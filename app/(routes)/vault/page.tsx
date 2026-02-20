@@ -7,7 +7,7 @@ import { useVault } from '@/modules/vault';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useNavigator } from '@/lib/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Lock, Unlock, ArrowUpRight, ArrowDownLeft, TrendingUp, ShieldCheck, History, AlertTriangle } from 'lucide-react';
+import { Lock, Unlock, ArrowUpRight, ArrowDownLeft, TrendingUp, ShieldCheck, History, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLayout } from '@/modules/ui/providers/LayoutProvider';
 import { AeroSkeleton } from '@/modules/ui/components/AeroSkeleton';
@@ -17,7 +17,6 @@ import Image from 'next/image';
 
 export default function VaultPage() {
   const { lockedBalance, spendableBalance, totalBalance } = useVault();
-  const demoMode = useAeroStore((s) => s.demoMode);
   const streak = useAeroStore((s) => s.streak);
   const language = useAeroStore((s) => s.language);
   const isWakeUpCall = useAeroStore((s) => s.isWakeUpCall);
@@ -157,7 +156,7 @@ export default function VaultPage() {
       </div>
 
       <AeroCard className={cn(
-        "w-full max-w-sm mb-4 overflow-hidden relative",
+        "w-full max-w-sm mb-4 overflow-hidden relative transition-all duration-1000",
         isWakeUpCall ? "border-red-500/30 bg-red-500/5 shadow-[0_0_40px_rgba(239,68,68,0.1)]" : "border-primary/20 bg-primary/5"
       )}>
         <div className="absolute top-0 right-0 p-3 opacity-20">
@@ -176,13 +175,13 @@ export default function VaultPage() {
       </AeroCard>
 
       <div className="mt-2 flex w-full max-w-sm gap-3">
-        <AeroCard className="flex-1 bg-white/5 border-white/10 p-4 flex flex-col items-center">
+        <AeroCard className="flex-1 border-white/10 bg-white/5 p-4 flex flex-col items-center">
           <Lock className="mb-2 h-4 w-4 text-muted-foreground" />
           <p className="text-[10px] text-muted-foreground uppercase font-bold">{t.locked}</p>
           <p className="font-numbers text-lg font-semibold">${lockedBalance.toFixed(2)}</p>
           <span className="text-[9px] text-muted-foreground mt-1">{t.releaseInfo}</span>
         </AeroCard>
-        <AeroCard className="flex-1 bg-gold/5 border-gold/20 p-4 flex flex-col items-center">
+        <AeroCard className="flex-1 border-gold/20 bg-gold/5 p-4 flex flex-col items-center">
           <Unlock className="mb-2 h-4 w-4 text-gold" />
           <p className="text-[10px] text-gold uppercase font-bold">{t.liquid}</p>
           <p className="font-numbers text-lg font-semibold text-gold">${spendableBalance.toFixed(2)}</p>
@@ -224,7 +223,7 @@ export default function VaultPage() {
       <AeroButton
         variant="primary"
         size="lg"
-        className={cn("mt-8 w-full max-w-sm h-14", isWakeUpCall ? "bg-red-600 border-red-500/50" : "")}
+        className={cn("mt-8 w-full max-w-sm h-14 transition-all duration-1000", isWakeUpCall ? "bg-red-600 border-red-500/50 shadow-[0_0_40px_rgba(239,68,68,0.3)]" : "")}
         onClick={() => nav.goToScan()}
       >
         {t.cta}

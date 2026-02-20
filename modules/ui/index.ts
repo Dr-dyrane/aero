@@ -9,3 +9,4 @@ export { TopNav } from './components/TopNav';
 export { ThemeToggle } from './components/ThemeToggle';
 export { ThemeProvider, useTheme } from './providers/ThemeProvider';
 export { LayoutProvider, useLayout } from './providers/LayoutProvider';
+export { PWAUpdater } from './components/PWAUpdater';

@@ -25,7 +25,7 @@ type AeroState = {
 
   // Vault
   vault: VaultState;
-  setVault: (vault: Partial<VaultState>) => void;
+  setVault: (vault: Partial<VaultState> | ((v: VaultState) => Partial<VaultState>)) => void;
   transactions: Transaction[];
   addTransaction: (tx: Omit<Transaction, 'id' | 'date'>) => void;
 
@@ -86,8 +86,13 @@ export const useAeroStore = create<AeroState>()(
 
       // Vault
       vault: { locked: DEMO_VAULT.locked_balance, spendable: DEMO_VAULT.spendable_balance },
-      setVault: (vault) =>
-        set((state) => ({ vault: { ...state.vault, ...vault } })),
+      setVault: (vaultOrFn) =>
+        set((state) => ({
+          vault: {
+            ...state.vault,
+            ...(typeof vaultOrFn === 'function' ? vaultOrFn(state.vault) : vaultOrFn)
+          }
+        })),
       transactions: [...DEMO_VAULT_TRANSACTIONS],
       addTransaction: (tx) => set((state) => ({
         transactions: [

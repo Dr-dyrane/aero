@@ -101,54 +101,15 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
-                let refreshing = false;
-
-                // Sync the protocol: Reload when new SW takes over
-                navigator.serviceWorker.addEventListener('controllerchange', () => {
-                  if (refreshing) return;
-                  refreshing = true;
-                  window.location.reload();
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').then(reg => {
+                    console.log('Protocol Registered');
+                    setInterval(() => reg.update(), 3600000);
+                  });
                 });
-
-                function registerServiceWorker() {
-                  navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                      console.log('Protocol Registered');
-
-                      // Check for updates on load
-                      if (registration.waiting) {
-                        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-                      }
-
-                      // Listen for future updates
-                      registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        newWorker.addEventListener('statechange', () => {
-                          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            // Protocol update detected: Force active
-                            newWorker.postMessage({ type: 'SKIP_WAITING' });
-                          }
-                        });
-                      });
-
-                      // Periodic Background Check (Every 1 hour)
-                      setInterval(() => {
-                        registration.update();
-                      }, 3600000);
-                    })
-                    .catch(error => {
-                      console.error('Protocol sync failed:', error);
-                    });
-                }
-
-                registerServiceWorker();
-
-                // Re-check protocol on visibility change
                 document.addEventListener('visibilitychange', () => {
                   if (document.visibilityState === 'visible') {
-                    navigator.serviceWorker.getRegistration().then(reg => {
-                      if (reg) reg.update();
-                    });
+                    navigator.serviceWorker.getRegistration().then(reg => { if (reg) reg.update(); });
                   }
                 });
               }

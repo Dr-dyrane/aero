@@ -8,6 +8,7 @@ import { LayoutProvider } from '@/modules/ui/providers/LayoutProvider';
 import { BioEngineProvider } from '@/modules/bio-engine/providers/BioEngineProvider';
 import { ApiProvider } from '@/modules/api/providers/ApiProvider';
 import { DemoModeProvider } from '@/modules/api/providers/DemoModeProvider';
+import { PWAUpdater } from '@/modules/ui';
 
 /**
  * AERO AppProviders
@@ -23,6 +24,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
             <LayoutProvider>
               <BioEngineProvider>
                 <ApiProvider>
+                  <PWAUpdater />
                   {children}
                 </ApiProvider>
               </BioEngineProvider>

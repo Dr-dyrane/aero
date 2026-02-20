@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useNavigator } from '@/lib/navigation';
 import { Menu, Bell, X, User, Heart, Activity, ShieldCheck, LayoutDashboard, ChevronLeft, Sparkles, LogOut, Info } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { AeroCard } from './AeroCard';
 import { AeroPill } from './AeroPill';
@@ -13,6 +13,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useLayout } from '../providers/LayoutProvider';
 import { useAuth } from '@/modules/auth';
+import { useVault } from '@/modules/vault';
 
 import { NotificationSheet, useNotificationStore } from '@/modules/notifications';
 import { useFeedback } from '../hooks/useFeedback';
@@ -32,7 +33,8 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
     const { playTap } = useFeedback();
     const nav = useNavigator();
     const pathname = usePathname();
-    const { demoMode, language, setDemoMode, setLanguage } = useAeroStore();
+    const { demoMode, language, setDemoMode, setLanguage, isWakeUpCall } = useAeroStore();
+    const { totalBalance } = useVault();
     const unreadCount = useNotificationStore((s) => s.unreadCount);
     const { signOut } = useAuth();
 
@@ -124,7 +126,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                         <img src={AVATAR_URL} alt="AERO User" className="w-full h-full object-cover" />
                     </button>
 
-                    {/* DEMO Marker in Nav: Restored premium style with AI icon */}
+                    {/* DEMO Marker in Nav */}
                     {demoMode && (
                         <div className="mx-1.5 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm">
                             <Sparkles className="h-2.5 w-2.5 text-primary animate-pulse" />
@@ -133,17 +135,28 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                     )}
                 </div>
 
-                <div className="flex items-center gap-4 pointer-events-auto">
-                    {/* Page Title: Right Aligned */}
-                    {title && (
-                        <motion.h2
-                            key={title}
-                            initial={{ opacity: 0, x: language === 'ar' ? -10 : 10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="font-serif text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase text-right rtl:text-left"
+                <div className="flex items-center gap-2 pointer-events-auto">
+                    {/* Sovereignty Pill */}
+                    {(pathname !== '/vault') && (
+                        <motion.div
+                            onClick={() => { playTap(); nav.goToVault(); }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-md border transition-all duration-500 cursor-pointer",
+                                isWakeUpCall
+                                    ? "bg-red-500/10 border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+                                    : "bg-gold/5 border-gold/20 shadow-[0_0_10px_rgba(212,175,55,0.1)]"
+                            )}
                         >
-                            {title}
-                        </motion.h2>
+                            <ShieldCheck className={cn("h-3 w-3", isWakeUpCall ? "text-red-400" : "text-gold")} />
+                            <span className={cn(
+                                "text-[11px] font-numbers font-bold",
+                                isWakeUpCall ? "text-red-200" : "text-gold"
+                            )}>
+                                ${totalBalance.toFixed(2)}
+                            </span>
+                        </motion.div>
                     )}
 
                     <button
@@ -180,7 +193,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                             className="fixed inset-0 z-[800] bg-black/40 backdrop-blur-sm mx-auto max-w-[430px]"
                         />
 
-                        {/* Panel: Borderless, Rounded-R, Transparent Blur */}
+                        {/* Panel */}
                         <motion.div
                             initial={{ x: language === 'ar' ? '100%' : '-100%' }}
                             animate={{ x: 0 }}
@@ -191,13 +204,6 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                 language === 'ar' ? "right-0 rounded-l-[40px]" : "left-0 rounded-r-[40px]"
                             )}
                         >
-                            {/* Liquid BG for Sheet */}
-                            <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-                                <div className={cn("absolute -top-20 h-64 w-64 rounded-full bg-primary/20 blur-[100px]", language === 'ar' ? "-right-20" : "-left-20")} />
-                                <div className={cn("absolute bottom-20 h-80 w-80 rounded-full bg-aero-blue/10 blur-[120px]", language === 'ar' ? "left-0" : "right-0")} />
-                            </div>
-
-                            {/* Content */}
                             <div className="relative z-10 flex flex-col h-full p-6">
                                 <div className="flex items-center justify-between mb-10">
                                     <div className="flex items-center gap-3">
@@ -234,17 +240,9 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                             </div>
                                             <span className="text-sm font-numbers font-medium text-foreground">98%</span>
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                <ShieldCheck className="h-3.5 w-3.5 text-gold" />
-                                                {t.vaultInsurance}
-                                            </div>
-                                            <AeroPill variant="accent" className="text-[8px] py-0">{t.active}</AeroPill>
-                                        </div>
                                     </div>
                                 </AeroCard>
 
-                                {/* Navigation Links */}
                                 <div className="flex flex-col gap-2 flex-1">
                                     <p className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-bold mb-2 ml-2 rtl:ml-0 rtl:mr-2">{t.navigation}</p>
                                     {[
@@ -278,7 +276,6 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                         onClick={async () => {
                                             await signOut();
                                             setDemoMode(false);
-                                            // Reset language to null to force welcome screen to show language select again
                                             setLanguage(null as any);
                                             nav.goToRoot();
                                             setIsOpen(false);
@@ -290,7 +287,6 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                     </button>
                                 </div>
 
-                                {/* Footer */}
                                 <div className="pt-6 border-t border-white/5 flex items-center justify-between">
                                     <div className="text-left rtl:text-right">
                                         <p className="text-[10px] text-muted-foreground">

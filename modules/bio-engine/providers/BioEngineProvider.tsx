@@ -126,22 +126,26 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
       playSuccess();
 
       // Even in demo mode, let's run the algorithm with simulated telemetry
-      if (user?.id) {
+      if (user?.id || demoMode) {
         try {
+          // Generate realistic "clean" telemetry (~0.8 - 1.0) with 5% chance of failure
+          const isFailing = Math.random() < 0.05;
+          const base = isFailing ? 0.1 : 0.85;
+
           const telemetry = normalizeTelemetry({
-            voice: 0.15 + Math.random() * 0.1,
-            ppg: 0.2 + Math.random() * 0.15,
-            face: 0.1 + Math.random() * 0.1
+            voice: base + Math.random() * 0.1,
+            ppg: (base + 0.05) + Math.random() * 0.1,
+            face: (base - 0.05) + Math.random() * 0.1
           });
           const result = await fetchAeroScore(user?.id || 'demo', telemetry, demoMode);
           setAeroScore(result.score);
 
           // Update Vault and Record History
           if (result.score > 80) {
-            setVault({
-              spendable: vault.spendable + 5.00,
-              locked: Math.max(0, vault.locked - 5.00)
-            });
+            setVault((v) => ({
+              spendable: v.spendable + 5.00,
+              locked: Math.max(0, v.locked - 5.00)
+            }));
             addTransaction({
               amount: 5,
               type: 'unlock',
@@ -153,14 +157,16 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
               status: 'clean'
             });
           } else if (result.score <= 20) {
-            const deduction = Math.min(vault.spendable, 5.00);
-            setVault({
-              spendable: vault.spendable - deduction,
-              locked: vault.locked + deduction
+            setVault((v) => {
+              const deduction = Math.min(v.spendable, 5.00);
+              return {
+                spendable: v.spendable - deduction,
+                locked: v.locked + deduction
+              };
             });
             addTransaction({
-              amount: deduction,
-              type: 'unlock', // Reverting is still an unlock-type flow in this schema
+              amount: 5, // Logic for amount is handled in functional update
+              type: 'unlock',
               description: 'Stability Reversion'
             });
             addScan({
@@ -205,7 +211,7 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
       playSuccess();
     }
     setIsScanning(false);
-  }, [demoMode, setScanStatus, user?.id, setAeroScore, playPulse, playSuccess, playError]);
+  }, [demoMode, setScanStatus, user?.id, setAeroScore, playPulse, playSuccess, playError, vault, setVault, addTransaction, addScan]);
 
   const cancelTripleCheck = useCallback(() => {
     setIsScanning(false);
