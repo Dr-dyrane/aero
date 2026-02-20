@@ -8,6 +8,7 @@ export interface AeroOrbProps {
   size?: number; // px
   className?: string;
   imgSrc?: string;
+  pulsing?: boolean;
 }
 
 /**
@@ -16,7 +17,7 @@ export interface AeroOrbProps {
  * Displays the Aero Score at center.
  * Uses exact AERO palette: #00F5FF glow.
  */
-export function AeroOrb({ score, size = 288, className, imgSrc }: AeroOrbProps) {
+export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false }: AeroOrbProps) {
   const glowIntensity = score / 100;
   const glowAlpha = 0.12 + glowIntensity * 0.35;
   const glowColor = `rgba(0, 245, 255, ${glowAlpha})`;
@@ -34,10 +35,11 @@ export function AeroOrb({ score, size = 288, className, imgSrc }: AeroOrbProps) 
           filter: `blur(40px)`,
         }}
         animate={{
-          opacity: [0.4, 0.7, 0.4],
+          opacity: pulsing ? [0.4, 0.9, 0.4] : [0.4, 0.7, 0.4],
+          scale: pulsing ? [1, 1.1, 1] : 1,
         }}
         transition={{
-          duration: 4,
+          duration: pulsing ? 0.8 : 4,
           repeat: Infinity,
           ease: [0.4, 0, 0.2, 1], // Standard fast-out-linear-in
         }}
@@ -47,10 +49,10 @@ export function AeroOrb({ score, size = 288, className, imgSrc }: AeroOrbProps) 
       <motion.div
         className="relative flex items-center justify-center w-full h-full"
         animate={{
-          y: [0, -6, 0],
+          y: pulsing ? [0, -2, 0] : [0, -6, 0],
         }}
         transition={{
-          duration: 6,
+          duration: pulsing ? 0.4 : 6,
           repeat: Infinity,
           ease: "easeInOut",
         }}
