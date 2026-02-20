@@ -62,17 +62,9 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
-    if (!isScrollSensitive) return; // Skip if sensitivity disabled
-
-    const currentScrollY = e.currentTarget.scrollTop;
-    // Hide on scroll down, show on scroll up
-    if (currentScrollY > lastScrollY && currentScrollY > 60) {
-      if (isNavVisible) setIsNavVisible(false);
-    } else {
-      if (!isNavVisible) setIsNavVisible(true);
-    }
-    setLastScrollY(currentScrollY);
+  const handleScroll = () => {
+    // Scroll-to-hide disabled per user request to improve performance/stability
+    return;
   };
 
   const safeAreaInsets = {

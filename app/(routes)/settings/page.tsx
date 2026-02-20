@@ -7,7 +7,11 @@ import { useTheme } from '@/modules/ui/providers/ThemeProvider';
 import { useAuth } from '@/modules/auth';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useNavigator } from '@/lib/navigation';
-import { ArrowLeft, Sun, Moon, Monitor, Shield, LogOut, Zap } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, Monitor, Shield, LogOut, Zap, ShieldAlert, ShieldCheck, Activity } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useLayout } from '@/modules/ui/providers/LayoutProvider';
+import { AeroSkeleton } from '@/modules/ui/components/AeroSkeleton';
+import { useEffect } from 'react';
 
 export default function SettingsPage() {
   const { theme, setTheme, resolvedTheme } = useTheme();
@@ -15,9 +19,17 @@ export default function SettingsPage() {
   const {
     demoMode, setDemoMode,
     language, setLanguage,
-    isWakeUpCall, setAeroScore
+    isWakeUpCall, setAeroScore,
+    streak, setStreak
   } = useAeroStore();
   const nav = useNavigator();
+  const { isSkeletonLoading, setSkeletonLoading } = useLayout();
+
+  useEffect(() => {
+    setSkeletonLoading(true);
+    const timer = setTimeout(() => setSkeletonLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, [setSkeletonLoading]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -64,6 +76,26 @@ export default function SettingsPage() {
   };
 
   const t = language === 'ar' ? content.ar : content.en;
+
+  if (isSkeletonLoading) {
+    return (
+      <main className="flex min-h-screen flex-col items-center px-4 pb-20 bg-background">
+        <div className="h-6 w-full" />
+        <AeroSkeleton variant="card" className="h-24 w-full max-w-sm mb-4" />
+        <AeroSkeleton variant="card" className="h-16 w-full max-w-sm mb-10" />
+        <div className="w-full max-w-sm space-y-4">
+          <AeroSkeleton className="h-3 w-32" />
+          <AeroSkeleton variant="card" className="h-14 w-full" />
+          <AeroSkeleton variant="card" className="h-14 w-full" />
+        </div>
+        <div className="w-full max-w-sm space-y-4 mt-8">
+          <AeroSkeleton className="h-3 w-32" />
+          <AeroSkeleton variant="card" className="h-16 w-full" />
+          <AeroSkeleton variant="card" className="h-16 w-full" />
+        </div>
+      </main>
+    );
+  }
 
   const themes = [
     { key: 'eclipse' as const, label: t.themes.eclipse.label, icon: Moon, desc: t.themes.eclipse.desc },
@@ -177,21 +209,27 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Clinical Stress Test */}
+      {/* SYSTEM OVERRIDE: Clinical Debugger */}
       {demoMode && (
-        <div className="mt-8 w-full max-w-sm">
-          <AeroCard className="border-red-500/20 bg-red-500/5">
+        <div className="mt-8 w-full max-w-sm space-y-3">
+          <div className="flex items-center gap-2 px-1 mb-2">
+            <Activity className="h-3 w-3 text-red-500 animate-pulse" />
+            <span className="text-[10px] font-bold tracking-[0.3em] text-red-500 uppercase">System Override</span>
+          </div>
+
+          <AeroCard className="border-red-500/20 bg-red-500/5 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
+              <ShieldAlert className="h-12 w-12 text-red-500" />
+            </div>
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10"
-                >
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 border border-red-500/20">
                   <Zap className="h-5 w-5 text-red-500" />
                 </div>
                 <div className="text-left rtl:text-right">
-                  <p className="text-sm font-medium text-red-500">Clinical Stress Test</p>
-                  <p className="text-xs text-red-400/60 leading-tight">
-                    Simulate AS {'>='} 90 (Addiction Protocol)
+                  <p className="text-xs font-bold text-red-500 uppercase tracking-wider">Addiction Alert</p>
+                  <p className="text-[9px] font-mono text-red-400/60 leading-tight uppercase font-bold">
+                    Force AS {'>='} 90.00_protocol
                   </p>
                 </div>
               </div>
@@ -210,6 +248,32 @@ export default function SettingsPage() {
                 />
               </button>
             </div>
+          </AeroCard>
+
+          <AeroCard className="border-primary/20 bg-primary/5 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-2 opacity-5 group-hover:opacity-10 transition-opacity">
+              <ShieldCheck className="h-12 w-12 text-primary" />
+            </div>
+            <button
+              onClick={() => setStreak(streak === 30 ? 3 : 30)}
+              className="flex w-full items-center justify-between p-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+                  <ShieldCheck className="h-5 w-5 text-primary" />
+                </div>
+                <div className="text-left rtl:text-right">
+                  <p className="text-xs font-bold text-primary uppercase tracking-wider">Force Maturity</p>
+                  <p className="text-[9px] font-mono text-primary/60 leading-tight uppercase font-bold">
+                    Set Streak: {streak === 30 ? '3 days' : '30 days (Crown)'}
+                  </p>
+                </div>
+              </div>
+              <div className={cn(
+                "h-2 w-2 rounded-full",
+                streak === 30 ? "bg-primary animate-pulse shadow-[0_0_10px_rgba(0,245,255,0.5)]" : "bg-white/10"
+              )} />
+            </button>
           </AeroCard>
         </div>
       )}

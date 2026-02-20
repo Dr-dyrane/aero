@@ -7,9 +7,14 @@ import { useAuth } from '@/modules/auth';
 import { useNavigator } from '@/lib/navigation';
 import { DEMO_MERITS, DEMO_SCAN_HISTORY, MERIT_LEVELS } from '@/lib/data';
 import { Shield, Zap, TrendingUp, ChevronRight, Sparkles, Brain, Clock, Globe, ArrowUpRight } from 'lucide-react';
-import { motion, type Variants } from 'framer-motion';
+import { motion, type Variants, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 import { useBioEngine } from '@/modules/bio-engine';
+import { useLayout } from '@/modules/ui/providers/LayoutProvider';
+import { AeroSkeleton } from '@/modules/ui/components/AeroSkeleton';
+import { useTheme } from '@/modules/ui/providers/ThemeProvider';
+import Image from 'next/image';
 
 export default function DashboardPage() {
   const aeroScore = useAeroStore((s) => s.aeroScore);
@@ -22,6 +27,60 @@ export default function DashboardPage() {
   const language = useAeroStore((s) => s.language);
   const isWakeUpCall = useAeroStore((s) => s.isWakeUpCall);
   const { resetScan } = useBioEngine();
+  const setAeroScore = useAeroStore((s) => s.setAeroScore);
+  const { isSkeletonLoading, setSkeletonLoading } = useLayout();
+  const { resolvedTheme } = useTheme();
+
+  const isDark = resolvedTheme === 'eclipse';
+  const asImg = isDark ? "/as.png" : "/as_light.png";
+
+  const [isDetoxing, setIsDetoxing] = useState(false);
+  const [detoxProgress, setDetoxProgress] = useState(0);
+
+  // Controlled Skeleton Duration for Demo Polish
+  useEffect(() => {
+    setSkeletonLoading(true);
+    const timer = setTimeout(() => setSkeletonLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, [setSkeletonLoading]);
+
+  const startDetox = () => {
+    setIsDetoxing(true);
+    setDetoxProgress(0);
+  };
+
+  useEffect(() => {
+    if (isDetoxing) {
+      const interval = setInterval(() => {
+        setDetoxProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              setIsDetoxing(false);
+              setAeroScore(82); // Reset to a healthy score
+            }, 500);
+            return 100;
+          }
+          return prev + 2;
+        });
+      }, 50);
+      return () => clearInterval(interval);
+    }
+  }, [isDetoxing, setAeroScore]);
+
+  const insights = isWakeUpCall
+    ? [
+      "CRITICAL: Bio-signatures indicate acute nicotine load. Vascular resistance is peaking.",
+      "THREAT: Sovereignty compromised by chemical dependency. Yield generation suspended.",
+      "URGENT: Autonomic nervous system shows high sympathetic drive. Initiate cessation."
+    ]
+    : [
+      "Your baseline stability signals a breakout. Projected yield increases by 12%.",
+      "Respiratory rhythm is optimal. Identity integrity verified at 98.4%.",
+      "Sovereign wealth projection: On track for Level 5 unlock by month-end."
+    ];
+
+  const currentInsight = insights[Math.floor((new Date().getSeconds() / 60) * insights.length) % insights.length];
 
   // Dictionary
   const content = {
@@ -29,11 +88,9 @@ export default function DashboardPage() {
       bioMarketValue: "Bio-Market Value",
       topGlobal: "TOP 4.2% GLOBAL",
       marketInsight: "Market Insight",
-      insightText: isWakeUpCall
-        ? "CRITICAL: Bio-signatures indicate acute nicotine load. Vascular resistance is peaking. Recommend immediate cessation ritual."
-        : `"Your baseline stability signals a breakout. Projected yield increases by 12% if streak holds through weekend."`,
+      insightText: currentInsight,
       liveFeed: "Live Feed",
-      fullReport: "FULL REPORT",
+      fullReport: "DECODE MY SCORE",
       totalEquity: "Total Equity",
       locked: "LOCKED",
       verifyStatus: "Verify Status",
@@ -52,10 +109,10 @@ export default function DashboardPage() {
       topGlobal: "أعلى ٤.٢٪ عالمياً",
       marketInsight: "رؤى السوق",
       insightText: isWakeUpCall
-        ? "حرج: المؤشرات الحيوية تدل على حمل نيكوتين عالي. ضغط الدم مرتفع. نوصي ببدء طقس التوقف فوراً."
-        : `"استقرارك الحيوي يشير إلى انطلاقة قوية. العائد المتوقع سيزيد بنسبة ١٢٪ إذا استمر الأداء خلال عطلة نهاية الأسبوع."`,
+        ? "حرج: المؤشرات الحيوية تدل على حمل نيكوتين عالي. ضغط الدم مرتفع."
+        : `"استقرارك الحيوي يشير إلى انطلاقة قوية. العائد المتوقع سيزيد بنسبة ١٢٪."`,
       liveFeed: "بث مباشر",
-      fullReport: "التقرير الكامل",
+      fullReport: "فك شفرة درجتك",
       totalEquity: "إجمالي الأصول",
       locked: "مُجمد",
       verifyStatus: "حالة التحقق",
@@ -100,6 +157,29 @@ export default function DashboardPage() {
     }
   };
 
+  if (isSkeletonLoading) {
+    return (
+      <main className="flex min-h-screen flex-col items-center px-4 pb-32 bg-background">
+        <div className="h-20 w-full" /> {/* Header Gap */}
+        <div className="flex flex-col items-center gap-6 w-full max-w-sm pt-10">
+          <AeroSkeleton variant="circle" className="h-[72px] w-[72px]" />
+          <div className="flex flex-col items-center gap-2">
+            <AeroSkeleton className="h-3 w-24" />
+            <AeroSkeleton className="h-16 w-32" />
+            <AeroSkeleton className="h-6 w-40 rounded-full mt-2" />
+          </div>
+          <AeroSkeleton variant="card" className="h-32 w-full mt-10" />
+          <AeroSkeleton variant="card" className="h-20 w-full" />
+          <div className="grid grid-cols-2 gap-3 w-full">
+            <AeroSkeleton variant="card" className="h-32" />
+            <AeroSkeleton variant="card" className="h-32" />
+          </div>
+          <AeroSkeleton variant="pill" className="h-16 w-full mt-4" />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className={cn(
       "flex min-h-screen flex-col items-center px-4 pb-32 overflow-x-hidden transition-colors duration-1000",
@@ -112,6 +192,47 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* DETOX RITUAL OVERLAY */}
+      <AnimatePresence>
+        {isDetoxing && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black/90 backdrop-blur-3xl flex flex-col items-center justify-center p-8 px-12"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,245,255,0.05)_0%,transparent_70%)]" />
+
+            <div className="relative flex flex-col items-center gap-12 w-full max-w-xs text-center">
+              <div className="relative">
+                <div className="absolute inset-0 blur-3xl bg-primary/20 animate-pulse" />
+                <AeroOrb score={82} size={160} pulsing />
+              </div>
+
+              <div className="space-y-4 w-full">
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] tracking-[0.4em] font-bold text-primary uppercase">Recovery in Progress</span>
+                  <h2 className="text-xl font-serif text-foreground">Bio-Detox Protocol</h2>
+                </div>
+
+                {/* Progress Track */}
+                <div className="w-full h-[2px] bg-white/5 relative overflow-hidden rounded-full">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${detoxProgress}%` }}
+                  />
+                </div>
+
+                <p className="text-[9px] font-mono text-muted-foreground uppercase tracking-widest">
+                  Purging chemical signatures... {detoxProgress}%
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         variants={container}
         initial="hidden"
@@ -121,42 +242,67 @@ export default function DashboardPage() {
         {/* Header Section: Reduced padding, now handled by TopNav */}
         <div className="h-6" />
 
-        {/* BIO-MARKET VALUE TICKER */}
-        <motion.section variants={item} className="flex flex-col items-center py-6 relative w-full pt-10">
+        {/* BIO-MARKET VALUE TICKER - INTEGRATED ARTIFACT */}
+        <motion.section variants={item} className="flex flex-col items-center py-6 relative w-full pt-4 min-h-[420px] justify-center overflow-visible">
+          {/* Background Aura */}
           <div className={cn(
-            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 blur-[100px] rounded-full pointer-events-none transition-colors duration-1000",
-            isWakeUpCall ? "bg-red-500/10" : "bg-primary/5"
+            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full blur-[140px] rounded-full pointer-events-none transition-colors duration-1000 z-0",
+            isWakeUpCall ? "bg-red-500/20" : "bg-primary/10"
           )} />
 
-          {/* Global Identity Anchor (72px AeroOrb) */}
-          <div className="mb-6">
-            <AeroOrb score={aeroScore} size={72} pulsing />
+          {/* THE ARTIFACT: 'as.png' as the Hero Background */}
+          <div className="absolute inset-0 z-0 flex items-center justify-center">
+            <motion.div
+              animate={{
+                scale: [1, 1.05, 1],
+                rotate: [0, 2, 0],
+                filter: isWakeUpCall
+                  ? ["drop-shadow(0 0 40px rgba(239,68,68,0.2))", "drop-shadow(0 0 60px rgba(239,68,68,0.4))", "drop-shadow(0 0 40px rgba(239,68,68,0.2))"]
+                  : ["drop-shadow(0 0 40px rgba(0,245,255,0.1))", "drop-shadow(0 0 60px rgba(0,245,255,0.2))", "drop-shadow(0 0 40px rgba(0,245,255,0.1))"]
+              }}
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="relative w-[480px] h-[480px] opacity-[0.25] saturate-[1.2]"
+            >
+              <Image
+                src={asImg}
+                alt="AERO Artifact Background"
+                fill
+                className="object-contain"
+                priority
+              />
+            </motion.div>
           </div>
 
-          <div className="flex flex-col items-center gap-1 z-10 text-center">
+          {/* OVERLAY CONTENT: Centered on the Artifact */}
+          <div className="relative z-10 flex flex-col items-center justify-center">
             <span className={cn(
-              "text-[10px] tracking-[0.2em] font-bold uppercase opacity-70 transition-colors",
-              isWakeUpCall ? "text-red-400" : "text-muted-foreground"
+              "text-[10px] tracking-[0.4em] font-bold uppercase opacity-80 transition-colors mb-4",
+              isWakeUpCall ? "text-red-400" : "text-primary"
             )}>
               {isWakeUpCall ? t.addictionAlert : t.bioMarketValue}
             </span>
+
             <h1 className={cn(
-              "font-serif text-7xl font-light tracking-tighter text-transparent bg-clip-text tabular-nums transition-all duration-1000",
+              "font-serif text-[104px] leading-tight font-light tracking-tighter text-transparent bg-clip-text tabular-nums transition-all duration-1000",
               isWakeUpCall
-                ? "bg-gradient-to-b from-red-400 via-red-500 to-red-900"
-                : "bg-gradient-to-b from-foreground via-foreground to-foreground/50"
+                ? "bg-gradient-to-b from-red-100 via-red-500 to-red-900"
+                : "bg-gradient-to-b from-foreground via-foreground/90 to-foreground/20"
             )}>
               {aeroScore}
             </h1>
 
             {/* Global Percentile Indicator */}
             <div className={cn(
-              "mt-4 flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md shadow-lg border transition-all duration-1000",
-              isWakeUpCall ? "bg-red-500/10 border-red-500/20" : "bg-white/5 border-white/10"
+              "mt-8 flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-xl border transition-all duration-1000 shadow-[0_4px_24px_rgba(0,0,0,0.2)]",
+              isWakeUpCall ? "bg-red-500/15 border-red-500/30" : "bg-white/5 border-white/10"
             )}>
-              <Globe className={cn("h-3 w-3 animate-pulse", isWakeUpCall ? "text-red-400" : "text-primary")} />
+              <Globe className={cn("h-3 w-3", isWakeUpCall ? "text-red-400 animate-pulse" : "text-primary")} />
               <span className={cn(
-                "text-[10px] font-bold tracking-widest uppercase transition-colors",
+                "text-[10px] font-bold tracking-[0.3em] uppercase transition-colors",
                 isWakeUpCall ? "text-red-400" : "text-primary"
               )}>
                 {t.topGlobal}
@@ -189,7 +335,10 @@ export default function DashboardPage() {
                   <Clock className="h-3.5 w-3.5" />
                   {t.liveFeed}
                 </div>
-                <button className="text-[10px] font-bold text-primary hover:text-white transition-colors flex items-center gap-1">
+                <button
+                  onClick={() => nav.goToHowItWorks()}
+                  className="text-[10px] font-bold text-primary hover:text-white transition-colors flex items-center gap-1"
+                >
                   {t.fullReport} <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                 </button>
               </div>
@@ -293,8 +442,12 @@ export default function DashboardPage() {
                 : "shadow-[0_0_50px_rgba(0,245,255,0.2)] border-primary/50"
             )}
             onClick={() => {
-              resetScan();
-              nav.goToScan();
+              if (isWakeUpCall) {
+                startDetox();
+              } else {
+                resetScan();
+                nav.goToScan();
+              }
             }}
           >
             {/* Inner Shimmer */}

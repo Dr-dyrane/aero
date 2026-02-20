@@ -6,46 +6,69 @@ import { AeroButton } from '@/modules/ui/components/AeroButton';
 import { useVault } from '@/modules/vault';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useNavigator } from '@/lib/navigation';
+import { motion } from 'framer-motion';
 import { DEMO_VAULT_TRANSACTIONS } from '@/lib/data';
-import { ArrowLeft, Lock, Unlock, ArrowUpRight, ArrowDownLeft, TrendingUp, ShieldCheck, History } from 'lucide-react';
+import { ArrowLeft, Lock, Unlock, ArrowUpRight, ArrowDownLeft, TrendingUp, ShieldCheck, History, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useLayout } from '@/modules/ui/providers/LayoutProvider';
+import { AeroSkeleton } from '@/modules/ui/components/AeroSkeleton';
+import { useTheme } from '@/modules/ui/providers/ThemeProvider';
+import { useEffect } from 'react';
+import Image from 'next/image';
 
 export default function VaultPage() {
   const { lockedBalance, spendableBalance, totalBalance } = useVault();
   const demoMode = useAeroStore((s) => s.demoMode);
   const streak = useAeroStore((s) => s.streak);
   const language = useAeroStore((s) => s.language);
+  const isWakeUpCall = useAeroStore((s) => s.isWakeUpCall);
   const nav = useNavigator();
+  const { isSkeletonLoading, setSkeletonLoading } = useLayout();
+  const { resolvedTheme } = useTheme();
+
+  const isDark = resolvedTheme === 'eclipse';
+  const asImg = isDark ? "/as.png" : "/as_light.png";
+
+  useEffect(() => {
+    setSkeletonLoading(true);
+    const timer = setTimeout(() => setSkeletonLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, [setSkeletonLoading]);
 
   const content = {
     en: {
       totalBioEquity: "Total Bio-Equity",
       yield: "yield",
-      projectionTitle: "10-Year Projection",
-      projectionSub: "Based on current streak & compound bio-yield.",
+      projectionTitle: isWakeUpCall ? "STABILITY RISK" : "10-Year Projection",
+      projectionSub: isWakeUpCall
+        ? "Projections suspended. Bio-signatures indicate critical instability."
+        : "Based on current streak & compound bio-yield.",
       locked: "Locked",
       liquid: "Liquid",
       releaseInfo: "Releases at Level 5",
       availableNow: "Available Now",
       miningRate: "Mining Rate",
-      rateValue: "$5.00 / verified day",
+      rateValue: isWakeUpCall ? "YIELD SUSPENDED" : "$5.00 / verified day",
       ledger: "Ledger",
       export: "EXPORT CSV",
-      cta: "Verify & Mine Yield"
+      cta: isWakeUpCall ? "INITIATE DETOX" : "Verify & Mine Yield"
     },
     ar: {
       totalBioEquity: "إجمالي الأصول الحيوية",
       yield: "عائد",
-      projectionTitle: "توقعات ١٠ سنوات",
-      projectionSub: "بناءً على الأداء الحالي وعائد النمو الحيوي المركب.",
+      projectionTitle: isWakeUpCall ? "خطر الاستقرار" : "توقعات ١٠ سنوات",
+      projectionSub: isWakeUpCall
+        ? "تم تعليق التوقعات. المؤشرات الحيوية تدل على عدم استقرار حرج."
+        : "بناءً على الأداء الحالي وعائد النمو الحيوي المركب.",
       locked: "مُجمد",
       liquid: "سيولة",
       releaseInfo: "يفتح عند المستوى ٥",
       availableNow: "متاح الآن",
       miningRate: "معدل الحصاد",
-      rateValue: "٥.٠٠ دولار / يوم محقق",
+      rateValue: isWakeUpCall ? "تم تعليق العائد" : "٥.٠٠ دولار / يوم محقق",
       ledger: "السجل",
       export: "تصدير CSV",
-      cta: "تحقق واجمع العائد"
+      cta: isWakeUpCall ? "بدء التطهير" : "تحقق واجمع العائد"
     }
   };
 
@@ -55,36 +78,116 @@ export default function VaultPage() {
   // Simple heuristic: Current Balance * Streak Multiplier * 10 years
   const projectedValue = (totalBalance + (5 * 365 * 10)) * 1.08;
 
+  if (isSkeletonLoading) {
+    return (
+      <main className="flex min-h-screen flex-col items-center px-4 pb-28 bg-background">
+        <div className="h-10 w-full" />
+        <div className="flex flex-col items-center mb-10 w-full max-w-sm">
+          <AeroSkeleton className="h-3 w-32 mb-4" />
+          <AeroSkeleton className="h-12 w-48 mb-4" />
+          <AeroSkeleton variant="pill" className="h-6 w-24" />
+        </div>
+        <AeroSkeleton variant="card" className="h-28 w-full max-w-sm mb-6" />
+        <div className="flex w-full max-w-sm gap-3 mb-10">
+          <AeroSkeleton variant="card" className="h-24 flex-1" />
+          <AeroSkeleton variant="card" className="h-24 flex-1" />
+        </div>
+        <div className="w-full max-w-sm space-y-3">
+          <AeroSkeleton className="h-4 w-20 mb-4" />
+          {[1, 2, 3, 4].map(i => (
+            <AeroSkeleton key={i} variant="card" className="h-16 w-full" />
+          ))}
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center px-4 pb-28">
+    <main className={cn(
+      "flex min-h-screen flex-col items-center px-4 pb-28 transition-colors duration-1000",
+      isWakeUpCall ? "bg-red-950/20" : "bg-background"
+    )}>
+      {isWakeUpCall && (
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,59,48,0.15)_0%,transparent_70%)]" />
+        </div>
+      )}
       {/* Header handled by TopNav */}
       <div className="h-6" />
 
-      {/* TOTAL EQUITY HEADER */}
-      <div className="flex flex-col items-center mb-6">
-        <span className="text-xs font-medium text-muted-foreground tracking-widest uppercase">{t.totalBioEquity}</span>
-        <h1 className="font-serif text-5xl font-light text-foreground mt-2 flex items-baseline gap-1">
-          <span className="text-2xl text-muted-foreground opacity-50">$</span>
-          {totalBalance.toFixed(2)}
-        </h1>
-        <AeroPill variant="accent" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-          <TrendingUp className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
-          +12.4% {t.yield}
-        </AeroPill>
+      {/* TOTAL EQUITY HEADER - INTEGRATED ARTIFACT */}
+      <div className="flex flex-col items-center mb-6 relative w-full pt-10 min-h-[260px] justify-center overflow-visible">
+        {/* Background Aura */}
+        <div className={cn(
+          "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full blur-[100px] rounded-full pointer-events-none transition-colors duration-1000 z-0",
+          isWakeUpCall ? "bg-red-500/15" : "bg-primary/5"
+        )} />
+
+        {/* THE ARTIFACT: 'as.png' Background */}
+        <div className="absolute inset-0 z-0 flex items-center justify-center opacity-[0.2] saturate-[1.2]">
+          <motion.div
+            animate={{
+              scale: [1, 1.05, 1],
+              rotate: [0, -1, 0]
+            }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            className="relative w-[400px] h-[400px]"
+          >
+            <Image src={asImg} alt="Protocol Artifact" fill className="object-contain" />
+          </motion.div>
+        </div>
+
+        <div className="flex flex-col items-center relative z-10">
+          <span className="text-[10px] font-bold text-muted-foreground tracking-[0.3em] uppercase">{t.totalBioEquity}</span>
+          <h1 className={cn(
+            "font-serif text-6xl font-light mt-4 flex items-baseline gap-1 transition-colors duration-1000 tracking-tighter",
+            isWakeUpCall ? "text-red-400" : "text-foreground"
+          )}>
+            <span className="text-2xl text-muted-foreground opacity-50">$</span>
+            {totalBalance.toFixed(2)}
+          </h1>
+          <AeroPill
+            variant="accent"
+            className={cn(
+              "mt-4 transition-colors duration-1000",
+              isWakeUpCall ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+            )}
+          >
+            {isWakeUpCall ? (
+              <AlertTriangle className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
+            ) : (
+              <TrendingUp className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
+            )}
+            {isWakeUpCall ? "-4.2% Risk" : `+12.4% ${t.yield}`}
+          </AeroPill>
+        </div>
       </div>
 
       {/* PROJECTED VALUE CARD */}
-      <AeroCard className="w-full max-w-sm mb-4 border-primary/20 bg-primary/5 overflow-hidden relative">
+      <AeroCard className={cn(
+        "w-full max-w-sm mb-4 overflow-hidden relative transition-all duration-1000",
+        isWakeUpCall ? "border-red-500/30 bg-red-500/5 shadow-[0_0_40px_rgba(239,68,68,0.1)]" : "border-primary/20 bg-primary/5"
+      )}>
         <div className="absolute top-0 right-0 rtl:right-auto rtl:left-0 p-3 opacity-20">
-          <TrendingUp className="h-16 w-16 text-primary" />
+          {isWakeUpCall ? (
+            <AlertTriangle className="h-16 w-16 text-red-500" />
+          ) : (
+            <TrendingUp className="h-16 w-16 text-primary" />
+          )}
         </div>
         <div className="relative z-10 flex flex-col gap-1">
-          <div className="flex items-center gap-2 text-[10px] font-bold text-primary tracking-widest uppercase">
-            <ShieldCheck className="h-3 w-3" />
+          <div className={cn(
+            "flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase transition-colors",
+            isWakeUpCall ? "text-red-400" : "text-primary"
+          )}>
+            {isWakeUpCall ? <AlertTriangle className="h-3 w-3" /> : <ShieldCheck className="h-3 w-3" />}
             {t.projectionTitle}
           </div>
-          <p className="text-2xl font-light tracking-wide text-foreground">
-            ${projectedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          <p className={cn(
+            "text-2xl font-light tracking-wide transition-colors",
+            isWakeUpCall ? "text-red-200" : "text-foreground"
+          )}>
+            {isWakeUpCall ? "---" : `$${projectedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           </p>
           <p className="text-xs text-muted-foreground italic">
             {t.projectionSub}
@@ -132,7 +235,13 @@ export default function VaultPage() {
           <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest">{t.miningRate}</span>
           <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         </div>
-        <AeroPill variant="muted" className="border-white/5 bg-white/[0.02]">
+        <AeroPill
+          variant="muted"
+          className={cn(
+            "border-white/5 bg-white/[0.02] transition-colors",
+            isWakeUpCall && "text-red-400 bg-red-500/5 border-red-500/20"
+          )}
+        >
           {t.rateValue}
         </AeroPill>
       </div>
@@ -164,7 +273,7 @@ export default function VaultPage() {
                 }}
               >
                 {tx.type === 'unlock' ? (
-                  <ArrowUpRight className="h-4 w-4 rtl:-rotate-90" style={{ color: '#00F5FF' }} />
+                  <ArrowUpRight className="h-4 w-4 rtl:-rotate-90" style={{ color: isWakeUpCall ? '#FF3B30' : '#00F5FF' }} />
                 ) : (
                   <ArrowDownLeft className="h-4 w-4 rtl:-rotate-90" style={{ color: '#D4AF37' }} />
                 )}
@@ -174,8 +283,8 @@ export default function VaultPage() {
                 <p className="text-[10px] text-muted-foreground font-mono opacity-60">{tx.date} • ID: {tx.id.slice(0, 6)}</p>
               </div>
               <p
-                className="font-numbers text-sm font-semibold"
-                style={{ color: tx.type === 'unlock' ? '#00F5FF' : '#D4AF37' }}
+                className="font-numbers text-sm font-semibold text-right"
+                style={{ color: tx.type === 'unlock' ? (isWakeUpCall ? '#FF3B30' : '#00F5FF') : '#D4AF37' }}
               >
                 {tx.type === 'unlock' ? '+' : ''}{'$'}{tx.amount.toFixed(2)}
               </p>
@@ -188,7 +297,10 @@ export default function VaultPage() {
       <AeroButton
         variant="primary"
         size="lg"
-        className="mt-8 w-full max-w-sm h-14"
+        className={cn(
+          "mt-8 w-full max-w-sm h-14 transition-all duration-1000",
+          isWakeUpCall ? "bg-red-600 border-red-500/50 shadow-[0_0_40px_rgba(239,68,68,0.3)]" : ""
+        )}
         onClick={() => nav.goToScan()}
       >
         {t.cta}

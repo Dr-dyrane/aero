@@ -25,7 +25,7 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
   const isDark = resolvedTheme === 'eclipse' || isWakeUpCall; // Modified isDark to include isWakeUpCall
 
   // Default theme-sensitive logo if no imgSrc provided
-  const logoSrc = imgSrc || (isDark ? "/as.png" : "/aero_light.png");
+  const logoSrc = imgSrc || (isDark ? "/as.png" : "/as_light.png");
 
   const glowIntensity = score / 100;
   const glowAlpha = 0.12 + glowIntensity * 0.35;
@@ -121,6 +121,8 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
             <span className={cn("font-numbers text-3xl font-medium", isDark ? "text-white" : "text-black")}>{score}</span>
           </div>
         )}
+        {/* GLOSS LAYER: Glass morphism depth */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/10 to-transparent opacity-40 mix-blend-overlay pointer-events-none" />
       </motion.div>
     </div>
   );

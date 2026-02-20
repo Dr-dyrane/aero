@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useLayout } from '@/modules/ui/providers/LayoutProvider';
 
 /**
  * AERO Navigator Helpers
@@ -8,17 +9,23 @@ import { useRouter } from 'next/navigation';
  */
 export function useNavigator() {
   const router = useRouter();
+  const { setSkeletonLoading } = useLayout();
+
+  const navigate = (path: string) => {
+    setSkeletonLoading(true);
+    router.push(path);
+  };
 
   return {
-    goToWelcome: () => router.push('/welcome'),
-    goToDashboard: () => router.push('/dashboard'),
-    goToVault: () => router.push('/vault'),
-    goToScan: () => router.push('/scan'),
-    goToAuth: () => router.push('/auth'),
-    goToSettings: () => router.push('/settings'),
-    goToRoot: () => router.push('/'),
-    goToHowItWorks: () => router.push('/how-it-works'),
+    goToWelcome: () => navigate('/welcome'),
+    goToDashboard: () => navigate('/dashboard'),
+    goToVault: () => navigate('/vault'),
+    goToScan: () => navigate('/scan'),
+    goToAuth: () => navigate('/auth'),
+    goToSettings: () => navigate('/settings'),
+    goToRoot: () => navigate('/'),
+    goToHowItWorks: () => navigate('/how-it-works'),
     goToOnboardingIfNeeded: (hasBaseline: boolean) =>
-      hasBaseline ? router.push('/dashboard') : router.push('/scan'),
+      hasBaseline ? navigate('/dashboard') : navigate('/scan'),
   };
 }

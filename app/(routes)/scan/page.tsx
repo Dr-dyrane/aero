@@ -10,7 +10,11 @@ import { useBioEngine } from '@/modules/bio-engine';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useNavigator } from '@/lib/navigation';
 import { useLayout } from '@/modules/ui/providers/LayoutProvider';
+import { AeroSkeleton } from '@/modules/ui/components/AeroSkeleton';
+import { useTheme } from '@/modules/ui/providers/ThemeProvider';
 import { Mic, Camera, ScanFace, CheckCircle2, Circle, ShieldCheck, Gem } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 export default function ScanPage() {
   const {
@@ -23,7 +27,17 @@ export default function ScanPage() {
   const aeroScore = useAeroStore((s) => s.aeroScore);
   const language = useAeroStore((s) => s.language);
   const nav = useNavigator();
-  const { setIsNavVisible, setScrollSensitivity } = useLayout();
+  const { setIsNavVisible, setScrollSensitivity, isSkeletonLoading, setSkeletonLoading } = useLayout();
+  const { resolvedTheme } = useTheme();
+
+  const isDark = resolvedTheme === 'eclipse';
+  const logoSrc = isDark ? "/as.png" : "/as_light.png"; // Default theme-sensitive logo if no imgSrc provided
+
+  useEffect(() => {
+    setSkeletonLoading(true);
+    const timer = setTimeout(() => setSkeletonLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, [setSkeletonLoading]);
 
   const content = {
     en: {
@@ -89,11 +103,36 @@ export default function ScanPage() {
     face: { label: t.sensors.face.label, desc: t.sensors.face.desc, icon: ScanFace },
   };
 
+  if (isSkeletonLoading) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center px-6 bg-background">
+        <div className="absolute top-12 flex flex-col items-center gap-2">
+          <AeroSkeleton variant="circle" className="h-[72px] w-[72px]" />
+          <AeroSkeleton className="h-3 w-32" />
+        </div>
+        <div className="flex flex-col items-center gap-12 w-full max-w-sm">
+          <AeroSkeleton variant="circle" className="h-[240px] w-[240px]" />
+          <AeroSkeleton variant="pill" className="h-20 w-full" />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="flex min-h-[100dvh] flex-col items-center justify-center px-6 relative overflow-hidden bg-background">
       {/* AMBIENT RITUAL BACKGROUND */}
-      <div className={`absolute inset-0 transition-colors duration-1000 ${isScanning ? 'bg-black' : 'bg-background'}`}>
-        {isScanning && <div className="absolute inset-0 bg-primary/5 animate-pulse" />}
+      <div className={cn(
+        "absolute inset-0 transition-colors duration-1000",
+        isScanning
+          ? (resolvedTheme === 'eclipse' ? 'bg-black' : 'bg-white')
+          : 'bg-background'
+      )}>
+        {isScanning && (
+          <div className={cn(
+            "absolute inset-0 animate-pulse",
+            resolvedTheme === 'eclipse' ? "bg-primary/5" : "bg-primary/[0.03]"
+          )} />
+        )}
       </div>
 
       {/* FIXED STATUS ANCHOR (72px AeroOrb as requested) */}
@@ -115,20 +154,57 @@ export default function ScanPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
-            className="flex flex-col items-center gap-12 z-10 w-full max-w-sm"
+            className="flex flex-col items-center justify-center z-10 w-full max-w-sm relative min-h-[400px]"
           >
-            <div className="relative py-8">
-              <AeroOrb score={aeroScore} size={240} />
+            {/* RITUAL ARTIFACT BACKGROUND */}
+            <div className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none">
+              <motion.div
+                animate={{
+                  scale: [1, 1.1, 1],
+                  opacity: resolvedTheme === 'eclipse' ? [0.18, 0.25, 0.18] : [0.12, 0.18, 0.12],
+                  filter: resolvedTheme === 'eclipse'
+                    ? ["drop-shadow(0 0 40px rgba(0,245,255,0.15))", "drop-shadow(0 0 80px rgba(0,245,255,0.3))", "drop-shadow(0 0 40px rgba(0,245,255,0.15))"]
+                    : ["drop-shadow(0 0 20px rgba(0,122,255,0.1))", "drop-shadow(0 0 40px rgba(0,122,255,0.2))", "drop-shadow(0 0 20px rgba(0,122,255,0.1))"]
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+                className="relative w-[520px] h-[520px] saturate-[1.3]"
+              >
+                <Image
+                  src={logoSrc}
+                  alt="Ritual Artifact"
+                  fill
+                  className="object-contain"
+                />
+              </motion.div>
             </div>
 
-            <AeroButton
-              variant="primary"
-              size="lg"
-              className="w-full h-20 text-lg tracking-widest font-bold shadow-[0_0_60px_rgba(0,245,255,0.3)] border border-primary/20"
-              onClick={startTripleCheck}
-            >
-              {t.initiate}
-            </AeroButton>
+            <div className="relative z-10 flex flex-col items-center gap-12 w-full">
+              <div className="flex flex-col items-center gap-2">
+                <span className={cn(
+                  "text-[10px] tracking-[0.4em] font-bold uppercase",
+                  resolvedTheme === 'eclipse' ? "text-primary opacity-60" : "text-primary/80"
+                )}>{t.ready}</span>
+                <h2 className="text-3xl font-serif text-foreground tracking-tighter">{t.bioVerification}</h2>
+              </div>
+
+              <AeroButton
+                variant="primary"
+                size="lg"
+                className={cn(
+                  "w-full h-20 text-lg tracking-widest font-bold shadow-2xl border backdrop-blur-xl transition-all",
+                  resolvedTheme === 'eclipse'
+                    ? "bg-primary/20 border-primary/30 text-primary shadow-primary/20"
+                    : "bg-primary text-white border-primary/10 shadow-primary/40"
+                )}
+                onClick={startTripleCheck}
+              >
+                {t.initiate}
+              </AeroButton>
+            </div>
           </motion.div>
         ) : isScanning ? (
           <motion.div
@@ -148,7 +224,12 @@ export default function ScanPage() {
                   exit={{ opacity: 0, y: -40, filter: 'blur(10px)' }}
                   className="w-full"
                 >
-                  <AeroCard className="p-8 border-primary/20 bg-black/40 backdrop-blur-2xl shadow-[0_0_80px_rgba(0,245,255,0.1)] active:scale-[0.98] transition-transform">
+                  <AeroCard className={cn(
+                    "p-8 border-primary/20 backdrop-blur-2xl active:scale-[0.98] transition-transform",
+                    resolvedTheme === 'eclipse'
+                      ? "bg-black/40 shadow-[0_0_80px_rgba(0,245,255,0.1)]"
+                      : "bg-white/80 shadow-[0_40px_100px_rgba(0,0,0,0.05)] border-primary/10"
+                  )}>
                     <div className="flex flex-col items-center text-center gap-6">
                       <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 animate-pulse">
                         {(() => {
@@ -166,7 +247,10 @@ export default function ScanPage() {
                       </div>
 
                       {/* Progress Line */}
-                      <div className="w-full h-[1px] bg-white/5 relative overflow-hidden">
+                      <div className={cn(
+                        "w-full h-[1px] relative overflow-hidden",
+                        resolvedTheme === 'eclipse' ? "bg-white/5" : "bg-black/5"
+                      )}>
                         <motion.div
                           className="absolute inset-0 bg-primary"
                           initial={{ x: '-100%' }}
@@ -182,7 +266,10 @@ export default function ScanPage() {
 
             <button
               onClick={cancelTripleCheck}
-              className="mt-4 text-[10px] text-muted-foreground/40 hover:text-destructive transition-colors tracking-[0.3em] uppercase py-4"
+              className={cn(
+                "mt-4 text-[10px] transition-colors tracking-[0.3em] uppercase py-4 font-bold",
+                resolvedTheme === 'eclipse' ? "text-muted-foreground/60 hover:text-destructive" : "text-foreground/40 hover:text-destructive"
+              )}
             >
               {t.abort}
             </button>
@@ -206,7 +293,10 @@ export default function ScanPage() {
                 </motion.div>
 
                 <div className="space-y-2">
-                  <h2 className="font-serif text-4xl text-white">{t.yieldMined}</h2>
+                  <h2 className={cn(
+                    "font-serif text-4xl transition-colors",
+                    resolvedTheme === 'eclipse' ? "text-white" : "text-foreground"
+                  )}>{t.yieldMined}</h2>
                   <p className="text-sm text-gold/80 uppercase tracking-[0.2em] font-bold">
                     {t.equityAdded}
                   </p>
@@ -221,9 +311,20 @@ export default function ScanPage() {
                   >
                     {t.viewInVault}
                   </AeroButton>
+                  <AeroButton
+                    onClick={() => nav.goToHowItWorks()}
+                    size="lg"
+                    variant="ghost"
+                    className="w-full border-primary/20 hover:bg-primary/5 text-primary text-[10px] tracking-[0.2em] font-bold"
+                  >
+                    DECODE YOUR SCORE
+                  </AeroButton>
                   <button
                     onClick={() => nav.goToDashboard()}
-                    className="w-full text-center text-[10px] text-muted-foreground hover:text-white transition-colors tracking-[0.2em] uppercase py-4"
+                    className={cn(
+                      "w-full text-center text-[10px] transition-colors tracking-[0.2em] uppercase py-4 font-bold",
+                      resolvedTheme === 'eclipse' ? "text-muted-foreground hover:text-white" : "text-foreground/60 hover:text-primary"
+                    )}
                   >
                     {t.return}
                   </button>
