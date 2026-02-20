@@ -1,14 +1,14 @@
 'use client';
 
-import { useTheme } from '@/modules/ui/providers/ThemeProvider';
-import { ThemeToggle } from '@/modules/ui/components/ThemeToggle';
+import { useTheme, ThemeToggle } from '@/modules/ui';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-// ThemeToggle logic remains in providers, but visual toggle removed for native minimalism.
+import { useNavigator } from '@/lib/navigation';
 
 export default function WelcomeDroplet() {
   const { resolvedTheme } = useTheme();
+  const nav = useNavigator();
   const isDark = resolvedTheme === 'eclipse';
   const logoSrc = isDark ? "/logo.svg" : "/aero_light.png";
 
@@ -18,11 +18,6 @@ export default function WelcomeDroplet() {
       {/* AMBIENT VOID: Deterministic Background Glow */}
       <div className="absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-aero-blue/[0.03] blur-[160px] dark:bg-[#00F5FF]/[0.03] transition-colors duration-700 pointer-events-none" />
 
-      {/* THEME TOGGLE: Top Right Absolute */}
-      <div className="absolute top-6 right-6 z-50">
-        <ThemeToggle />
-      </div>
-
       {/* HERO: The Artifact + Typography (Center) */}
       <div className="flex-1 flex flex-col items-center justify-start pt-20 gap-8 w-full max-w-md z-10">
         <motion.div
@@ -31,29 +26,23 @@ export default function WelcomeDroplet() {
           transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
           className="relative"
         >
-          {/* LOCALIZED AURA: Blends the artifact into the 'Void' */}
+          {/* LOCALIZED AURA: Bio-digital atmosphere */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[120%] w-[120%] bg-aero-blue/[0.08] blur-[80px] rounded-full pointer-events-none animate-pulse" />
 
           <motion.div
-            animate={{
-              y: [0, -10, 0],
-            }}
+            animate={{ y: [0, -10, 0] }}
             transition={{
               duration: 6,
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="relative h-72 w-72 drop-shadow-[0_0_40px_rgba(0,245,255,0.15)] mix-blend-screen dark:mix-blend-plus-lighter"
-            style={{
-              WebkitMaskImage: 'radial-gradient(circle, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)',
-              maskImage: 'radial-gradient(circle, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 100%)',
-            }}
+            className="relative h-72 w-72"
           >
             <Image
               src={logoSrc}
               alt="AERO Logo"
               fill
-              className="object-contain"
+              className="object-contain drop-shadow-[0_0_40px_rgba(0,245,255,0.2)]"
               priority
             />
           </motion.div>
@@ -83,15 +72,16 @@ export default function WelcomeDroplet() {
 
       {/* ACTION: Bottom-Anchored */}
       <motion.div
-        initial={{ y: 40, opacity: 0 }}
+        initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 1, type: "spring", stiffness: 100, damping: 25 }}
+        transition={{ delay: 0.8, duration: 1, ease: [0.22, 1, 0.36, 1] }}
         className="w-full max-w-sm z-20 pb-8"
       >
         <motion.button
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.98 }}
-          className="group relative flex w-full items-center justify-between pl-10 pr-2 overflow-hidden rounded-full bg-surface-translucent py-2 font-light tracking-wider text-foreground backdrop-blur-2xl shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_8px_32px_rgba(0,0,0,0.3)] transition-all"
+          onClick={() => nav.goToDashboard()}
+          className="group relative flex w-full items-center justify-between pl-10 pr-2 overflow-hidden rounded-full bg-surface-translucent py-2 font-medium tracking-wider text-foreground backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
         >
           {/* Liquid Sheen: Hidden gradient that appears on hover */}
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.2)_0%,transparent_60%)]" />

@@ -27,7 +27,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t px-2 pb-[env(safe-area-inset-bottom)] pt-2"
+      className="fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[430px] items-center justify-around border-t px-2 pb-[env(safe-area-inset-bottom)] pt-2"
       style={{
         background: 'var(--background)',
         borderColor: 'var(--border)',

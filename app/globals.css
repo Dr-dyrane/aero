@@ -90,6 +90,7 @@
   --font-sans: var(--font-geist), 'Geist', system-ui, sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --font-serif: var(--font-space-grotesk), 'Space Grotesk', serif;
+  --font-numbers: var(--font-satoshi), 'Geist Mono', monospace;
 
   /* Semantic Colors */
   --color-background: var(--background);
@@ -155,13 +156,20 @@
 
   body {
     @apply bg-background text-foreground;
-    /* Native Mobile Feel: Lock viewport, prevent bounce */
-    height: 100vh;
+    /* Native Mobile Feel: Viewport control */
+    min-height: 100vh;
     width: 100vw;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     background-color: var(--background);
     /* Dynamic Void/Cloud backing */
     overscroll-behavior: scroll;
+  }
+
+  .aero-bg-glow {
+    @apply pointer-events-none fixed inset-0 z-0 overflow-hidden;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 245, 255, 0.05) 0%, transparent 70%);
+    filter: blur(100px);
   }
 }
 

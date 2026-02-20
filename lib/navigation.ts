@@ -10,6 +10,7 @@ export function useNavigator() {
   const router = useRouter();
 
   return {
+    goToWelcome: () => router.push('/welcome'),
     goToDashboard: () => router.push('/dashboard'),
     goToVault: () => router.push('/vault'),
     goToScan: () => router.push('/scan'),

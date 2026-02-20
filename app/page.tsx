@@ -1,21 +1,21 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { useTheme } from '@/modules/ui/providers/ThemeProvider';
+import { useNavigator } from '@/lib/navigation';
+import { useTheme } from '@/modules/ui';
 
 export default function HomePage() {
-  const router = useRouter();
+  const nav = useNavigator();
   const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     // Premium splash duration
     const timer = setTimeout(() => {
-      router.replace('/welcome');
+      nav.goToWelcome();
     }, 2800);
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [nav]);
 
   const isDark = resolvedTheme === 'eclipse';
   const logoSrc = isDark ? "/as.png" : "/aero_light.png";

@@ -3,10 +3,11 @@
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 
-interface AeroOrbProps {
+export interface AeroOrbProps {
   score: number; // 0-100
   size?: number; // px
   className?: string;
+  imgSrc?: string;
 }
 
 /**
@@ -15,75 +16,89 @@ interface AeroOrbProps {
  * Displays the Aero Score at center.
  * Uses exact AERO palette: #00F5FF glow.
  */
-export function AeroOrb({ score, size = 200, className }: AeroOrbProps) {
+export function AeroOrb({ score, size = 288, className, imgSrc }: AeroOrbProps) {
   const glowIntensity = score / 100;
-  const glowColor = `rgba(0, 245, 255, ${0.15 + glowIntensity * 0.45})`;
+  const glowAlpha = 0.12 + glowIntensity * 0.35;
+  const glowColor = `rgba(0, 245, 255, ${glowAlpha})`;
 
   return (
     <div
-      className={cn('relative flex items-center justify-center', className)}
+      className={cn('relative flex items-center justify-center select-none', className)}
       style={{ width: size, height: size }}
     >
-      {/* Outer glow ring */}
+      {/* AMBIENT AURA: Solid performance via single-layer opacity breathe */}
       <motion.div
-        className="absolute inset-0 rounded-full"
+        className="absolute inset-0 rounded-full pointer-events-none"
         style={{
           background: `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`,
-          filter: `blur(${20 + glowIntensity * 20}px)`,
+          filter: `blur(40px)`,
         }}
         animate={{
-          scale: [1, 1.08, 1],
-          opacity: [0.6, 1, 0.6],
+          opacity: [0.4, 0.7, 0.4],
         }}
         transition={{
           duration: 4,
           repeat: Infinity,
-          ease: 'easeInOut',
+          ease: [0.4, 0, 0.2, 1], // Standard fast-out-linear-in
         }}
       />
 
-      {/* Orb body */}
+      {/* THE ARTIFACT: Stabilized motion path */}
       <motion.div
-        className="relative flex items-center justify-center rounded-full"
-        style={{
-          width: size * 0.75,
-          height: size * 0.75,
-          background: `radial-gradient(circle at 35% 35%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, transparent 70%)`,
-          backdropFilter: 'blur(40px)',
-          boxShadow: `
-            inset 0 2px 4px rgba(255,255,255,0.1),
-            0 0 ${30 + glowIntensity * 40}px ${glowColor}
-          `,
-        }}
+        className="relative flex items-center justify-center w-full h-full"
         animate={{
-          scale: [1, 1.02, 1],
+          y: [0, -6, 0],
         }}
         transition={{
-          duration: 3,
+          duration: 6,
           repeat: Infinity,
-          ease: 'easeInOut',
+          ease: "easeInOut",
         }}
       >
-        {/* Inner glow — #00F5FF */}
-        <div
-          className="absolute inset-4 rounded-full"
-          style={{
-            background: `radial-gradient(circle at 50% 50%, rgba(0, 245, 255, ${0.08 + glowIntensity * 0.25}) 0%, transparent 70%)`,
-          }}
-        />
+        {imgSrc ? (
+          <div className="relative flex items-center justify-center w-full h-full">
+            <img
+              src={imgSrc}
+              alt="Aero Score Artifact"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                filter: `drop-shadow(0 0 20px rgba(0, 245, 255, ${glowAlpha}))`,
+              }}
+              className="z-10"
+              draggable={false}
+            />
 
-        {/* Score display */}
-        <span
-          className="relative z-10 font-numbers"
-          style={{
-            fontSize: size * 0.22,
-            fontWeight: 700,
-            letterSpacing: '-0.02em',
-            color: '#FFFFFF',
-          }}
-        >
-          {score}
-        </span>
+            {/* Score: Blended organically into the artifact artifact (No Shadow) */}
+            <span
+              className="absolute z-20 font-numbers flex items-center justify-center transition-opacity duration-700"
+              style={{
+                fontSize: size * 0.23,
+                fontWeight: 500,
+                letterSpacing: '-0.06em',
+                color: '#FFFFFF',
+                opacity: 0.85,
+                mixBlendMode: 'plus-lighter',
+              }}
+            >
+              {score}
+            </span>
+          </div>
+        ) : (
+          <div
+            className="flex items-center justify-center rounded-full glass-surface"
+            style={{
+              width: size * 0.7,
+              height: size * 0.7,
+              background: 'rgba(255,255,255,0.05)',
+              backdropFilter: 'blur(20px)',
+              boxShadow: `inset 0 1px 1px rgba(255,255,255,0.1), 0 0 30px ${glowColor}`,
+            }}
+          >
+            <span className="font-numbers text-3xl font-medium text-white">{score}</span>
+          </div>
+        )}
       </motion.div>
     </div>
   );

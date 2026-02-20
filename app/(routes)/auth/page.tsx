@@ -1,9 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { AeroButton } from '@/modules/ui/components/AeroButton';
-import { AeroCard } from '@/modules/ui/components/AeroCard';
-import { AeroPill } from '@/modules/ui/components/AeroPill';
+import { AeroButton, AeroCard, AeroPill } from '@/modules/ui';
 import { useAuth } from '@/modules/auth';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useNavigator } from '@/lib/navigation';
