@@ -4,10 +4,12 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigator } from '@/lib/navigation';
 import { useTheme } from '@/modules/ui';
+import { useAeroStore } from '@/store/useAeroStore';
 
 export default function HomePage() {
   const nav = useNavigator();
   const { resolvedTheme } = useTheme();
+  const language = useAeroStore((s) => s.language);
 
   useEffect(() => {
     // Premium splash duration
@@ -20,8 +22,15 @@ export default function HomePage() {
   const isDark = resolvedTheme === 'eclipse';
   const logoSrc = isDark ? "/as.png" : "/aero_light.png";
 
+  const content = {
+    en: "Opening Aero...",
+    ar: "جاري فتح أيرو..."
+  };
+
+  const text = language === 'ar' ? content.ar : content.en;
+
   return (
-    <div className="relative min-h-[100dvh] flex items-center justify-center bg-background transition-colors duration-700 overflow-hidden">
+    <div className="relative min-h-[100dvh] flex items-center justify-center bg-background transition-colors duration-700 overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* AMBIENT VOID */}
       <div className="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-aero-blue/[0.04] blur-[120px] pointer-events-none" />
 
@@ -65,7 +74,7 @@ export default function HomePage() {
             transition={{ delay: 1.2, duration: 1 }}
             className="text-[10px] tracking-[0.2em] font-light text-foreground uppercase"
           >
-            Opening Aero...
+            {text}
           </motion.span>
         </div>
       </motion.div>
