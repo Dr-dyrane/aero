@@ -47,7 +47,7 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
-        
+
         // Network request with error handling
         return fetch(event.request).catch(() => {
           // Return cached version if network fails
@@ -58,4 +58,11 @@ self.addEventListener('fetch', event => {
         console.error('Service Worker fetch failed:', error);
       })
   );
+});
+
+// Force update listener
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
