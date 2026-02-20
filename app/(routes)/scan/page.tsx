@@ -41,41 +41,41 @@ export default function ScanPage() {
 
   const content = {
     en: {
-      protocolActive: "PROTOCOL ACTIVE",
-      bioVerification: "BIO-VERIFICATION",
-      yieldUnlocked: "YIELD UNLOCKED",
+      protocolActive: "SCANNING",
+      bioVerification: "Health Scan",
+      yieldUnlocked: "REWARD UNLOCKED",
       analyzing: "ANALYZING...",
       ready: "READY",
-      confidence: "CONFIDENCE",
-      yieldMined: "Yield Mined",
-      equityAdded: "+ $5.00 Equity Added",
-      viewInVault: "View In Vault",
-      initiate: "INITIATE BIO-VERIFICATION",
-      abort: "Abort Protocol",
-      return: "Return to Terminal",
+      confidence: "Accuracy",
+      yieldMined: "Reward Earned",
+      equityAdded: "+ $5.00 Balance Added",
+      viewInVault: "View Balance",
+      initiate: "START HEALTH SCAN",
+      abort: "Cancel",
+      return: "Return Home",
       sensors: {
-        voice: { label: "Vocal Biomarkers", desc: "Analyzing tonal stability..." },
-        ppg: { label: "Hemodynamic Pulse", desc: "Measuring HRV coherence..." },
-        face: { label: "Micro-Expression", desc: "Detecting fatigue signals..." }
+        voice: { label: "Voice Scan", desc: "Checking voice stability..." },
+        ppg: { label: "Heart Scan", desc: "Measuring heart rhythm..." },
+        face: { label: "Face Scan", desc: "Analyzing facial signals..." }
       }
     },
     ar: {
-      protocolActive: "البروتوكول نشط",
-      bioVerification: "التحقق الحيوي",
-      yieldUnlocked: "تم فتح العائد",
+      protocolActive: "جاري الفحص",
+      bioVerification: "فحص الصحة",
+      yieldUnlocked: "تم فتح المكافأة",
       analyzing: "جاري التحليل...",
       ready: "جاهز",
-      confidence: "مستوى الثقة",
-      yieldMined: "تم حصاد العائد",
-      equityAdded: "+ ٥.٠٠ دولار أصول مضافة",
-      viewInVault: "عرض الخزنة",
-      initiate: "بدء التحقق الحيوي",
-      abort: "إلغاء البروتوكول",
-      return: "العودة إلى الواجهة",
+      confidence: "مستوى الدقة",
+      yieldMined: "تم ربح المكافأة",
+      equityAdded: "+ ٥.٠٠ دولار رصيد مضاف",
+      viewInVault: "عرض الرصيد",
+      initiate: "بدء فحص الصحة",
+      abort: "إلغاء",
+      return: "العودة للرئيسية",
       sensors: {
-        voice: { label: "المقاييس الصوتية", desc: "تحليل استقرار النبرة..." },
-        ppg: { label: "النبض الدوري", desc: "قياس تباين معدل ضربات القلب..." },
-        face: { label: "تعبيرات دقيقة", desc: "كشف إشارات الإرهاق..." }
+        voice: { label: "فحص الصوت", desc: "تحليل استقرار نبرة الصوت..." },
+        ppg: { label: "فحص القلب", desc: "قياس انتظام نبضات القلب..." },
+        face: { label: "فحص الوجه", desc: "تحليل إشارات الوجه..." }
       }
     }
   };

@@ -83,7 +83,7 @@ export const useAeroStore = create<AeroState>()(
       isWakeUpCall: false,
       setAeroScore: (aeroScore) => set({
         aeroScore,
-        isWakeUpCall: aeroScore >= 90
+        isWakeUpCall: aeroScore <= 20
       }),
       setWakeUpCall: (v) => set({ isWakeUpCall: v }),
 

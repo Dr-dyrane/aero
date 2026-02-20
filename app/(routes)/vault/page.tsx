@@ -37,38 +37,38 @@ export default function VaultPage() {
 
   const content = {
     en: {
-      totalBioEquity: "Total Bio-Equity",
-      yield: "yield",
-      projectionTitle: isWakeUpCall ? "STABILITY RISK" : "10-Year Projection",
+      totalBioEquity: "Balance",
+      yield: "reward",
+      projectionTitle: isWakeUpCall ? "STABILITY RISK" : "Future Value",
       projectionSub: isWakeUpCall
-        ? "Projections suspended. Bio-signatures indicate critical instability."
-        : "Based on current streak & compound bio-yield.",
-      locked: "Locked",
-      liquid: "Liquid",
-      releaseInfo: "Releases at Level 5",
+        ? "Projections suspended. Your system currently shows high instability."
+        : "Estimated total rewards over the next 10 years.",
+      locked: "Saved",
+      liquid: "Spendable",
+      releaseInfo: "Unlocks at Level 5",
       availableNow: "Available Now",
-      miningRate: "Mining Rate",
-      rateValue: isWakeUpCall ? "YIELD SUSPENDED" : "$5.00 / verified day",
-      ledger: "Ledger",
-      export: "EXPORT CSV",
-      cta: isWakeUpCall ? "INITIATE DETOX" : "Verify & Mine Yield"
+      miningRate: "Daily Reward",
+      rateValue: isWakeUpCall ? "REWARDS SUSPENDED" : "$5.00 / check-in",
+      ledger: "History",
+      export: "DOWNLOAD",
+      cta: isWakeUpCall ? "START RECOVERY" : "Scan to Earn"
     },
     ar: {
-      totalBioEquity: "إجمالي الأصول الحيوية",
-      yield: "عائد",
-      projectionTitle: isWakeUpCall ? "خطر الاستقرار" : "توقعات ١٠ سنوات",
+      totalBioEquity: "الرصيد",
+      yield: "مكافأة",
+      projectionTitle: isWakeUpCall ? "خطر الاستقرار" : "القيمة المستقبلية",
       projectionSub: isWakeUpCall
-        ? "تم تعليق التوقعات. المؤشرات الحيوية تدل على عدم استقرار حرج."
-        : "بناءً على الأداء الحالي وعائد النمو الحيوي المركب.",
-      locked: "مُجمد",
-      liquid: "سيولة",
+        ? "تم تعليق التوقعات. يظهر نظامك حالياً عدم استقرار عالٍ."
+        : "إجمالي المكافآت التقديرية خلال ١٠ سنوات.",
+      locked: "مدخرات",
+      liquid: "قابل للاستخدام",
       releaseInfo: "يفتح عند المستوى ٥",
       availableNow: "متاح الآن",
-      miningRate: "معدل الحصاد",
-      rateValue: isWakeUpCall ? "تم تعليق العائد" : "٥.٠٠ دولار / يوم محقق",
+      miningRate: "المكافأة اليومية",
+      rateValue: isWakeUpCall ? "تم تعليق المكافآت" : "٥.٠٠ دولار / يوم",
       ledger: "السجل",
-      export: "تصدير CSV",
-      cta: isWakeUpCall ? "بدء التطهير" : "تحقق واجمع العائد"
+      export: "تحميل",
+      cta: isWakeUpCall ? "بدء التعافي" : "افحص واكسب"
     }
   };
 

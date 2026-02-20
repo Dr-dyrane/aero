@@ -27,22 +27,22 @@ export default function WelcomeDroplet() {
   const content = {
     en: {
       title: "Aero Score",
-      subtitle: "The first Medical Credit Score.",
-      caption: "Your endowment is locked in the vault.",
-      cta: "Claim My Endowment"
+      subtitle: "Your Health Score.",
+      caption: "Your rewards are waiting.",
+      cta: "Claim My Rewards"
     },
     ar: {
-      title: "نظام أيرو",
-      subtitle: "أول نظام ائتماني طبي.",
-      caption: "مخصصاتك المالية محفوظة في الخزنة.",
-      cta: "استلام المخصصات"
+      title: "أيرو",
+      subtitle: "درجتك الصحية الشخصية.",
+      caption: "مكافآتك في انتظارك.",
+      cta: "استلم مكافآتك"
     }
   };
 
   const text = language ? content[language] : content.en;
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col items-center justify-between overflow-hidden bg-background text-foreground transition-colors duration-700 pb-6 px-6">
+    <div className="absolute inset-0 flex flex-col items-center justify-between overflow-hidden bg-background text-foreground transition-colors duration-700 pb-6 px-6">
 
       {/* AMBIENT VOID: Deterministic Background Glow */}
       <div className="absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-aero-blue/[0.03] blur-[160px] dark:bg-[#00F5FF]/[0.03] transition-colors duration-700 pointer-events-none" />
@@ -112,7 +112,7 @@ export default function WelcomeDroplet() {
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
-                  className="relative h-72 w-72"
+                  className="relative h-56 w-56 md:h-72 md:w-72"
                 >
                   <Image
                     src={logoSrc}
@@ -151,7 +151,7 @@ export default function WelcomeDroplet() {
               initial={{ y: 30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.8, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-              className="w-full max-w-sm z-20 pb-12"
+              className="w-full max-w-sm z-20 pb-8 md:pb-12"
             >
               <motion.button
                 whileHover={{ scale: 1.01 }}

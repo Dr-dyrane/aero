@@ -45,7 +45,7 @@ export default function SettingsPage() {
       demoDesc: "Bypass auth, use localized placeholder data",
       appearance: "Visual Interface",
       language: "Linguistic Interface",
-      signOut: "De-authenticate",
+      signOut: "Logout",
       themes: {
         eclipse: { label: "Eclipse", desc: "Digital Dark Protocol" },
         cloud: { label: "Cloud", desc: "Atmospheric Light Protocol" },
@@ -229,12 +229,12 @@ export default function SettingsPage() {
                 <div className="text-left rtl:text-right">
                   <p className="text-xs font-bold text-red-500 uppercase tracking-wider">Addiction Alert</p>
                   <p className="text-[9px] font-mono text-red-400/60 leading-tight uppercase font-bold">
-                    Force AS {'>='} 90.00_protocol
+                    Force AS {'<='} 20.00_protocol
                   </p>
                 </div>
               </div>
               <button
-                onClick={() => setAeroScore(isWakeUpCall ? 87 : 92)}
+                onClick={() => setAeroScore(isWakeUpCall ? 87 : 12)}
                 className="relative h-6 w-11 rounded-full transition-colors flex-shrink-0"
                 style={{
                   background: isWakeUpCall ? '#FF3B30' : 'rgba(255,255,255,0.05)',

@@ -176,6 +176,7 @@ AERO is a multi-language sovereign environment.
 - **Directional Flip**: Components must support `dir="rtl"` dynamically.
 - **Translation Glossaries**: Clinical terms are defined in localized content dictionaries within each page shell to maintain high-fidelity context.
 - **RTL Physics**: Motion paths (X-axis) and arrow icons are mirrored in Arabic context to preserve spatial logic. 
+- **Simple Terminology**: Prioritize human-centric terms for core system functions. Use "Logout" instead of "De-authenticate" and "Settings" instead of "Terminal Configuration" to maintain accessibility across languages.
 
 ---
 

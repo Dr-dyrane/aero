@@ -43,72 +43,72 @@ export default function HowItWorksPage() {
     const content = {
         en: {
             spectrum: {
-                title: "Score Dynamics",
-                subtitle: "The AERO Protocol decodes your bio-signal integrity into five clinical tiers. Tap a frequency to understand your status.",
+                title: "Health Levels",
+                subtitle: "AERO scans your body to determine your clinical health status. Tap a level to understand your score.",
                 explore: "VIEW SENSORS"
             },
             sensors: {
-                title: "Distributed Lab",
-                subtitle: "The AERO sensors act as a sovereign clinical laboratory on your device.",
+                title: "Bio-Sensors",
+                subtitle: "Your device acts as a professional medical laboratory in your pocket.",
                 items: [
-                    { id: "vocal", title: "Vocal Biomarkers", icon: Mic2, desc: "AI analysis of micro-tremors in vocal folds caused by nicotine load.", stat: "94% Acc" },
-                    { id: "ppg", title: "Optical Hemodynamics", icon: Activity, desc: "Measuring HRV and vasoconstriction via the camera flash.", stat: "O2 Proof" },
-                    { id: "facial", title: "Facial Perfusion", icon: ScanFace, desc: "Mapping sub-dermal blood-flow patterns for recent inhalation.", stat: "Spectral" }
+                    { id: "vocal", title: "Voice Scan", icon: Mic2, desc: "AI detects micro-tremors in your voice to track nicotine load.", stat: "94% Acc" },
+                    { id: "ppg", title: "Heart Scan", icon: Activity, desc: "Measures heart rate stability and blood flow via the camera flash.", stat: "O2 Proof" },
+                    { id: "facial", title: "Face Scan", icon: ScanFace, desc: "Analyzes blood flow in your face to detect recent inhalation.", stat: "Spectral" }
                 ],
                 explore: "CLINICAL LOGIC"
             },
             clinical: {
-                title: "Clinical Anchor",
-                subtitle: "FTND Integration ensuring psychometric stability and global standards.",
+                title: "Medical Data",
+                subtitle: "Standardized clinical tests ensuring your data stays accurate.",
                 formula: "AS = (θ * Bio_avg / 10) * 100",
                 explore: "PRIVACY SHIELD"
             },
             privacy: {
-                title: "Privacy Shield",
-                desc: "Raw telemetry never leaves your device. Only normalized numerical integrity is processed.",
+                title: "Privacy Protected",
+                desc: "Your raw data never leaves your device. Only your final score is processed.",
                 explore: "RETURN TO CONSOLE"
             },
             tiers: [
-                { range: "0 - 20", level: "Critical Load", desc: "Yield suspended. Acute dependency detected.", color: "#EF4444" },
-                { range: "21 - 40", level: "High Risk", desc: "Bio-integrity compromised. Significant load.", color: "#F97316" },
-                { range: "41 - 60", level: "Functional", desc: "Moderate exposure. Base yield generation.", color: "#EAB308" },
-                { range: "61 - 80", level: "Stable", desc: "Strong signatures. Standard yield active.", color: "#84CC16" },
-                { range: "81 - 100", level: "Sovereign", desc: "Peak integrity. maximum yield velocity.", color: "#10B981" }
+                { range: "0 - 20", level: "Critical", desc: "Extreme nicotine load. Bio-vault rewards suspended.", color: "#EF4444" },
+                { range: "21 - 40", level: "Low", desc: "High nicotine load detected. Health stability compromised.", color: "#F97316" },
+                { range: "41 - 60", level: "Fair", desc: "Moderate exposure. Standard rewards active.", color: "#EAB308" },
+                { range: "61 - 80", level: "Good", desc: "Strong health signatures. Full rewards active.", color: "#84CC16" },
+                { range: "81 - 100", level: "Sovereign", desc: "Peak health integrity. Maximum rewards enabled.", color: "#10B981" }
             ]
         },
         ar: {
             spectrum: {
-                title: "ديناميكيات الدرجة",
-                subtitle: "يقوم بروتوكول أيرو بفك تشفير سلامة إشاراتك الحيوية إلى خمس مستويات سريرية. اضغط على تردد لفهم حالتك.",
+                title: "مستويات الصحة",
+                subtitle: "يقوم أيرو بفحص جسمك لتحديد مستواك الصحي بدقة. اضغط على مستوى لفهم نتيجتك.",
                 explore: "عرض المستشعرات"
             },
             sensors: {
-                title: "مختبر موزع",
-                subtitle: "تعمل مستشعرات أيرو كمختبر سريري سيادي على جهازك.",
+                title: "المستشعرات الحيوية",
+                subtitle: "هاتفك يعمل كمختبر طبي متكامل بين يديك.",
                 items: [
-                    { id: "vocal", title: "البصمات الصوتية", icon: Mic2, desc: "تحليل الذكاء الاصطناعي للرعشات الصوتية الناتجة عن حمل النيكوتين.", stat: "٩٤٪ دقة" },
-                    { id: "ppg", title: "ديناميكا الدم", icon: Activity, desc: "قياس تقلب ضربات القلب وضيق الأوعية عبر الفلاش.", stat: "إثبات O2" },
-                    { id: "facial", title: "التروية الوجهية", icon: ScanFace, desc: "رسم خرائط تدفق الدم تحت الجلد للاستخدام الأخير.", stat: "طيفي" }
+                    { id: "vocal", title: "فحص الصوت", icon: Mic2, desc: "الذكاء الاصطناعي يحلل نبرة صوتك للكشف عن أثر التدخين.", stat: "٩٤٪ دقة" },
+                    { id: "ppg", title: "فحص القلب", icon: Activity, desc: "قياس نبضات القلب وسريان الدم عبر فلاش الكاميرا.", stat: "إثبات O2" },
+                    { id: "facial", title: "فحص الوجه", icon: ScanFace, desc: "تحليل تدفق الدم في الوجه لكشف الاستخدام الأخير.", stat: "طيفي" }
                 ],
                 explore: "المنطق السريري"
             },
             clinical: {
-                title: "المرساة السريرية",
-                subtitle: "تكامل FTND لضمان استقرار القياس النفسي والمعايير العالمية.",
+                title: "البيانات الطبية",
+                subtitle: "اختبارات سريرية معتمدة لضمان دقة بياناتك الصحية.",
                 formula: "AS = (θ * Bio_avg / 10) * 100",
                 explore: "درع الخصوصية"
             },
             privacy: {
-                title: "درع الخصوصية",
-                desc: "البيانات الخام لا تغادر جهازك أبداً. تتم معالجة الأرقام الطبيعية فقط.",
+                title: "خصوصية محمية",
+                desc: "بياناتك الخاصة لا تغادر جهازك أبداً. تتم معالجة رقم النتيجة فقط.",
                 explore: "العودة للوحة التحكم"
             },
             tiers: [
-                { range: "٠ - ٢٠", level: "حمل حرج", desc: "توقف العائد. تم كشف تبعية حادة.", color: "#EF4444" },
-                { range: "٢١ - ٤٠", level: "خطر عالٍ", desc: "سلامة حيوية مهددة. حمل كبير.", color: "#F97316" },
-                { range: "٤١ - ٦٠", level: "وظيفي", desc: "تعرض متوسط. توليد عائد متاح.", color: "#EAB308" },
-                { range: "٦١ - ٨٠", level: "مستقر", desc: "إشارات قوية. حصاد عائد قياسي.", color: "#84CC16" },
-                { range: "٨١ - ١٠٠", level: "سيادي", desc: "سلامة قصوى. أقصى سرعة للعائد.", color: "#10B981" }
+                { range: "٠ - ٢٠", level: "حرج جداً", desc: "حمل نيكوتين عالٍ. تم إيقاف مكافآت الخزنة.", color: "#EF4444" },
+                { range: "٢١ - ٤٠", level: "منخفض", desc: "تم كشف تأثير تدخين واضح. الصحة غير مستقرة.", color: "#F97316" },
+                { range: "٤١ - ٦٠", level: "مقبول", desc: "تعرض متوسط. مكافآت الخزنة متاحة.", color: "#EAB308" },
+                { range: "٦١ - ٨٠", level: "جيد", desc: "صحة مستقرة وقوية. كامل المكافآت متاحة.", color: "#84CC16" },
+                { range: "٨١ - ١٠٠", level: "سيادي", desc: "سلامة صحية قصوى. تفعيل أقصى المكافآت.", color: "#10B981" }
             ]
         }
     };

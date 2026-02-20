@@ -85,46 +85,48 @@ export default function DashboardPage() {
   // Dictionary
   const content = {
     en: {
-      bioMarketValue: "Bio-Market Value",
+      bioMarketValue: "Aero Score",
       topGlobal: "TOP 4.2% GLOBAL",
-      marketInsight: "Market Insight",
-      insightText: currentInsight,
+      marketInsight: "Insight",
+      insightText: isWakeUpCall
+        ? "High nicotine load detected. Your health status is currently unstable."
+        : "Your health is improving. Projected rewards are increasing.",
       liveFeed: "Live Feed",
-      fullReport: "DECODE MY SCORE",
-      totalEquity: "Total Equity",
-      locked: "LOCKED",
-      verifyStatus: "Verify Status",
-      secure: isWakeUpCall ? "VULNERABLE" : "SECURE",
+      fullReport: "HOW IT WORKS",
+      totalEquity: "Balance",
+      locked: "SAVED",
+      verifyStatus: "Status",
+      secure: isWakeUpCall ? "UNSTABLE" : "HEALTHY",
       pending: "PENDING",
-      uptime: "99.8% Uptime",
-      yieldTier: "Yield Tier",
+      uptime: "99.8% Stability",
+      yieldTier: "Level",
       levelUp: "to Level Up",
-      ctaMain: isWakeUpCall ? "INITIATE DETOX" : "VERIFY & MINE YIELD",
-      ctaSub: isWakeUpCall ? "PROTOCOL OVERRIDE ACTIVE" : "DAILY CHECK-IN UNLOCKED",
-      footer: "Encrypted Bio-Ledger Active",
-      addictionAlert: "ADDICTION ALERT"
+      ctaMain: isWakeUpCall ? "START RECOVERY" : "SCAN TO EARN",
+      ctaSub: isWakeUpCall ? "RESETTING BIO-SIGNATURES" : "DAILY REWARD AVAILABLE",
+      footer: "Data Protected",
+      addictionAlert: "HEALTH ALERT"
     },
     ar: {
-      bioMarketValue: "القيمة السوقية الحيوية",
+      bioMarketValue: "درجة أيرو",
       topGlobal: "أعلى ٤.٢٪ عالمياً",
-      marketInsight: "رؤى السوق",
+      marketInsight: "رؤى",
       insightText: isWakeUpCall
-        ? "حرج: المؤشرات الحيوية تدل على حمل نيكوتين عالي. ضغط الدم مرتفع."
-        : `"استقرارك الحيوي يشير إلى انطلاقة قوية. العائد المتوقع سيزيد بنسبة ١٢٪."`,
+        ? "تم كشف حمل نيكوتين عالٍ. حالتك الصحية غير مستقرة حالياً."
+        : "صحتك في تحسن مستمر. المكافآت المتوقعة تزداد.",
       liveFeed: "بث مباشر",
-      fullReport: "فك شفرة درجتك",
-      totalEquity: "إجمالي الأصول",
-      locked: "مُجمد",
-      verifyStatus: "حالة التحقق",
-      secure: isWakeUpCall ? "ضعيف" : "آمن",
+      fullReport: "كيف يعمل أيرو",
+      totalEquity: "الرصيد",
+      locked: "مدخرات",
+      verifyStatus: "الحالة",
+      secure: isWakeUpCall ? "غير مستقر" : "صحي",
       pending: "قيد الانتظار",
       uptime: "٩٩.٨٪ استقرار",
-      yieldTier: "مستوى العائد",
+      yieldTier: "المستوى",
       levelUp: "للترقية",
-      ctaMain: isWakeUpCall ? "بدء التطهير" : "تحقق واجمع العائد",
-      ctaSub: isWakeUpCall ? "بروتوكول التجاوز نشط" : "تسجيل الدخول اليومي متاح",
-      footer: "السجل الحيوي المشفر نشط",
-      addictionAlert: "تنبيه إدمان"
+      ctaMain: isWakeUpCall ? "بدء التعافي" : "افحص واكسب",
+      ctaSub: isWakeUpCall ? "إعادة ضبط المؤشرات" : "المكافأة اليومية متاحة",
+      footer: "البيانات محمية",
+      addictionAlert: "تنبيه صحي"
     }
   };
 

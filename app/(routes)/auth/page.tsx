@@ -31,21 +31,21 @@ export default function AuthPage() {
   const content = {
     en: {
       title: "A E R O",
-      subtitle: "Rebranding Addiction as an Elite Bio-Investment",
+      subtitle: "Your Health, Your Wealth.",
       google: "Continue with Google",
       loading: "Loading...",
       demo: "Enter Demo Mode",
-      footer: "By continuing, you agree to protect your Bio-Vault endowment.",
+      footer: "By continuing, you are agreeing to protect your health rewards.",
       or: "or",
       noKeys: "No API keys needed"
     },
     ar: {
       title: "أ يـ ر و",
-      subtitle: "إعادة تعريف الإدمان كاستثمار حيوي نخبة",
+      subtitle: "صحتك، هي ثروتك.",
       google: "المتابعة باستخدام Google",
       loading: "جاري التحميل...",
       demo: "دخول وضع المحاكاة",
-      footer: "بالمتابعة، أنت توافق على حماية مخصصاتك في الخزنة الحيوية.",
+      footer: "بالمتابعة، أنت توافق على حماية مكافآتك الصحية.",
       or: "أو",
       noKeys: "لا حاجة لمفاتيح API"
     }
