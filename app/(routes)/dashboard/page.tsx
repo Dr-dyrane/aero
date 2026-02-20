@@ -259,8 +259,8 @@ export default function DashboardPage() {
                 scale: [1, 1.05, 1],
                 rotate: [0, 2, 0],
                 filter: isWakeUpCall
-                  ? ["drop-shadow(0 0 40px var(--destructive))", "drop-shadow(0 0 60px var(--destructive))", "drop-shadow(0 0 40px var(--destructive))"]
-                  : ["drop-shadow(0 0 40px var(--primary))", "drop-shadow(0 0 60px var(--primary))", "drop-shadow(0 0 40px var(--primary))"]
+                  ? ["drop-shadow(0 0 40px color-mix(in srgb, var(--destructive) 20%, transparent))", "drop-shadow(0 0 60px color-mix(in srgb, var(--destructive) 40%, transparent))", "drop-shadow(0 0 40px color-mix(in srgb, var(--destructive) 20%, transparent))"]
+                  : ["drop-shadow(0 0 40px color-mix(in srgb, var(--primary) 10%, transparent))", "drop-shadow(0 0 60px color-mix(in srgb, var(--primary) 20%, transparent))", "drop-shadow(0 0 40px color-mix(in srgb, var(--primary) 10%, transparent))"]
               }}
               transition={{
                 duration: 10,

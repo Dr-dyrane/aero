@@ -51,8 +51,12 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
       <motion.div
         className="absolute inset-0 rounded-full pointer-events-none"
         style={{
-          background: `radial-gradient(circle, color-mix(in srgb, ${glowColor} ${glowAlpha * 100}%, transparent) 0%, transparent 70%)`,
-          filter: `blur(40px)`,
+          background: `radial-gradient(circle, 
+            color-mix(in srgb, ${glowColor} ${glowAlpha * 120}%, transparent) 0%, 
+            color-mix(in srgb, ${glowColor} ${glowAlpha * 60}%, transparent) 40%, 
+            transparent 75%
+          )`,
+          filter: `blur(45px)`,
         }}
         animate={{
           opacity: ambientOpacity,
@@ -86,7 +90,7 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
                 width: '100%',
                 height: '100%',
                 objectFit: 'contain',
-                filter: `drop-shadow(0 0 20px color-mix(in srgb, ${glowColor} ${glowAlpha * 100}%, transparent))`,
+                filter: `drop-shadow(0 0 30px color-mix(in srgb, ${glowColor} ${glowAlpha * 150}%, transparent))`,
               }}
               className="z-10"
               draggable={false}

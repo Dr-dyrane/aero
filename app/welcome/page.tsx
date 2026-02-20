@@ -118,7 +118,8 @@ export default function WelcomeDroplet() {
                     src={logoSrc}
                     alt="AERO Logo"
                     fill
-                    className="object-contain drop-shadow-[0_0_40px_var(--primary)]"
+                    className="object-contain"
+                    style={{ filter: 'drop-shadow(0 0 40px color-mix(in srgb, var(--primary) 20%, transparent))' }}
                     priority
                   />
                 </motion.div>
