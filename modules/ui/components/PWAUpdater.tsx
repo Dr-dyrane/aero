@@ -61,8 +61,24 @@ export function PWAUpdater() {
 
         navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
 
+        // Simulation Trigger for Testing
+        const handleSimulate = () => {
+            setUpdateStatus('detected');
+            setTimeout(() => setUpdateStatus('downloading'), 2000);
+            setTimeout(() => setUpdateStatus('ready'), 5000);
+            setTimeout(() => {
+                setUpdateStatus('applying');
+                setTimeout(() => {
+                    setUpdateStatus('idle'); // Safe exit if no reload happens
+                }, 3000);
+            }, 7000);
+        };
+
+        window.addEventListener('aero-simulate-update' as any, handleSimulate);
+
         return () => {
             navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+            window.removeEventListener('aero-simulate-update' as any, handleSimulate);
         };
     }, []);
 

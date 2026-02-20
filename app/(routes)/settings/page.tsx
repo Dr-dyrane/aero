@@ -7,7 +7,7 @@ import { useTheme } from '@/modules/ui/providers/ThemeProvider';
 import { useAuth } from '@/modules/auth';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useNavigator } from '@/lib/navigation';
-import { ArrowLeft, Sun, Moon, Monitor, Shield, LogOut, Zap, ShieldAlert, ShieldCheck, Activity } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, Monitor, Shield, LogOut, Zap, ShieldAlert, ShieldCheck, Activity, RefreshCw } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLayout } from '@/modules/ui/providers/LayoutProvider';
 import { AeroSkeleton } from '@/modules/ui/components/AeroSkeleton';
@@ -273,6 +273,28 @@ export default function SettingsPage() {
                 "h-2 w-2 rounded-full",
                 streak === 30 ? "bg-primary animate-pulse shadow-[0_0_10px_var(--primary)]" : "bg-white/10"
               )} />
+            </button>
+          </AeroCard>
+
+          <AeroCard className="border-white/10 bg-white/5 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-2 opacity-5">
+              <Activity className="h-12 w-12 text-white" />
+            </div>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('aero-simulate-update'))}
+              className="flex w-full items-center justify-between p-4"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 border border-white/20">
+                  <RefreshCw className="h-5 w-5 text-white" />
+                </div>
+                <div className="text-left rtl:text-right">
+                  <p className="text-xs font-bold text-white uppercase tracking-wider">Protocol Update</p>
+                  <p className="text-[9px] font-mono text-white/60 leading-tight uppercase font-bold">
+                    Trigger SW Update Simulation
+                  </p>
+                </div>
+              </div>
             </button>
           </AeroCard>
         </div>
