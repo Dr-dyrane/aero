@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase admin for secure calculation if needed, 
-// or use regular client if RLS is tight enough.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!; // High privilege for calculation
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 /**
  * AERO Bio-Algorithm API
  * Handles biometric data normalization and triggers the secure calculation RPC.
  */
 export async function POST(req: NextRequest) {
+    // Initialize Supabase inside the handler to prevent build-time failures
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+        console.error('[Bio-Algorithm] Supabase credentials missing from environment');
+        return NextResponse.json({ error: 'System Configuration Error' }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     try {
         const { userId, sensorData } = await req.json();
 
