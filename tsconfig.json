@@ -17,30 +17,15 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "baseUrl": ".",
     "plugins": [
       {
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./*"
-      ],
-      "@/modules/*": [
-        "./modules/*"
-      ],
-      "@/lib/*": [
-        "./lib/*"
-      ],
-      "@/store/*": [
-        "./store/*"
-      ],
-      "@/app/*": [
-        "./app/*"
-      ],
-      "@/components/*": [
-        "./components/*"
       ]
     }
   },
