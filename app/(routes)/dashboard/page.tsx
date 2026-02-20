@@ -6,7 +6,7 @@ import { useVault } from '@/modules/vault';
 import { useAuth } from '@/modules/auth';
 import { useNavigator } from '@/lib/navigation';
 import { DEMO_MERITS, DEMO_SCAN_HISTORY, MERIT_LEVELS } from '@/lib/data';
-import { Shield, Zap, TrendingUp, ChevronRight, Sparkles, Brain, Clock } from 'lucide-react';
+import { Shield, Zap, TrendingUp, ChevronRight, Sparkles, Brain, Clock, Globe, ArrowUpRight } from 'lucide-react';
 import { motion, type Variants } from 'framer-motion';
 
 export default function DashboardPage() {
@@ -56,96 +56,124 @@ export default function DashboardPage() {
         {/* Header Section: Reduced padding, now handled by TopNav */}
         <div className="h-6" />
 
-        {/* Hero Score Section */}
-        <motion.section variants={item} className="flex flex-col items-center py-4 relative">
+        {/* BIO-MARKET VALUE TICKER */}
+        <motion.section variants={item} className="flex flex-col items-center py-6 relative w-full">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
-          <AeroOrb score={aeroScore} size={288} imgSrc="/as.png" />
-          <div className="mt-4 flex items-center gap-2">
-            <AeroPill variant={scanStatus === 'success' ? 'accent' : 'muted'}>
-              <div className={scanStatus === 'success' ? 'animate-pulse' : ''}>
-                {scanStatus === 'success' ? 'Authenticated Clean' : 'Awaiting Check'}
-              </div>
-            </AeroPill>
-            <AeroPill variant="muted" className="aero-surface">
-              <Zap className="mr-1 h-3 w-3" style={{ color: 'var(--gold)' }} />
-              {streak}d Streak
-            </AeroPill>
+
+          <div className="flex flex-col items-center gap-1 z-10">
+            <span className="text-[10px] tracking-[0.2em] font-bold text-muted-foreground uppercase opacity-70">
+              Bio-Market Value
+            </span>
+            <h1 className="font-serif text-7xl font-light tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/50 tabular-nums">
+              {aeroScore}
+            </h1>
+
+            {/* Global Percentile Indicator */}
+            <div className="mt-2 flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+              <Globe className="h-3 w-3 text-primary animate-pulse" />
+              <span className="text-[10px] font-medium text-primary tracking-wide">
+                TOP 4.2% GLOBAL
+              </span>
+            </div>
           </div>
         </motion.section>
 
+        {/* Live Orb Visualization (Smaller, secondary) */}
+        <motion.div variants={item} className="mb-8 scale-75 opacity-80">
+          <AeroOrb score={aeroScore} size={160} imgSrc="/as.png" />
+        </motion.div>
+
         {/* Intelligence Card */}
-        <motion.div variants={item} className="w-full mt-10">
-          <AeroCard className="relative overflow-hidden group">
+        <motion.div variants={item} className="w-full">
+          <AeroCard className="relative overflow-hidden group border-primary/20 bg-primary/5">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <Brain className="h-12 w-12 text-primary" />
             </div>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2 text-[10px] tracking-widest text-primary uppercase font-bold">
                 <Sparkles className="h-3 w-3" />
-                Live Insight
+                Market Insight
               </div>
               <p className="text-sm font-medium leading-relaxed text-foreground/90 italic">
-                "Your baseline stability is up by 4.2% since yesterday. Recovery window is optimal for high-focus tasks."
+                "Your baseline stability signals a breakout. Projected yield increases by 12% if streak holds through weekend."
               </p>
-              <div className="flex items-center justify-between pt-2 border-t border-border/10">
+              <div className="flex items-center justify-between pt-2 border-t border-primary/10">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock className="h-3.5 w-3.5" />
-                  Updated 12m ago
+                  Live Feed
                 </div>
                 <button className="text-[10px] font-bold text-primary hover:text-white transition-colors flex items-center gap-1">
-                  VIEW REPORT <ChevronRight className="h-3 w-3" />
+                  FULL REPORT <ChevronRight className="h-3 w-3" />
                 </button>
               </div>
             </div>
           </AeroCard>
         </motion.div>
 
-        {/* Vault Summary (Primary Action) */}
+        {/* ENDOWMENT PROTOCOL (Vault) */}
         <motion.div variants={item} className="w-full mt-4">
-          <AeroCard glow className="p-0">
+          <AeroCard glow className="p-0 overflow-hidden">
             <button
               onClick={() => nav.goToVault()}
-              className="flex w-full items-center justify-between p-4 group"
+              className="flex w-full items-center justify-between p-4 group relative"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 transition-transform group-hover:scale-105">
+              {/* Liquid Gold Background Hint */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 transition-transform group-hover:scale-105 border border-gold/20">
                   <Shield className="h-6 w-6 text-gold" />
                 </div>
                 <div className="text-left">
-                  <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold">Bio-Vault</p>
-                  <p className="font-numbers text-2xl font-medium text-foreground">
-                    {'$'}{spendableBalance.toFixed(2)}
+                  <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold">Total Equity</p>
+                  <p className="font-numbers text-2xl font-medium text-foreground flex items-center gap-2">
+                    {'$'}{(spendableBalance + lockedBalance).toFixed(2)}
+                    <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                      <ArrowUpRight className="h-2.5 w-2.5" /> +5.2%
+                    </span>
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-1">
-                <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" />
-                <span className="text-[10px] text-muted-foreground font-medium">
-                  {'$'}{lockedBalance.toFixed(2)} PENDING
+
+              <div className="flex flex-col items-end gap-1 relative z-10">
+                <div className="flex items-center gap-1.5">
+                  <div className="h-2 w-2 rounded-full bg-gold animate-pulse" />
+                  <span className="text-[10px] font-bold text-gold tracking-wider">LOCKED</span>
+                </div>
+                <span className="text-xs font-mono text-muted-foreground">
+                  {'$'}{lockedBalance.toFixed(2)}
                 </span>
               </div>
             </button>
           </AeroCard>
         </motion.div>
 
-        {/* History & Progress Grid */}
+        {/* Mining Status Grid */}
         <motion.div variants={item} className="grid grid-cols-2 gap-3 w-full mt-4">
-          <AeroCard className="p-4 flex flex-col justify-between h-32">
+          <AeroCard className="p-4 flex flex-col justify-between h-32 bg-white/[0.02]">
             <div>
-              <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold mb-1">Status</p>
+              <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold mb-1">Verify Status</p>
               <div className="flex items-center gap-1.5 mt-2">
-                <TrendingUp className="h-4 w-4 text-primary" />
-                <span className="font-numbers text-lg font-medium">87</span>
+                {scanStatus === 'success' ? (
+                  <div className="flex items-center gap-2 text-emerald-400">
+                    <Shield className="h-4 w-4" />
+                    <span className="font-bold text-sm">SECURE</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-amber-400">
+                    <Clock className="h-4 w-4" />
+                    <span className="font-bold text-sm">PENDING</span>
+                  </div>
+                )}
               </div>
             </div>
-            <p className="text-[10px] text-muted-foreground">91% Confidence</p>
+            <p className="text-[10px] text-muted-foreground">99.8% Uptime</p>
           </AeroCard>
 
-          <AeroCard className="p-4 flex flex-col justify-between h-32">
+          <AeroCard className="p-4 flex flex-col justify-between h-32 bg-white/[0.02]">
             <div>
-              <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold mb-1">Next Merit</p>
+              <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold mb-1">Yield Tier</p>
               <div className="flex items-center gap-2 mt-2">
-                <div className="h-2 w-2 rounded-full" style={{ background: nextMerit.color }} />
                 <span className="font-serif text-sm font-semibold uppercase" style={{ color: nextMerit.color }}>
                   {nextMerit.name}
                 </span>
@@ -161,25 +189,36 @@ export default function DashboardPage() {
                   style={{ background: nextMerit.color }}
                 />
               </div>
-              <p className="text-[10px] text-muted-foreground text-right">{streak}/{nextMerit.threshold}d</p>
+              <p className="text-[10px] text-muted-foreground text-right">{streak}/{nextMerit.threshold}d to Level Up</p>
             </div>
           </AeroCard>
         </motion.div>
 
-        {/* Primary Action Button */}
-        <motion.div variants={item} className="w-full mt-10">
+        {/* Primary Action Button: MINE YIELD */}
+        <motion.div variants={item} className="w-full mt-8">
           <AeroButton
             variant="primary"
             size="lg"
-            className="w-full h-14 text-lg shadow-[0_0_40px_rgba(0,245,255,0.15)] group"
+            className="w-full h-16 text-lg shadow-[0_0_50px_rgba(0,245,255,0.2)] group border border-primary/50 relative overflow-hidden"
             onClick={() => nav.goToScan()}
           >
-            <ScanFace className="mr-3 h-5 w-5 transition-transform group-hover:scale-110" />
-            Start Triple-Check
+            {/* Inner Shimmer */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+
+            <div className="flex items-center gap-3 relative z-10">
+              <ScanFace className="h-6 w-6 transition-transform group-hover:scale-110" />
+              <div className="flex flex-col items-start leading-none">
+                <span className="text-base font-bold tracking-wide">VERIFY & MINE YIELD</span>
+                <span className="text-[10px] font-normal opacity-80 tracking-wider">DAILY CHECK-IN UNLOCKED</span>
+              </div>
+            </div>
           </AeroButton>
-          <p className="mt-4 text-center text-[10px] text-muted-foreground tracking-widest uppercase font-medium">
-            Next scan recommended in 4 hours
-          </p>
+
+          <div className="mt-6 flex items-center justify-center gap-2 opacity-40">
+            <div className="h-1 w-1 rounded-full bg-foreground" />
+            <p className="text-[9px] tracking-[0.2em] uppercase">Encrypted Bio-Ledger Active</p>
+            <div className="h-1 w-1 rounded-full bg-foreground" />
+          </div>
         </motion.div>
       </motion.div>
     </main>

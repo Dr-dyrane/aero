@@ -24,7 +24,7 @@ export default function WelcomeDroplet() {
       </div>
 
       {/* HERO: The Artifact + Typography (Center) */}
-      <div className="flex-1 flex flex-col items-center justify-start pt-20 gap-8 w-full max-w-md z-10">
+      <div className="flex-1 flex flex-col items-center justify-evenly w-full max-w-md z-10 py-10">
         <motion.div
           initial={{ scale: 0.9, opacity: 0, filter: "blur(20px)" }}
           animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
@@ -80,7 +80,7 @@ export default function WelcomeDroplet() {
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.8, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full max-w-sm z-20 pb-8"
+        className="w-full max-w-sm z-20 pb-12"
       >
         <motion.button
           whileHover={{ scale: 1.01 }}
