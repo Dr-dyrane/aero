@@ -13,7 +13,7 @@ export default function WelcomeDroplet() {
   const nav = useNavigator();
   const { language, setLanguage } = useAeroStore();
   const isDark = resolvedTheme === 'eclipse';
-  const logoSrc = isDark ? "/as.png" : "/aero_light.png";
+  const logoSrc = isDark ? "/aero.png" : "/aero_light.png";
 
   // Local state for transition
   const [isSelecting, setIsSelecting] = useState(!language);
@@ -42,7 +42,7 @@ export default function WelcomeDroplet() {
   const text = language ? content[language] : content.en;
 
   return (
-    <div className="relative flex min-h-[100dvh] w-full flex-col items-center justify-between overflow-hidden bg-background text-foreground transition-colors duration-700 py-12 px-6">
+    <div className="relative flex min-h-[100dvh] w-full flex-col items-center justify-between overflow-hidden bg-background text-foreground transition-colors duration-700 pb-6 px-6">
 
       {/* AMBIENT VOID: Deterministic Background Glow */}
       <div className="absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-aero-blue/[0.03] blur-[160px] dark:bg-[#00F5FF]/[0.03] transition-colors duration-700 pointer-events-none" />
@@ -62,7 +62,7 @@ export default function WelcomeDroplet() {
             transition={{ duration: 0.5 }}
             className="flex-1 flex flex-col items-center justify-center w-full max-w-sm gap-8 z-20"
           >
-            <div className="relative h-24 w-24 mb-4">
+            <div className="relative h-20 w-20 mb-4">
               <Image src={logoSrc} alt="AERO" fill className="object-contain opacity-80" />
             </div>
 
