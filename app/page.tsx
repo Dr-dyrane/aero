@@ -18,7 +18,6 @@ export default function HomePage() {
   }, [router]);
 
   const isDark = resolvedTheme === 'eclipse';
-  // Use aero_light.png if light mode, otherwise as.png
   const logoSrc = isDark ? "/as.png" : "/aero_light.png";
 
   return (
