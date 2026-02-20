@@ -6,6 +6,7 @@ import { useNotificationStore } from '../stores/useNotificationStore';
 import { AeroCard, AeroPill, AeroButton } from '@/modules/ui';
 import { cn } from '@/lib/utils';
 import { NotificationType } from '../types';
+import { useFeedback } from '@/modules/ui/hooks/useFeedback';
 
 interface NotificationSheetProps {
     isOpen: boolean;
@@ -16,6 +17,7 @@ import { useAeroStore } from '@/store/useAeroStore';
 
 export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
     const { notifications, markAsRead, clearAll, unreadCount } = useNotificationStore();
+    const { playTap, playError } = useFeedback();
     const language = useAeroStore((s) => s.language);
 
     const content = {
@@ -85,7 +87,13 @@ export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
                                     <AeroPill variant="accent" className="px-1.5 py-0 text-[10px]">{unreadCount}</AeroPill>
                                 )}
                             </div>
-                            <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                            <button
+                                onClick={() => {
+                                    playTap();
+                                    onClose();
+                                }}
+                                className="p-2 hover:bg-white/5 rounded-full transition-colors"
+                            >
                                 <X className="h-5 w-5 text-muted-foreground" />
                             </button>
                         </div>
@@ -142,7 +150,10 @@ export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
                         {notifications.length > 0 && (
                             <div className="p-6 border-t border-white/5">
                                 <button
-                                    onClick={clearAll}
+                                    onClick={() => {
+                                        playError();
+                                        clearAll();
+                                    }}
                                     className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all"
                                 >
                                     <Trash2 className="h-4 w-4" />

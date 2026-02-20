@@ -15,6 +15,7 @@ import { useLayout } from '../providers/LayoutProvider';
 import { useAuth } from '@/modules/auth';
 
 import { NotificationSheet, useNotificationStore } from '@/modules/notifications';
+import { useFeedback } from '../hooks/useFeedback';
 
 interface TopNavProps {
     title?: string;
@@ -28,6 +29,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
     const [isOpen, setIsOpen] = useState(false);
     const [isNotifOpen, setIsNotifOpen] = useState(false);
     const { isNavVisible, setScrollSensitivity } = useLayout();
+    const { playTap } = useFeedback();
     const nav = useNavigator();
     const pathname = usePathname();
     const { demoMode, language, setDemoMode, setLanguage } = useAeroStore();
@@ -101,7 +103,10 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                     {/* Context Aware Back Button */}
                     {hasBack && (
                         <button
-                            onClick={onBack || (() => window.history.back())}
+                            onClick={() => {
+                                playTap();
+                                if (onBack) onBack(); else nav.goBack();
+                            }}
                             className="flex h-10 w-8 items-center justify-center rounded-full bg-transparent backdrop-blur-sm transition-transform active:scale-95"
                         >
                             <ChevronLeft className="h-5 w-5 text-foreground rtl:rotate-180" />
@@ -110,7 +115,10 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
 
                     {/* TRIGGER: Avatar (High Fidelity) */}
                     <button
-                        onClick={() => setIsOpen(true)}
+                        onClick={() => {
+                            playTap();
+                            setIsOpen(true);
+                        }}
                         className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent backdrop-blur-sm transition-transform active:scale-95 overflow-hidden border border-white/5 shadow-sm"
                     >
                         <img src={AVATAR_URL} alt="AERO User" className="w-full h-full object-cover" />
@@ -139,7 +147,10 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                     )}
 
                     <button
-                        onClick={() => setIsNotifOpen(true)}
+                        onClick={() => {
+                            playTap();
+                            setIsNotifOpen(true);
+                        }}
                         className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent backdrop-blur-sm transition-transform active:scale-95 relative"
                     >
                         <Bell className="h-5 w-5 text-foreground" />

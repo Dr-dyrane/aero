@@ -5,8 +5,11 @@ import { Moon, Sun } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
+import { useFeedback } from '../hooks/useFeedback';
+
 export function ThemeToggle() {
     const { setTheme, resolvedTheme } = useTheme();
+    const { playTap } = useFeedback();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -20,6 +23,7 @@ export function ThemeToggle() {
     const isDark = resolvedTheme === 'eclipse';
 
     const toggleTheme = () => {
+        playTap();
         setTheme(isDark ? 'cloud' : 'eclipse');
     };
 
@@ -47,8 +51,10 @@ export function ThemeToggle() {
                 dragElastic={0.1}
                 onDragEnd={(e, info) => {
                     if (info.offset.y > 20 && !isDark) {
+                        playTap();
                         setTheme('eclipse');
                     } else if (info.offset.y < -20 && isDark) {
+                        playTap();
                         setTheme('cloud');
                     }
                 }}

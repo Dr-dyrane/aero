@@ -17,6 +17,7 @@ import type {
 } from '@/lib/types';
 import { useAuth } from '@/modules/auth';
 import { normalizeTelemetry, fetchAeroScore } from '../services/algorithm';
+import { useFeedback } from '@/modules/ui/hooks/useFeedback';
 
 interface BioEngineContextValue {
   permissions: SensorPermissions;
@@ -67,6 +68,7 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
     useState<TripleCheckResult>(INITIAL_RESULT);
 
   const [isScanning, setIsScanning] = useState(false);
+  const { playPulse, playSuccess, playError } = useFeedback();
 
   // Detect sensor availability on mount
   useEffect(() => {
@@ -111,10 +113,13 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
       // Demo mode: simulate scan with delays (Slow & Graceful)
       await new Promise((r) => setTimeout(r, 2800));
       setTripleCheckResult((prev) => ({ ...prev, voice: DEMO_TRIPLE_CHECK.voice }));
+      playPulse();
       await new Promise((r) => setTimeout(r, 2800));
       setTripleCheckResult((prev) => ({ ...prev, ppg: DEMO_TRIPLE_CHECK.ppg }));
+      playPulse();
       await new Promise((r) => setTimeout(r, 2800));
       setTripleCheckResult(DEMO_TRIPLE_CHECK);
+      playSuccess();
 
       // Even in demo mode, let's run the algorithm with simulated telemetry
       if (user?.id) {
@@ -152,14 +157,17 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
         const result = await fetchAeroScore(user.id, telemetry, demoMode);
         setAeroScore(result.score);
         setScanStatus('success');
+        playSuccess();
       } catch (e) {
         setScanStatus('failed');
+        playError();
       }
     } else {
       setScanStatus('success');
+      playSuccess();
     }
     setIsScanning(false);
-  }, [demoMode, setScanStatus, user?.id, setAeroScore]);
+  }, [demoMode, setScanStatus, user?.id, setAeroScore, playPulse, playSuccess, playError]);
 
   const cancelTripleCheck = useCallback(() => {
     setIsScanning(false);

@@ -164,15 +164,42 @@ App Router → AppProviders → Modules → Supabase (Pillar Schema)
 
 AERO is composed of five core systems:
 
-1. **Auth System**
-2. **Bio‑Engine System**
-3. **Aero Score System**
-4. **Bio‑Vault System**
-5. **UI + Theme System**
+6. **Linguistic System (Internationalization)**
+7. **UI + Theme System**
 
 ---
 
-# 2. State Machines
+# 1.5 Linguistic Interface Protocol
+
+AERO is a multi-language sovereign environment.
+- **State-Driven**: Language context is managed via `useAeroStore`.
+- **Directional Flip**: Components must support `dir="rtl"` dynamically.
+- **Translation Glossaries**: Clinical terms are defined in localized content dictionaries within each page shell to maintain high-fidelity context.
+- **RTL Physics**: Motion paths (X-axis) and arrow icons are mirrored in Arabic context to preserve spatial logic. 
+
+---
+
+# 2. Handler Resilience & Build Safety
+
+To ensure build-time stability in CI/CD environments (Vercel):
+- **Deferred Initialization**: External clients (Supabase Admin, etc.) must be initialized **inside** the request handlers (e.g., `POST` function). 
+- **Validation**: Environment variables are checked at runtime, preventing the "Collecting page data" build phase from crashing due to missing secrets.
+
+---
+
+# 3. Z-Index Hierarchy (The Depth Pillar)
+
+To maintain structural clarity between the application content and sovereign UI:
+- **Baseline Content**: `z-[0]` to `z-[50]`.
+- **Overlays (Detox/Scan)**: `z-[200]`.
+- **Sovereign UI (Sidebar/Notifications)**: 
+    - Backdrops: `z-[800]`.
+    - Panels/Sheets: `z-[810]`.
+- **Tooltips/Topmost**: `z-[1000]`.
+
+---
+
+# 4. State Machines
 
 ## 2.1 Triple‑Check Scan State Machine
 
@@ -281,7 +308,20 @@ Output:
 
 ---
 
-# 7. Realtime Sync
+# 7. Bio-Digital Acoustic Protocol (Feedback)
+
+AERO achieves a native-app feel through synchronized audio and haptic feedback.
+- **Programmatic Audio**: Instead of MP3 assets, AERO uses the **Web Audio API** to generate sine-wave tones at specific frequencies (e.g., 880Hz for success). This ensures zero latency and zero asset bloat.
+- **Haptic Integration**: Tactile pulses are delivered via the **Vibration API** on supported devices (Mobile/PWA).
+- **Core Triggers**:
+    - `Tap`: Subtle 440Hz click on button contact.
+    - `Pulse`: Ethereal heartbeat during biometric scans.
+    - `Success`: High-fidelity chime upon clinical verification.
+    - `Error`: Dissonant triangle-wave tone for protocol failures.
+
+---
+
+# 8. Realtime Sync
 
 Supabase channels push updates to:
 - Vault balances
@@ -353,6 +393,15 @@ Interactions must feel physical and weighted.
 *   **Iconography:** Icons conclude an action. Place them **after** text.
 *   **The Guard:** Leading actions (like "Claim") use a right-aligned circular icon wrapper (`rounded-full bg-white/5`).
 *   **Physics:** Use Framer Motion `spring` physics (`stiffness: 100`, `damping: 25`). No linear easings.
+*   **Linguistic Mirroring:** In RTL mode (Arabic), icons and layout orientations are mirrored to respect the reading path while maintaining aesthetic weight. 
+
+---
+
+## 1.5 Color Has Meaning (Rule 7)
+*   **Cyan (#00F5FF):** Vitality, Oxygen, Bio-Integrity.
+*   **Obsidian (#000000):** The Private Void, Security.
+*   **Red-Alert (#FF3B30):** Bio-Dissonance, Critical Load (Wake-Up Call).
+*   **Gold (#D4AF37):** Sovereign Endowment, Vault Merit.
 
 ---
 

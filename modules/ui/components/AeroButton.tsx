@@ -3,6 +3,9 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 
+import { AeroPill } from './AeroPill';
+import { useFeedback } from '../hooks/useFeedback';
+
 interface AeroButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
@@ -11,10 +14,17 @@ interface AeroButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 /**
  * AeroButton
  * Pill-shaped, translucent, glow-on-hover.
- * Uses global AERO tokens.
+ * Integrated with Audio + Haptic Feedback.
  */
 export const AeroButton = forwardRef<HTMLButtonElement, AeroButtonProps>(
-  ({ className, variant = 'primary', size = 'md', children, ...props }, ref) => {
+  ({ className, variant = 'primary', size = 'md', children, onClick, ...props }, ref) => {
+    const { playTap } = useFeedback();
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      playTap();
+      if (onClick) onClick(e);
+    };
+
     return (
       <button
         ref={ref}
@@ -45,6 +55,7 @@ export const AeroButton = forwardRef<HTMLButtonElement, AeroButtonProps>(
           className
         )}
         {...props}
+        onClick={handleClick}
       >
         {children}
       </button>

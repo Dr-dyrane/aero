@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useLayout } from '@/modules/ui/providers/LayoutProvider';
+import { useFeedback } from '@/modules/ui/hooks/useFeedback';
 
 /**
  * AERO Navigator Helpers
@@ -10,8 +11,10 @@ import { useLayout } from '@/modules/ui/providers/LayoutProvider';
 export function useNavigator() {
   const router = useRouter();
   const { setSkeletonLoading } = useLayout();
+  const { playTap } = useFeedback();
 
   const navigate = (path: string) => {
+    playTap();
     setSkeletonLoading(true);
     router.push(path);
   };
@@ -25,6 +28,16 @@ export function useNavigator() {
     goToSettings: () => navigate('/settings'),
     goToRoot: () => navigate('/'),
     goToHowItWorks: () => navigate('/how-it-works'),
+    goToDecodeScore: () => navigate('/how-it-works'),
+    goBack: () => {
+      playTap();
+      router.back();
+    },
+    replace: (path: string) => {
+      playTap();
+      setSkeletonLoading(true);
+      router.replace(path);
+    },
     goToOnboardingIfNeeded: (hasBaseline: boolean) =>
       hasBaseline ? navigate('/dashboard') : navigate('/scan'),
   };

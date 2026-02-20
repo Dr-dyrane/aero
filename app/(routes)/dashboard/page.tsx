@@ -336,7 +336,7 @@ export default function DashboardPage() {
                   {t.liveFeed}
                 </div>
                 <button
-                  onClick={() => nav.goToHowItWorks()}
+                  onClick={() => nav.goToDecodeScore()}
                   className="text-[10px] font-bold text-primary hover:text-white transition-colors flex items-center gap-1"
                 >
                   {t.fullReport} <ChevronRight className="h-3 w-3 rtl:rotate-180" />
