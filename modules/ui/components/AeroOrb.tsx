@@ -17,24 +17,21 @@ export interface AeroOrbProps {
  * AeroOrb
  * 3D liquid orb with breathing animation.
  * Displays the Aero Score at center.
- * Uses exact AERO palette: #00F5FF glow.
+ * Uses theme-aware primary variables for atmospheric glow.
  */
 export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false }: AeroOrbProps) {
   const { resolvedTheme } = useTheme();
-  const isWakeUpCall = useAeroStore((s) => s.isWakeUpCall); // Added useAeroStore hook
-  const isDark = resolvedTheme === 'eclipse' || isWakeUpCall; // Modified isDark to include isWakeUpCall
+  const isWakeUpCall = useAeroStore((s) => s.isWakeUpCall);
+  const isDark = resolvedTheme === 'eclipse' || isWakeUpCall;
 
   // Default theme-sensitive logo if no imgSrc provided
   const logoSrc = imgSrc || (isDark ? "/as.png" : "/as_light.png");
 
   const glowIntensity = score / 100;
   const glowAlpha = 0.12 + glowIntensity * 0.35;
-
-  // The Wake-Up Call Shift: Cyan transforms into a pulsing Warning Red
-  const glowAlphaHex = Math.round(glowAlpha * 255).toString(16).padStart(2, '0');
   const glowColor = isWakeUpCall ? `var(--destructive)` : `var(--primary)`;
 
-  // Determine animation parameters based on pulsing prop and wake-up call state
+  // Determine animation parameters
   const ambientOpacity = isWakeUpCall ? [0.4, 0.9, 0.4] : (pulsing ? [0.3, 0.8, 0.3] : [0.3, 0.6, 0.3]);
   const ambientScale = isWakeUpCall ? [1, 1.2, 1] : (pulsing ? [1, 1.15, 1] : 1);
   const ambientDuration = isWakeUpCall ? 1.8 : (pulsing ? 3.6 : 10);
@@ -47,16 +44,17 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
       className={cn('relative flex items-center justify-center select-none', className)}
       style={{ width: size, height: size }}
     >
-      {/* AMBIENT AURA: Solid performance via single-layer opacity breathe */}
+      {/* AMBIENT AURA: Soft atmospheric bloom */}
       <motion.div
         className="absolute inset-0 rounded-full pointer-events-none"
         style={{
           background: `radial-gradient(circle, 
-            color-mix(in srgb, ${glowColor} ${glowAlpha * 120}%, transparent) 0%, 
-            color-mix(in srgb, ${glowColor} ${glowAlpha * 60}%, transparent) 40%, 
-            transparent 75%
+            color-mix(in srgb, ${glowColor} 80%, transparent) 0%, 
+            color-mix(in srgb, ${glowColor} 30%, transparent) 45%, 
+            transparent 80%
           )`,
-          filter: `blur(45px)`,
+          filter: `blur(${size * 0.15}px)`,
+          opacity: isDark ? 0.7 : 0.5,
         }}
         animate={{
           opacity: ambientOpacity,
@@ -69,7 +67,7 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
         }}
       />
 
-      {/* THE ARTIFACT: Stabilized motion path */}
+      {/* THE ARTIFACT */}
       <motion.div
         className="relative flex items-center justify-center w-full h-full"
         animate={{
@@ -90,15 +88,14 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
                 width: '100%',
                 height: '100%',
                 objectFit: 'contain',
-                filter: `drop-shadow(0 0 30px color-mix(in srgb, ${glowColor} ${glowAlpha * 150}%, transparent))`,
+                filter: `drop-shadow(0 0 ${size * 0.12}px color-mix(in srgb, ${glowColor} 20%, transparent))`,
               }}
               className="z-10"
               draggable={false}
             />
 
-            {/* Score: Blended organically into the artifact artifact (No Shadow) */}
             <span
-              className="absolute z-20 font-numbers flex items-center justify-center transition-opacity duration-700"
+              className="absolute z-20 font-numbers flex items-center justify-center"
               style={{
                 fontSize: size * 0.23,
                 fontWeight: 500,
@@ -125,7 +122,7 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
             <span className={cn("font-numbers text-3xl font-medium", isDark ? "text-white" : "text-black")}>{score}</span>
           </div>
         )}
-        {/* GLOSS LAYER: Glass morphism depth */}
+        {/* GLOSS LAYER */}
         <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-white/10 to-transparent opacity-40 mix-blend-overlay pointer-events-none" />
       </motion.div>
     </div>

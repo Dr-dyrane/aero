@@ -44,23 +44,23 @@ export default function HowItWorksPage() {
         en: {
             spectrum: {
                 title: "Health Levels",
-                subtitle: "AERO scans your body to determine your clinical health status. Tap a level to understand your score.",
+                subtitle: "AERO scans your health signature to determine your current status. Tap a level to understand your score.",
                 explore: "VIEW SENSORS"
             },
             sensors: {
-                title: "Bio-Sensors",
-                subtitle: "Your device acts as a professional medical laboratory in your pocket.",
+                title: "Health Sensors",
+                subtitle: "Your mobile device acts as a high-precision health scanner in your pocket.",
                 items: [
-                    { id: "vocal", title: "Voice Scan", icon: Mic2, desc: "AI detects micro-tremors in your voice to track nicotine load.", stat: "94% Acc" },
-                    { id: "ppg", title: "Heart Scan", icon: Activity, desc: "Measures heart rate stability and blood flow via the camera flash.", stat: "O2 Proof" },
-                    { id: "facial", title: "Face Scan", icon: ScanFace, desc: "Analyzes blood flow in your face to detect recent inhalation.", stat: "Spectral" }
+                    { id: "vocal", title: "Voice Scan", icon: Mic2, desc: "AI detects subtle patterns in your voice to track recovery progress.", stat: "94% Acc" },
+                    { id: "ppg", title: "Heart Scan", icon: Activity, desc: "Measures health stability and blood flow via the camera flash.", stat: "O2 Proof" },
+                    { id: "facial", title: "Face Scan", icon: ScanFace, desc: "Analyzes blood flow in your face to detect health markers.", stat: "Spectral" }
                 ],
-                explore: "CLINICAL LOGIC"
+                explore: "REWARD LOGIC"
             },
             clinical: {
-                title: "Medical Data",
-                subtitle: "Standardized clinical tests ensuring your data stays accurate.",
-                formula: "AS = (θ * Bio_avg / 10) * 100",
+                title: "Reward Logic",
+                subtitle: "Standardized health tests ensuring your rewards stay accurate and secure.",
+                formula: "AS = (θ * Health_avg / 10) * 100",
                 explore: "PRIVACY SHIELD"
             },
             privacy: {
@@ -176,7 +176,7 @@ export default function HowItWorksPage() {
                                     <>
                                         <h1 className="text-3xl font-serif text-foreground tracking-tighter">{t.spectrum.title}</h1>
                                         <p className="text-[13px] text-muted-foreground leading-relaxed px-6 opacity-80 italic">
-                                            The AERO radar visualizes your bio-signal integrity across a five-tier clinical spectrum. Tap a frequency to decode your status.
+                                            The AERO radar visualizes your health status across a five-tier reward spectrum. Tap a tier to see your potential.
                                         </p>
                                     </>
                                 ) : (
@@ -190,7 +190,7 @@ export default function HowItWorksPage() {
                                         <div className="space-y-1">
                                             <h2 className="text-2xl font-serif tracking-tight" style={{ color: t.tiers[selectedTier].color }}>{t.tiers[selectedTier].level}</h2>
                                             <div className="flex items-center justify-center gap-2">
-                                                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">Biometric Anchor</span>
+                                                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">Health Score</span>
                                                 <div className="h-1 w-1 rounded-full bg-white/20" />
                                                 <span className="text-[10px] font-mono font-medium text-muted-foreground/60">{t.tiers[selectedTier].range.replace(/٠|١|٢|٣|٤|٥|٦|٧|٨|٩/g, m => "0123456789"["٠١٢٣٤٥٦٧٨٩".indexOf(m)])} AS</span>
                                             </div>

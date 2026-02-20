@@ -70,14 +70,14 @@ export default function DashboardPage() {
 
   const insights = isWakeUpCall
     ? [
-      "CRITICAL: Bio-signatures indicate acute nicotine load. Vascular resistance is peaking.",
-      "THREAT: Sovereignty compromised by chemical dependency. Yield generation suspended.",
-      "URGENT: Autonomic nervous system shows high sympathetic drive. Initiate cessation."
+      "CRITICAL: Health signatures indicate acute nicotine load. Pulse resistance is peaking.",
+      "THREAT: Health status compromised by chemical dependency. Reward generation suspended.",
+      "URGENT: Nervous system shows high stress levels. Initiate recovery scan."
     ]
     : [
-      "Your baseline stability signals a breakout. Projected yield increases by 12%.",
-      "Respiratory rhythm is optimal. Identity integrity verified at 98.4%.",
-      "Sovereign wealth projection: On track for Level 5 unlock by month-end."
+      "Your baseline stability signals a breakout. Projected rewards increase by 12%.",
+      "Respiratory rhythm is optimal. Health status verified at 98.4%.",
+      "Future wealth projection: On track for Level 5 unlock by month-end."
     ];
 
   const currentInsight = insights[Math.floor((new Date().getSeconds() / 60) * insights.length) % insights.length];
@@ -348,7 +348,6 @@ export default function DashboardPage() {
           </AeroCard>
         </motion.div>
 
-        {/* ENDOWMENT PROTOCOL (Vault) */}
         <motion.div variants={item} className="w-full mt-4">
           <AeroCard glow className="p-0 overflow-hidden">
             <button
@@ -432,7 +431,7 @@ export default function DashboardPage() {
           </AeroCard>
         </motion.div>
 
-        {/* Primary Action Button: MINE YIELD */}
+        {/* Primary Action Button: SCAN TO EARN */}
         <motion.div variants={item} className="w-full mt-8">
           <AeroButton
             variant="primary"

@@ -163,8 +163,8 @@ export default function ScanPage() {
                   scale: [1, 1.1, 1],
                   opacity: resolvedTheme === 'eclipse' ? [0.18, 0.25, 0.18] : [0.12, 0.18, 0.12],
                   filter: resolvedTheme === 'eclipse'
-                    ? ["drop-shadow(0 0 40px rgba(0,245,255,0.15))", "drop-shadow(0 0 80px rgba(0,245,255,0.3))", "drop-shadow(0 0 40px rgba(0,245,255,0.15))"]
-                    : ["drop-shadow(0 0 20px rgba(0,122,255,0.1))", "drop-shadow(0 0 40px rgba(0,122,255,0.2))", "drop-shadow(0 0 20px rgba(0,122,255,0.1))"]
+                    ? [`drop-shadow(0 0 80px color-mix(in srgb, var(--primary) 15%, transparent))`, `drop-shadow(0 0 160px color-mix(in srgb, var(--primary) 30%, transparent))`, `drop-shadow(0 0 80px color-mix(in srgb, var(--primary) 15%, transparent))`]
+                    : [`drop-shadow(0 0 50px color-mix(in srgb, var(--primary) 10%, transparent))`, `drop-shadow(0 0 100px color-mix(in srgb, var(--primary) 20%, transparent))`, `drop-shadow(0 0 50px color-mix(in srgb, var(--primary) 10%, transparent))`]
                 }}
                 transition={{
                   duration: 8,
@@ -227,7 +227,7 @@ export default function ScanPage() {
                   <AeroCard className={cn(
                     "p-8 border-primary/20 backdrop-blur-2xl active:scale-[0.98] transition-transform",
                     resolvedTheme === 'eclipse'
-                      ? "bg-black/40 shadow-[0_0_80px_rgba(0,245,255,0.1)]"
+                      ? "bg-black/40 shadow-[0_0_80px_color-mix(in srgb, var(--primary) 10%, transparent)]"
                       : "bg-white/80 shadow-[0_40px_100px_rgba(0,0,0,0.05)] border-primary/10"
                   )}>
                     <div className="flex flex-col items-center text-center gap-6">

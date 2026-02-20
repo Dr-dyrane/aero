@@ -10,18 +10,18 @@ interface AeroScoreDisplayProps {
   className?: string;
 }
 
-export function AeroScoreDisplay({ 
-  size = 200, 
+export function AeroScoreDisplay({
+  size = 200,
   showBreakdown = false,
-  className 
+  className
 }: AeroScoreDisplayProps) {
   const { currentScore, interpretation, isCalculating, lastCalculation } = useAeroScoreCalculator();
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return '#00F5FF'; // Vascular Elite - Cyan
-    if (score >= 60) return '#00D4FF'; // Oxygen Optimized - Light Blue
-    if (score >= 40) return '#D4AF37'; // Carbon Neutral - Gold
-    return '#FF6B6B'; // Nicotine Active - Red
+    if (score >= 80) return 'var(--primary)'; // Peak Health
+    if (score >= 60) return '#10B981'; // Optimized - emerald
+    if (score >= 40) return '#EAB308'; // Balanced - yellow
+    return '#EF4444'; // Recovery Needed - red
   };
 
   const getGlowIntensity = (score: number) => {
@@ -34,10 +34,10 @@ export function AeroScoreDisplay({
   return (
     <div className={cn('relative flex flex-col items-center', className)}>
       {/* Main Score Sphere */}
-      <div 
+      <div
         className="relative"
-        style={{ 
-          width: size, 
+        style={{
+          width: size,
           height: size,
         }}
       >
@@ -128,7 +128,7 @@ export function AeroScoreDisplay({
                 >
                   {currentScore}
                 </motion.div>
-                <div 
+                <div
                   className="text-xs font-medium opacity-80"
                   style={{ color: scoreColor }}
                 >
@@ -164,7 +164,7 @@ export function AeroScoreDisplay({
         transition={{ duration: 0.5, delay: 0.2 }}
         className="mt-6 text-center"
       >
-        <div 
+        <div
           className="text-sm font-semibold"
           style={{ color: scoreColor }}
         >
@@ -189,15 +189,15 @@ export function AeroScoreDisplay({
               <div className="text-muted-foreground">{lastCalculation.breakdown.behavioral}%</div>
             </div>
             <div className="text-center">
-              <div className="font-medium text-foreground">Vocal</div>
+              <div className="font-medium text-foreground">Voice</div>
               <div className="text-muted-foreground">{lastCalculation.breakdown.vocal}%</div>
             </div>
             <div className="text-center">
-              <div className="font-medium text-foreground">Hemodynamic</div>
+              <div className="font-medium text-foreground">Stability</div>
               <div className="text-muted-foreground">{lastCalculation.breakdown.hemodynamic}%</div>
             </div>
           </div>
-          
+
           <div className="mt-3 text-xs text-center text-muted-foreground">
             Confidence: {Math.round(lastCalculation.confidence * 100)}%
           </div>

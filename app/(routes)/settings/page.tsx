@@ -118,7 +118,7 @@ export default function SettingsPage() {
         <div className="flex items-center gap-3 p-4">
           <div
             className="flex h-12 w-12 items-center justify-center rounded-full font-serif text-lg font-bold"
-            style={{ background: 'rgba(0, 245, 255, 0.15)', color: '#00F5FF' }}
+            style={{ background: 'color-mix(in srgb, var(--primary) 15%, transparent)', color: 'var(--primary)' }}
           >
             {user?.name?.charAt(0) ?? 'A'}
           </div>
@@ -151,7 +151,7 @@ export default function SettingsPage() {
             onClick={() => setDemoMode(!demoMode)}
             className="relative h-6 w-11 rounded-full transition-colors flex-shrink-0"
             style={{
-              background: demoMode ? '#00F5FF' : 'var(--surface-translucent)',
+              background: demoMode ? 'var(--primary)' : 'var(--surface-translucent)',
             }}
             aria-label="Toggle demo mode"
             role="switch"
@@ -160,7 +160,7 @@ export default function SettingsPage() {
             <span
               className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full transition-transform"
               style={{
-                background: demoMode ? '#050505' : 'var(--muted-foreground)',
+                background: demoMode ? 'var(--background)' : 'var(--muted-foreground)',
                 transform: demoMode ? 'translateX(20px)' : 'translateX(0)',
               }}
             />
@@ -186,11 +186,11 @@ export default function SettingsPage() {
                     className="flex h-10 w-10 items-center justify-center rounded-full"
                     style={{
                       background: isActive
-                        ? 'rgba(0, 245, 255, 0.15)'
+                        ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
                         : 'var(--surface-translucent)',
                     }}
                   >
-                    <Monitor className="h-5 w-5" style={{ color: isActive ? '#00F5FF' : 'var(--muted-foreground)' }} />
+                    <Monitor className="h-5 w-5" style={{ color: isActive ? 'var(--primary)' : 'var(--muted-foreground)' }} />
                   </div>
                   <div className="flex-1 text-left rtl:text-right">
                     <p className="text-sm font-medium text-foreground">{label}</p>
@@ -198,8 +198,8 @@ export default function SettingsPage() {
                   <div
                     className="h-4 w-4 rounded-full border-2"
                     style={{
-                      borderColor: isActive ? '#00F5FF' : 'var(--border)',
-                      background: isActive ? '#00F5FF' : 'transparent',
+                      borderColor: isActive ? 'var(--primary)' : 'var(--border)',
+                      background: isActive ? 'var(--primary)' : 'transparent',
                     }}
                   />
                 </button>

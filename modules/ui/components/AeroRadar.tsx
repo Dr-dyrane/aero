@@ -188,7 +188,7 @@ export function AeroRadar({ tiers, onSelect, activeIndex }: AeroRadarProps) {
                             </span>
                             <div className="h-[1px] w-8 bg-primary/20 mx-auto mt-1 mb-2" />
                             <p className="text-[11px] font-serif text-foreground/40 italic leading-none lowercase tracking-widest">
-                                {typeof activeIndex === 'number' ? "clinical status" : "protocol"}
+                                {typeof activeIndex === 'number' ? "health status" : "status"}
                             </p>
                         </motion.div>
                     </AnimatePresence>
