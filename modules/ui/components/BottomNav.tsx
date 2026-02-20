@@ -4,8 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useNavigator } from '@/lib/navigation';
 import { LayoutDashboard, Shield, Settings, ScanFace, ChevronRight, Zap, Coins } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { useLayout } from '../providers/LayoutProvider';
 
