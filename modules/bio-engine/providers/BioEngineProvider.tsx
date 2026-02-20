@@ -52,6 +52,8 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
   const demoMode = useAeroStore((s) => s.demoMode);
   const setScanStatus = useAeroStore((s) => s.setScanStatus);
   const setAeroScore = useAeroStore((s) => s.setAeroScore);
+  const setVault = useAeroStore((s) => s.setVault);
+  const vault = useAeroStore((s) => s.vault);
 
   const [permissions, setPermissions] = useState<SensorPermissions>({
     microphone: 'unknown',
@@ -131,6 +133,20 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
           });
           const result = await fetchAeroScore(user?.id || 'demo', telemetry, demoMode);
           setAeroScore(result.score);
+
+          // Update Vault based on outcome
+          if (result.score > 80) {
+            setVault({
+              spendable: vault.spendable + 5.00,
+              locked: Math.max(0, vault.locked - 5.00)
+            });
+          } else if (result.score <= 20) {
+            const deduction = Math.min(vault.spendable, 5.00);
+            setVault({
+              spendable: vault.spendable - deduction,
+              locked: vault.locked + deduction
+            });
+          }
         } catch (e) {
           console.warn('Algorithm sync failed, falling back to demo static score');
         }

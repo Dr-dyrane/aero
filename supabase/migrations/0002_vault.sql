@@ -34,6 +34,7 @@ CREATE OR REPLACE TRIGGER on_profile_created_vault
   FOR EACH ROW EXECUTE FUNCTION handle_new_vault();
 
 -- Unlock daily reward: $5 per verified clean day (score > 80)
+-- Stability Reversion: Deduct $5 for critical instability (score <= 20)
 CREATE OR REPLACE FUNCTION unlock_daily_reward()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -41,6 +42,13 @@ BEGIN
     UPDATE vaults SET
       spendable_balance = spendable_balance + 5.00,
       locked_balance = GREATEST(locked_balance - 5.00, 0),
+      aero_score = NEW.score,
+      updated_at = now()
+    WHERE user_id = NEW.user_id;
+  ELSIF NEW.score <= 20 THEN
+    UPDATE vaults SET
+      locked_balance = locked_balance + LEAST(spendable_balance, 5.00),
+      spendable_balance = GREATEST(spendable_balance - 5.00, 0),
       aero_score = NEW.score,
       updated_at = now()
     WHERE user_id = NEW.user_id;

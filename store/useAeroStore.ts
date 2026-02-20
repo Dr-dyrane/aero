@@ -61,7 +61,7 @@ export const useAeroStore = create<AeroState>()(
               aeroScore: DEMO_AERO_SCORE,
               streak: DEMO_STREAK,
               scanStatus: 'success',
-              isWakeUpCall: DEMO_AERO_SCORE >= 90
+              isWakeUpCall: DEMO_AERO_SCORE <= 20
             }
             : {
               demoMode,

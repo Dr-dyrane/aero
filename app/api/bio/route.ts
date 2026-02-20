@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         // 3. Return the hard truth
         return NextResponse.json({
             score,
-            isWakeUpCall: score >= 90,
+            isWakeUpCall: score <= 20,
             timestamp: new Date().toISOString()
         });
 

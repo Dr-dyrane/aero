@@ -49,6 +49,8 @@ export default function ScanPage() {
       confidence: "Accuracy",
       yieldMined: "Reward Earned",
       equityAdded: "+ $5.00 Balance Added",
+      equityDeducted: "- $5.00 Balance Reverted",
+      stabilityFailure: "STABILITY FAILURE",
       viewInVault: "View Balance",
       initiate: "START HEALTH SCAN",
       abort: "Cancel",
@@ -68,6 +70,8 @@ export default function ScanPage() {
       confidence: "مستوى الدقة",
       yieldMined: "تم ربح المكافأة",
       equityAdded: "+ ٥.٠٠ دولار رصيد مضاف",
+      equityDeducted: "- ٥.٠٠ دولار رصيد مسترجع",
+      stabilityFailure: "فشل الاستقرار",
       viewInVault: "عرض الرصيد",
       initiate: "بدء فحص الصحة",
       abort: "إلغاء",
@@ -281,24 +285,44 @@ export default function ScanPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center w-full max-w-sm z-10 gap-6"
           >
-            <AeroCard glow className="w-full border-gold/30 bg-gold/5 backdrop-blur-3xl p-8">
+            <AeroCard
+              glow
+              className={cn(
+                "w-full backdrop-blur-3xl p-8 border",
+                aeroScore <= 20 ? "border-red-500/30 bg-red-500/5 shadow-[0_0_80px_rgba(239,68,68,0.1)]" : "border-gold/30 bg-gold/5"
+              )}
+            >
               <div className="flex flex-col items-center text-center gap-6">
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', damping: 12 }}
-                  className="h-24 w-24 rounded-full bg-gold/20 flex items-center justify-center shadow-[0_0_50px_rgba(212,175,55,0.3)]"
+                  className={cn(
+                    "h-24 w-24 rounded-full flex items-center justify-center",
+                    aeroScore <= 20
+                      ? "bg-red-500/20 shadow-[0_0_50px_rgba(239,68,68,0.3)]"
+                      : "bg-gold/20 shadow-[0_0_50px_rgba(212,175,55,0.3)]"
+                  )}
                 >
-                  <Gem className="h-12 w-12 text-gold" />
+                  {aeroScore <= 20 ? (
+                    <ShieldCheck className="h-12 w-12 text-red-500" />
+                  ) : (
+                    <Gem className="h-12 w-12 text-gold" />
+                  )}
                 </motion.div>
 
                 <div className="space-y-2">
                   <h2 className={cn(
                     "font-serif text-4xl transition-colors",
-                    resolvedTheme === 'eclipse' ? "text-white" : "text-foreground"
-                  )}>{t.yieldMined}</h2>
-                  <p className="text-sm text-gold/80 uppercase tracking-[0.2em] font-bold">
-                    {t.equityAdded}
+                    aeroScore <= 20 ? "text-red-500" : (resolvedTheme === 'eclipse' ? "text-white" : "text-foreground")
+                  )}>
+                    {aeroScore <= 20 ? t.stabilityFailure : t.yieldMined}
+                  </h2>
+                  <p className={cn(
+                    "text-sm uppercase tracking-[0.2em] font-bold",
+                    aeroScore <= 20 ? "text-red-400" : "text-gold/80"
+                  )}>
+                    {aeroScore <= 20 ? t.equityDeducted : t.equityAdded}
                   </p>
                 </div>
 

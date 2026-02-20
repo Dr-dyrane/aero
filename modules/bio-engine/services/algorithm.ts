@@ -39,7 +39,7 @@ export function calculateAeroScoreLocal(telemetry: TelemetryPacket): { score: nu
 
     return {
         score: Math.min(Math.max(score, 0), 100),
-        isWakeUpCall: score >= 90
+        isWakeUpCall: score <= 20
     };
 }
 
