@@ -34,7 +34,7 @@ export function BottomNav() {
     <motion.div
       animate={{ y: isNavVisible ? 0 : 120 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed bottom-8 left-1/2 z-50 w-full max-w-[400px] -translate-x-1/2 px-4 pointer-events-none"
+      className="fixed bottom-8 left-1/2 z-[100] w-full max-w-[400px] -translate-x-1/2 px-4 pointer-events-none"
     >
       <div className="flex items-center justify-between pointer-events-auto">
 

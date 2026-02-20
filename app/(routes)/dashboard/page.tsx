@@ -8,6 +8,8 @@ import { useNavigator } from '@/lib/navigation';
 import { DEMO_MERITS, DEMO_SCAN_HISTORY, MERIT_LEVELS } from '@/lib/data';
 import { Shield, Zap, TrendingUp, ChevronRight, Sparkles, Brain, Clock, Globe, ArrowUpRight } from 'lucide-react';
 import { motion, type Variants } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { useBioEngine } from '@/modules/bio-engine';
 
 export default function DashboardPage() {
   const aeroScore = useAeroStore((s) => s.aeroScore);
@@ -18,6 +20,8 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const nav = useNavigator();
   const language = useAeroStore((s) => s.language);
+  const isWakeUpCall = useAeroStore((s) => s.isWakeUpCall);
+  const { resetScan } = useBioEngine();
 
   // Dictionary
   const content = {
@@ -25,39 +29,45 @@ export default function DashboardPage() {
       bioMarketValue: "Bio-Market Value",
       topGlobal: "TOP 4.2% GLOBAL",
       marketInsight: "Market Insight",
-      insightText: `"Your baseline stability signals a breakout. Projected yield increases by 12% if streak holds through weekend."`,
+      insightText: isWakeUpCall
+        ? "CRITICAL: Bio-signatures indicate acute nicotine load. Vascular resistance is peaking. Recommend immediate cessation ritual."
+        : `"Your baseline stability signals a breakout. Projected yield increases by 12% if streak holds through weekend."`,
       liveFeed: "Live Feed",
       fullReport: "FULL REPORT",
       totalEquity: "Total Equity",
       locked: "LOCKED",
       verifyStatus: "Verify Status",
-      secure: "SECURE",
+      secure: isWakeUpCall ? "VULNERABLE" : "SECURE",
       pending: "PENDING",
       uptime: "99.8% Uptime",
       yieldTier: "Yield Tier",
       levelUp: "to Level Up",
-      ctaMain: "VERIFY & MINE YIELD",
-      ctaSub: "DAILY CHECK-IN UNLOCKED",
-      footer: "Encrypted Bio-Ledger Active"
+      ctaMain: isWakeUpCall ? "INITIATE DETOX" : "VERIFY & MINE YIELD",
+      ctaSub: isWakeUpCall ? "PROTOCOL OVERRIDE ACTIVE" : "DAILY CHECK-IN UNLOCKED",
+      footer: "Encrypted Bio-Ledger Active",
+      addictionAlert: "ADDICTION ALERT"
     },
     ar: {
       bioMarketValue: "القيمة السوقية الحيوية",
       topGlobal: "أعلى ٤.٢٪ عالمياً",
       marketInsight: "رؤى السوق",
-      insightText: `"استقرارك الحيوي يشير إلى انطلاقة قوية. العائد المتوقع سيزيد بنسبة ١٢٪ إذا استمر الأداء خلال عطلة نهاية الأسبوع."`,
+      insightText: isWakeUpCall
+        ? "حرج: المؤشرات الحيوية تدل على حمل نيكوتين عالي. ضغط الدم مرتفع. نوصي ببدء طقس التوقف فوراً."
+        : `"استقرارك الحيوي يشير إلى انطلاقة قوية. العائد المتوقع سيزيد بنسبة ١٢٪ إذا استمر الأداء خلال عطلة نهاية الأسبوع."`,
       liveFeed: "بث مباشر",
       fullReport: "التقرير الكامل",
       totalEquity: "إجمالي الأصول",
       locked: "مُجمد",
       verifyStatus: "حالة التحقق",
-      secure: "آمن",
+      secure: isWakeUpCall ? "ضعيف" : "آمن",
       pending: "قيد الانتظار",
       uptime: "٩٩.٨٪ استقرار",
       yieldTier: "مستوى العائد",
       levelUp: "للترقية",
-      ctaMain: "تحقق واجمع العائد",
-      ctaSub: "تسجيل الدخول اليومي متاح",
-      footer: "السجل الحيوي المشفر نشط"
+      ctaMain: isWakeUpCall ? "بدء التطهير" : "تحقق واجمع العائد",
+      ctaSub: isWakeUpCall ? "بروتوكول التجاوز نشط" : "تسجيل الدخول اليومي متاح",
+      footer: "السجل الحيوي المشفر نشط",
+      addictionAlert: "تنبيه إدمان"
     }
   };
 
@@ -91,37 +101,64 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-4 pb-32 overflow-x-hidden">
+    <main className={cn(
+      "flex min-h-screen flex-col items-center px-4 pb-32 overflow-x-hidden transition-colors duration-1000",
+      isWakeUpCall ? "bg-red-950/20" : "bg-background"
+    )}>
+      {isWakeUpCall && (
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,59,48,0.15)_0%,transparent_70%)]" />
+          <div className="absolute inset-0 bg-[#FF3B30]/[0.02] animate-pulse" />
+        </div>
+      )}
+
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="w-full max-w-sm flex flex-col items-center"
+        className="w-full max-w-sm flex flex-col items-center z-10"
       >
         {/* Header Section: Reduced padding, now handled by TopNav */}
         <div className="h-6" />
 
         {/* BIO-MARKET VALUE TICKER */}
         <motion.section variants={item} className="flex flex-col items-center py-6 relative w-full pt-10">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+          <div className={cn(
+            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 blur-[100px] rounded-full pointer-events-none transition-colors duration-1000",
+            isWakeUpCall ? "bg-red-500/10" : "bg-primary/5"
+          )} />
 
           {/* Global Identity Anchor (72px AeroOrb) */}
           <div className="mb-6">
             <AeroOrb score={aeroScore} size={72} pulsing />
           </div>
 
-          <div className="flex flex-col items-center gap-1 z-10">
-            <span className="text-[10px] tracking-[0.2em] font-bold text-muted-foreground uppercase opacity-70">
-              {t.bioMarketValue}
+          <div className="flex flex-col items-center gap-1 z-10 text-center">
+            <span className={cn(
+              "text-[10px] tracking-[0.2em] font-bold uppercase opacity-70 transition-colors",
+              isWakeUpCall ? "text-red-400" : "text-muted-foreground"
+            )}>
+              {isWakeUpCall ? t.addictionAlert : t.bioMarketValue}
             </span>
-            <h1 className="font-serif text-7xl font-light tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/50 tabular-nums">
+            <h1 className={cn(
+              "font-serif text-7xl font-light tracking-tighter text-transparent bg-clip-text tabular-nums transition-all duration-1000",
+              isWakeUpCall
+                ? "bg-gradient-to-b from-red-400 via-red-500 to-red-900"
+                : "bg-gradient-to-b from-foreground via-foreground to-foreground/50"
+            )}>
               {aeroScore}
             </h1>
 
             {/* Global Percentile Indicator */}
-            <div className="mt-4 flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
-              <Globe className="h-3 w-3 text-primary animate-pulse" />
-              <span className="text-[10px] font-bold text-primary tracking-widest uppercase">
+            <div className={cn(
+              "mt-4 flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-md shadow-lg border transition-all duration-1000",
+              isWakeUpCall ? "bg-red-500/10 border-red-500/20" : "bg-white/5 border-white/10"
+            )}>
+              <Globe className={cn("h-3 w-3 animate-pulse", isWakeUpCall ? "text-red-400" : "text-primary")} />
+              <span className={cn(
+                "text-[10px] font-bold tracking-widest uppercase transition-colors",
+                isWakeUpCall ? "text-red-400" : "text-primary"
+              )}>
                 {t.topGlobal}
               </span>
             </div>
@@ -249,8 +286,16 @@ export default function DashboardPage() {
           <AeroButton
             variant="primary"
             size="lg"
-            className="w-full h-16 text-lg shadow-[0_0_50px_rgba(0,245,255,0.2)] group border border-primary/50 relative overflow-hidden"
-            onClick={() => nav.goToScan()}
+            className={cn(
+              "w-full h-16 text-lg group border relative overflow-hidden transition-all duration-1000",
+              isWakeUpCall
+                ? "shadow-[0_0_50px_rgba(239,68,68,0.3)] border-red-500/50 bg-red-600"
+                : "shadow-[0_0_50px_rgba(0,245,255,0.2)] border-primary/50"
+            )}
+            onClick={() => {
+              resetScan();
+              nav.goToScan();
+            }}
           >
             {/* Inner Shimmer */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />

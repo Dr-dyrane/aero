@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useTheme } from '@/modules/ui';
+import { useAeroStore } from '@/store/useAeroStore';
 
 export interface AeroOrbProps {
   score: number; // 0-100
@@ -20,14 +21,26 @@ export interface AeroOrbProps {
  */
 export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false }: AeroOrbProps) {
   const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === 'eclipse';
+  const isWakeUpCall = useAeroStore((s) => s.isWakeUpCall); // Added useAeroStore hook
+  const isDark = resolvedTheme === 'eclipse' || isWakeUpCall; // Modified isDark to include isWakeUpCall
 
   // Default theme-sensitive logo if no imgSrc provided
   const logoSrc = imgSrc || (isDark ? "/as.png" : "/aero_light.png");
 
   const glowIntensity = score / 100;
   const glowAlpha = 0.12 + glowIntensity * 0.35;
-  const glowColor = `rgba(0, 245, 255, ${glowAlpha})`;
+
+  // The Wake-Up Call Shift: Cyan transforms into a pulsing Warning Red
+  const baseGlowColor = isWakeUpCall ? '255, 59, 48' : '0, 245, 255'; // Modified glowColor logic
+  const glowColor = `rgba(${baseGlowColor}, ${glowAlpha})`;
+
+  // Determine animation parameters based on pulsing prop and wake-up call state
+  const ambientOpacity = isWakeUpCall ? [0.4, 0.9, 0.4] : (pulsing ? [0.3, 0.8, 0.3] : [0.3, 0.6, 0.3]);
+  const ambientScale = isWakeUpCall ? [1, 1.2, 1] : (pulsing ? [1, 1.15, 1] : 1);
+  const ambientDuration = isWakeUpCall ? 1.8 : (pulsing ? 3.6 : 10);
+
+  const artifactY = isWakeUpCall ? [0, -6, 0] : (pulsing ? [0, -4, 0] : [0, -8, 0]);
+  const artifactDuration = isWakeUpCall ? 2.4 : (pulsing ? 4.8 : 12);
 
   return (
     <div
@@ -42,11 +55,11 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
           filter: `blur(40px)`,
         }}
         animate={{
-          opacity: pulsing ? [0.3, 0.8, 0.3] : [0.3, 0.6, 0.3],
-          scale: pulsing ? [1, 1.15, 1] : 1,
+          opacity: ambientOpacity,
+          scale: ambientScale,
         }}
         transition={{
-          duration: pulsing ? 3.6 : 10,
+          duration: ambientDuration,
           repeat: Infinity,
           ease: "easeInOut",
         }}
@@ -56,10 +69,10 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
       <motion.div
         className="relative flex items-center justify-center w-full h-full"
         animate={{
-          y: pulsing ? [0, -4, 0] : [0, -8, 0],
+          y: artifactY,
         }}
         transition={{
-          duration: pulsing ? 4.8 : 12,
+          duration: artifactDuration,
           repeat: Infinity,
           ease: "easeInOut",
         }}

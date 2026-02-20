@@ -15,6 +15,8 @@ import type {
   SensorAvailability,
   TripleCheckResult,
 } from '@/lib/types';
+import { useAuth } from '@/modules/auth';
+import { normalizeTelemetry, fetchAeroScore } from '../services/algorithm';
 
 interface BioEngineContextValue {
   permissions: SensorPermissions;
@@ -24,6 +26,7 @@ interface BioEngineContextValue {
   requestPermissions: () => Promise<void>;
   startTripleCheck: () => Promise<void>;
   cancelTripleCheck: () => void;
+  resetScan: () => void;
 }
 
 const BioEngineContext = createContext<BioEngineContextValue | null>(null);
@@ -44,8 +47,10 @@ const INITIAL_RESULT: TripleCheckResult = {
 };
 
 export function BioEngineProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const demoMode = useAeroStore((s) => s.demoMode);
   const setScanStatus = useAeroStore((s) => s.setScanStatus);
+  const setAeroScore = useAeroStore((s) => s.setAeroScore);
 
   const [permissions, setPermissions] = useState<SensorPermissions>({
     microphone: 'unknown',
@@ -110,6 +115,22 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
       setTripleCheckResult((prev) => ({ ...prev, ppg: DEMO_TRIPLE_CHECK.ppg }));
       await new Promise((r) => setTimeout(r, 2800));
       setTripleCheckResult(DEMO_TRIPLE_CHECK);
+
+      // Even in demo mode, let's run the algorithm with simulated telemetry
+      if (user?.id) {
+        try {
+          const telemetry = normalizeTelemetry({
+            voice: 0.15 + Math.random() * 0.1,
+            ppg: 0.2 + Math.random() * 0.15,
+            face: 0.1 + Math.random() * 0.1
+          });
+          const result = await fetchAeroScore(user?.id || 'demo', telemetry, demoMode);
+          setAeroScore(result.score);
+        } catch (e) {
+          console.warn('Algorithm sync failed, falling back to demo static score');
+        }
+      }
+
       setScanStatus('success');
       setIsScanning(false);
       return;
@@ -120,14 +141,36 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
     // 2. PPG (camera + flash)
     // 3. Face (video stream)
     // Raw biometric data never leaves the device.
-    setScanStatus('success');
+    if (user?.id) {
+      try {
+        // Placeholder for real sensor data collection
+        const telemetry = normalizeTelemetry({
+          voice: 0.5, // To be replaced with real frequency tracking
+          ppg: 0.5,   // To be replaced with real pulse-ox
+          face: 0.5   // To be replaced with real perfusion map
+        });
+        const result = await fetchAeroScore(user.id, telemetry, demoMode);
+        setAeroScore(result.score);
+        setScanStatus('success');
+      } catch (e) {
+        setScanStatus('failed');
+      }
+    } else {
+      setScanStatus('success');
+    }
     setIsScanning(false);
-  }, [demoMode, setScanStatus]);
+  }, [demoMode, setScanStatus, user?.id, setAeroScore]);
 
   const cancelTripleCheck = useCallback(() => {
     setIsScanning(false);
     setScanStatus('idle');
     setTripleCheckResult(INITIAL_RESULT);
+  }, [setScanStatus]);
+
+  const resetScan = useCallback(() => {
+    setScanStatus('idle');
+    setTripleCheckResult(INITIAL_RESULT);
+    setIsScanning(false);
   }, [setScanStatus]);
 
   return (
@@ -140,6 +183,7 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
         requestPermissions,
         startTripleCheck,
         cancelTripleCheck,
+        resetScan,
       }}
     >
       {children}

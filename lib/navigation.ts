@@ -17,6 +17,7 @@ export function useNavigator() {
     goToAuth: () => router.push('/auth'),
     goToSettings: () => router.push('/settings'),
     goToRoot: () => router.push('/'),
+    goToHowItWorks: () => router.push('/how-it-works'),
     goToOnboardingIfNeeded: (hasBaseline: boolean) =>
       hasBaseline ? router.push('/dashboard') : router.push('/scan'),
   };

@@ -7,12 +7,16 @@ import { useTheme } from '@/modules/ui/providers/ThemeProvider';
 import { useAuth } from '@/modules/auth';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useNavigator } from '@/lib/navigation';
-import { ArrowLeft, Sun, Moon, Monitor, Shield, LogOut } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, Monitor, Shield, LogOut, Zap } from 'lucide-react';
 
 export default function SettingsPage() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const { user, signOut } = useAuth();
-  const { demoMode, setDemoMode, language, setLanguage } = useAeroStore();
+  const {
+    demoMode, setDemoMode,
+    language, setLanguage,
+    isWakeUpCall, setAeroScore
+  } = useAeroStore();
   const nav = useNavigator();
 
   const handleSignOut = async () => {
@@ -172,6 +176,43 @@ export default function SettingsPage() {
           })}
         </div>
       </div>
+
+      {/* Clinical Stress Test */}
+      {demoMode && (
+        <div className="mt-8 w-full max-w-sm">
+          <AeroCard className="border-red-500/20 bg-red-500/5">
+            <div className="flex items-center justify-between p-4">
+              <div className="flex items-center gap-3">
+                <div
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10"
+                >
+                  <Zap className="h-5 w-5 text-red-500" />
+                </div>
+                <div className="text-left rtl:text-right">
+                  <p className="text-sm font-medium text-red-500">Clinical Stress Test</p>
+                  <p className="text-xs text-red-400/60 leading-tight">
+                    Simulate AS {'>='} 90 (Addiction Protocol)
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setAeroScore(isWakeUpCall ? 87 : 92)}
+                className="relative h-6 w-11 rounded-full transition-colors flex-shrink-0"
+                style={{
+                  background: isWakeUpCall ? '#FF3B30' : 'rgba(255,255,255,0.05)',
+                }}
+              >
+                <span
+                  className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full transition-transform bg-white shadow-sm"
+                  style={{
+                    transform: isWakeUpCall ? 'translateX(20px)' : 'translateX(0)',
+                  }}
+                />
+              </button>
+            </div>
+          </AeroCard>
+        </div>
+      )}
 
       {/* Theme Selection */}
       <div className="mt-6 w-full max-w-sm">

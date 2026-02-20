@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useNavigator } from '@/lib/navigation';
-import { Menu, Bell, X, User, Heart, Activity, ShieldCheck, LayoutDashboard, ChevronLeft, Sparkles, LogOut } from 'lucide-react';
+import { Menu, Bell, X, User, Heart, Activity, ShieldCheck, LayoutDashboard, ChevronLeft, Sparkles, LogOut, Info } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { AeroCard } from './AeroCard';
@@ -49,6 +49,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
             identity: "Identity & Security",
             diagnostics: "Baseline Diagnostics",
             sovereign: "Sovereign Bio-Identity Protocol",
+            howItWorks: "Bio-Protocol",
             signOut: "De-authenticate"
         },
         ar: {
@@ -65,6 +66,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
             identity: "الهوية والأمن",
             diagnostics: "تشخيصات الأساس",
             sovereign: "بروتوكول الهوية الحيوية السيادية",
+            howItWorks: "البروتوكول الحيوي",
             signOut: "تسجيل الخروج"
         }
     };
@@ -90,7 +92,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                 animate={{ y: isNavVisible ? 0 : -100 }}
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 className={cn(
-                    "fixed top-0 left-1/2 z-[55] flex h-20 w-full max-w-[430px] -translate-x-1/2 items-center justify-between z-10",
+                    "fixed top-0 left-1/2 flex h-20 w-full max-w-[430px] -translate-x-1/2 items-center justify-between z-[100]",
                     hasBack ? "px-1" : "px-6",
                     "pointer-events-none"
                 )}
@@ -164,7 +166,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsOpen(false)}
-                            className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm mx-auto max-w-[430px]"
+                            className="fixed inset-0 z-[110] bg-black/40 backdrop-blur-sm mx-auto max-w-[430px]"
                         />
 
                         {/* Panel: Borderless, Rounded-R, Transparent Blur */}
@@ -174,7 +176,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                             exit={{ x: language === 'ar' ? '100%' : '-100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                             className={cn(
-                                "fixed inset-y-0 z-[110] w-[85%] max-w-[360px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col border-none",
+                                "fixed inset-y-0 z-[120] w-[85%] max-w-[360px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col border-none",
                                 language === 'ar' ? "right-0 rounded-l-[40px]" : "left-0 rounded-r-[40px]"
                             )}
                         >
@@ -238,6 +240,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                         { name: t.dashboard, path: '/dashboard', icon: LayoutDashboard },
                                         { name: t.bioVault, path: '/vault', icon: ShieldCheck },
                                         { name: t.identity, path: '/settings', icon: User },
+                                        { name: t.howItWorks, path: '/how-it-works', icon: Info },
                                         { name: t.diagnostics, path: '/scan', icon: Activity },
                                     ].map((link) => (
                                         <button
@@ -246,6 +249,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                                 if (link.path === '/vault') nav.goToVault();
                                                 else if (link.path === '/settings') nav.goToSettings();
                                                 else if (link.path === '/scan') nav.goToScan();
+                                                else if (link.path === '/how-it-works') nav.goToHowItWorks();
                                                 else nav.goToDashboard();
                                                 setIsOpen(false);
                                             }}

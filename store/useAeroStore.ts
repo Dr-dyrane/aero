@@ -25,6 +25,8 @@ type AeroState = {
   // Aero Score
   aeroScore: number;
   setAeroScore: (score: number) => void;
+  isWakeUpCall: boolean;
+  setWakeUpCall: (v: boolean) => void;
 
   // Theme
   theme: AeroTheme;
@@ -59,6 +61,7 @@ export const useAeroStore = create<AeroState>()(
               aeroScore: DEMO_AERO_SCORE,
               streak: DEMO_STREAK,
               scanStatus: 'success',
+              isWakeUpCall: DEMO_AERO_SCORE >= 90
             }
             : {
               demoMode,
@@ -66,6 +69,7 @@ export const useAeroStore = create<AeroState>()(
               aeroScore: 0,
               streak: 0,
               scanStatus: 'idle',
+              isWakeUpCall: false
             }
         ),
 
@@ -76,7 +80,12 @@ export const useAeroStore = create<AeroState>()(
 
       // Aero Score
       aeroScore: DEMO_AERO_SCORE,
-      setAeroScore: (aeroScore) => set({ aeroScore }),
+      isWakeUpCall: false,
+      setAeroScore: (aeroScore) => set({
+        aeroScore,
+        isWakeUpCall: aeroScore >= 90
+      }),
+      setWakeUpCall: (v) => set({ isWakeUpCall: v }),
 
       // Theme
       theme: 'eclipse',
