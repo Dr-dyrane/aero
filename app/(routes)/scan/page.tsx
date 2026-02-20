@@ -49,7 +49,7 @@ export default function ScanPage() {
   const isComplete = scanStatus === 'success' && tripleCheckResult.completedAt;
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-4 pb-28 pt-2">
+    <main className="flex min-h-screen flex-col items-center px-4 pb-28">
       {/* Header handled by TopNav */}
       <div className="w-full max-w-sm flex justify-end gap-2 mb-4">
         <AeroPill

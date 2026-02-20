@@ -29,7 +29,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-4 pb-28 pt-2">
+    <main className="flex min-h-screen flex-col items-center px-4 pb-282">
       {/* Header handled by TopNav */}
       <div className="h-4" />
 

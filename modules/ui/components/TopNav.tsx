@@ -18,18 +18,24 @@ import { NotificationSheet, useNotificationStore } from '@/modules/notifications
 interface TopNavProps {
     title?: string;
     onBack?: () => void;
+    scrollSensitivity?: boolean;
 }
 
 const AVATAR_URL = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200&h=200";
 
-export function TopNav({ title, onBack }: TopNavProps) {
+export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isNotifOpen, setIsNotifOpen] = useState(false);
-    const { isNavVisible } = useLayout();
+    const { isNavVisible, setScrollSensitivity } = useLayout();
     const nav = useNavigator();
     const pathname = usePathname();
     const demoMode = useAeroStore((s) => s.demoMode);
     const unreadCount = useNotificationStore((s) => s.unreadCount);
+
+    // Sync scroll sensitivity
+    useEffect(() => {
+        setScrollSensitivity(scrollSensitivity);
+    }, [scrollSensitivity, setScrollSensitivity]);
 
     // Close sheets on route change
     useEffect(() => {

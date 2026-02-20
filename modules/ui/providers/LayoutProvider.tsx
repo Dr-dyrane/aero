@@ -16,6 +16,7 @@ interface LayoutContextValue {
   safeAreaInsets: { top: number; bottom: number };
   isNavVisible: boolean;
   setIsNavVisible: (v: boolean) => void;
+  setScrollSensitivity: (v: boolean) => void;
 }
 
 const LayoutContext = createContext<LayoutContextValue | null>(null);
@@ -30,6 +31,7 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
   const [isMobile, setIsMobile] = useState(true);
   const [isSkeletonLoading, setSkeletonLoading] = useState(true);
   const [isNavVisible, setIsNavVisible] = useState(true);
+  const [isScrollSensitive, setScrollSensitivity] = useState(true); // Default to true
   const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
@@ -47,6 +49,8 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    if (!isScrollSensitive) return; // Skip if sensitivity disabled
+
     const currentScrollY = e.currentTarget.scrollTop;
     // Hide on scroll down, show on scroll up
     if (currentScrollY > lastScrollY && currentScrollY > 60) {
@@ -84,11 +88,12 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
         safeAreaInsets,
         isNavVisible,
         setIsNavVisible,
+        setScrollSensitivity,
       }}
     >
       <main
         onScroll={handleScroll}
-        className="relative mx-auto h-[100dvh] w-full max-w-[430px] overflow-auto bg-background shadow-2xl"
+        className="relative mx-auto h-[100dvh] w-full max-w-[430px] overflow-auto bg-background shadow-2xl pt-12"
       >
         {children}
       </main>

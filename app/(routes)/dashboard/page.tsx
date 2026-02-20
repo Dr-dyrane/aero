@@ -46,7 +46,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-4 pb-32 pt-6 overflow-x-hidden">
+    <main className="flex min-h-screen flex-col items-center px-4 pb-32 overflow-x-hidden">
       <motion.div
         variants={container}
         initial="hidden"

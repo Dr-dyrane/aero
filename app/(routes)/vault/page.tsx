@@ -15,7 +15,7 @@ export default function VaultPage() {
   const nav = useNavigator();
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-4 pb-28 pt-2">
+    <main className="flex min-h-screen flex-col items-center px-4 pb-28">
       {/* Header handled by TopNav */}
       <div className="h-4" />
 
