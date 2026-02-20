@@ -3,6 +3,8 @@ import {
   DEMO_VAULT,
   DEMO_AERO_SCORE,
   DEMO_STREAK,
+  DEMO_VAULT_TRANSACTIONS,
+  DEMO_SCAN_HISTORY,
 } from '@/lib/data';
 
 export type AeroTheme = 'eclipse' | 'cloud' | 'system';
@@ -13,6 +15,9 @@ type VaultState = {
   spendable: number;
 };
 
+import { persist } from 'zustand/middleware';
+import { Transaction, ScanHistoryItem } from '@/lib/types';
+
 type AeroState = {
   // Demo Mode
   demoMode: boolean;
@@ -21,12 +26,16 @@ type AeroState = {
   // Vault
   vault: VaultState;
   setVault: (vault: Partial<VaultState>) => void;
+  transactions: Transaction[];
+  addTransaction: (tx: Omit<Transaction, 'id' | 'date'>) => void;
 
   // Aero Score
   aeroScore: number;
   setAeroScore: (score: number) => void;
   isWakeUpCall: boolean;
   setWakeUpCall: (v: boolean) => void;
+  scans: ScanHistoryItem[];
+  addScan: (scan: Omit<ScanHistoryItem, 'id' | 'date'>) => void;
 
   // Theme
   theme: AeroTheme;
@@ -45,8 +54,6 @@ type AeroState = {
   setLanguage: (lang: 'en' | 'ar') => void;
 };
 
-import { persist } from 'zustand/middleware';
-
 export const useAeroStore = create<AeroState>()(
   persist(
     (set) => ({
@@ -61,7 +68,9 @@ export const useAeroStore = create<AeroState>()(
               aeroScore: DEMO_AERO_SCORE,
               streak: DEMO_STREAK,
               scanStatus: 'success',
-              isWakeUpCall: DEMO_AERO_SCORE <= 20
+              isWakeUpCall: DEMO_AERO_SCORE <= 20,
+              transactions: [...DEMO_VAULT_TRANSACTIONS],
+              scans: [...DEMO_SCAN_HISTORY.map((s, i) => ({ ...s, id: `scan-${i}` }))]
             }
             : {
               demoMode,
@@ -69,7 +78,9 @@ export const useAeroStore = create<AeroState>()(
               aeroScore: 0,
               streak: 0,
               scanStatus: 'idle',
-              isWakeUpCall: false
+              isWakeUpCall: false,
+              transactions: [],
+              scans: []
             }
         ),
 
@@ -77,6 +88,17 @@ export const useAeroStore = create<AeroState>()(
       vault: { locked: DEMO_VAULT.locked_balance, spendable: DEMO_VAULT.spendable_balance },
       setVault: (vault) =>
         set((state) => ({ vault: { ...state.vault, ...vault } })),
+      transactions: [...DEMO_VAULT_TRANSACTIONS],
+      addTransaction: (tx) => set((state) => ({
+        transactions: [
+          {
+            ...tx,
+            id: `tx-${Date.now()}`,
+            date: new Date().toISOString().split('T')[0]
+          },
+          ...state.transactions
+        ]
+      })),
 
       // Aero Score
       aeroScore: DEMO_AERO_SCORE,
@@ -86,6 +108,17 @@ export const useAeroStore = create<AeroState>()(
         isWakeUpCall: aeroScore <= 20
       }),
       setWakeUpCall: (v) => set({ isWakeUpCall: v }),
+      scans: [...DEMO_SCAN_HISTORY.map((s, i) => ({ ...s, id: `scan-${i}` }))],
+      addScan: (scan) => set((state) => ({
+        scans: [
+          {
+            ...scan,
+            id: `scan-${Date.now()}`,
+            date: new Date().toISOString().split('T')[0]
+          },
+          ...state.scans
+        ]
+      })),
 
       // Theme
       theme: 'eclipse',

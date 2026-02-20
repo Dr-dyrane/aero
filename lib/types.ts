@@ -83,6 +83,23 @@ export interface Merit {
   benefits: string[];
 }
 
+// ── History ──────────────────────────────────────────────────────
+export interface Transaction {
+  id: string;
+  date: string;
+  amount: number;
+  type: 'unlock' | 'deposit';
+  description: string;
+}
+
+export interface ScanHistoryItem {
+  id: string;
+  date: string;
+  score: number;
+  confidence: number;
+  status: 'clean' | 'compromised';
+}
+
 // ── API ──────────────────────────────────────────────────────────
 export interface ApiResponse<T = unknown> {
   data: T | null;

@@ -54,6 +54,8 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
   const setAeroScore = useAeroStore((s) => s.setAeroScore);
   const setVault = useAeroStore((s) => s.setVault);
   const vault = useAeroStore((s) => s.vault);
+  const addTransaction = useAeroStore((s) => s.addTransaction);
+  const addScan = useAeroStore((s) => s.addScan);
 
   const [permissions, setPermissions] = useState<SensorPermissions>({
     microphone: 'unknown',
@@ -134,17 +136,37 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
           const result = await fetchAeroScore(user?.id || 'demo', telemetry, demoMode);
           setAeroScore(result.score);
 
-          // Update Vault based on outcome
+          // Update Vault and Record History
           if (result.score > 80) {
             setVault({
               spendable: vault.spendable + 5.00,
               locked: Math.max(0, vault.locked - 5.00)
+            });
+            addTransaction({
+              amount: 5,
+              type: 'unlock',
+              description: 'Daily stability reward'
+            });
+            addScan({
+              score: result.score,
+              confidence: 0.9 + Math.random() * 0.1,
+              status: 'clean'
             });
           } else if (result.score <= 20) {
             const deduction = Math.min(vault.spendable, 5.00);
             setVault({
               spendable: vault.spendable - deduction,
               locked: vault.locked + deduction
+            });
+            addTransaction({
+              amount: deduction,
+              type: 'unlock', // Reverting is still an unlock-type flow in this schema
+              description: 'Stability Reversion'
+            });
+            addScan({
+              score: result.score,
+              confidence: 0.8 + Math.random() * 0.1,
+              status: 'compromised'
             });
           }
         } catch (e) {

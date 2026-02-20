@@ -7,7 +7,6 @@ import { useVault } from '@/modules/vault';
 import { useAeroStore } from '@/store/useAeroStore';
 import { useNavigator } from '@/lib/navigation';
 import { motion } from 'framer-motion';
-import { DEMO_VAULT_TRANSACTIONS } from '@/lib/data';
 import { ArrowLeft, Lock, Unlock, ArrowUpRight, ArrowDownLeft, TrendingUp, ShieldCheck, History, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLayout } from '@/modules/ui/providers/LayoutProvider';
@@ -22,6 +21,7 @@ export default function VaultPage() {
   const streak = useAeroStore((s) => s.streak);
   const language = useAeroStore((s) => s.language);
   const isWakeUpCall = useAeroStore((s) => s.isWakeUpCall);
+  const transactions = useAeroStore((s) => s.transactions);
   const nav = useNavigator();
   const { isSkeletonLoading, setSkeletonLoading } = useLayout();
   const { resolvedTheme } = useTheme();
@@ -74,8 +74,7 @@ export default function VaultPage() {
 
   const t = language === 'ar' ? content.ar : content.en;
 
-  // Projected Value Calculation (Compound effect of sobriety)
-  // Simple heuristic: Current Balance * Streak Multiplier * 10 years
+  // Projected Value Calculation
   const projectedValue = (totalBalance + (5 * 365 * 10)) * 1.08;
 
   if (isSkeletonLoading) {
@@ -112,24 +111,18 @@ export default function VaultPage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,59,48,0.15)_0%,transparent_70%)]" />
         </div>
       )}
-      {/* Header handled by TopNav */}
       <div className="h-6" />
 
-      {/* TOTAL EQUITY HEADER - INTEGRATED ARTIFACT */}
+      {/* TOTAL EQUITY HEADER */}
       <div className="flex flex-col items-center mb-6 relative w-full pt-10 min-h-[260px] justify-center overflow-visible">
-        {/* Background Aura */}
         <div className={cn(
           "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full blur-[100px] rounded-full pointer-events-none transition-colors duration-1000 z-0",
           isWakeUpCall ? "bg-red-500/15" : "bg-primary/5"
         )} />
 
-        {/* THE ARTIFACT: 'as.png' Background */}
         <div className="absolute inset-0 z-0 flex items-center justify-center opacity-[0.2] saturate-[1.2]">
           <motion.div
-            animate={{
-              scale: [1, 1.05, 1],
-              rotate: [0, -1, 0]
-            }}
+            animate={{ scale: [1, 1.05, 1], rotate: [0, -1, 0] }}
             transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
             className="relative w-[400px] h-[400px]"
           >
@@ -140,7 +133,7 @@ export default function VaultPage() {
         <div className="flex flex-col items-center relative z-10">
           <span className="text-[10px] font-bold text-muted-foreground tracking-[0.3em] uppercase">{t.totalBioEquity}</span>
           <h1 className={cn(
-            "font-serif text-6xl font-light mt-4 flex items-baseline gap-1 transition-colors duration-1000 tracking-tighter",
+            "font-serif text-6xl font-light mt-4 flex items-baseline gap-1 tracking-tighter transition-colors duration-1000",
             isWakeUpCall ? "text-red-400" : "text-foreground"
           )}>
             <span className="text-2xl text-muted-foreground opacity-50">$</span>
@@ -149,158 +142,89 @@ export default function VaultPage() {
           <AeroPill
             variant="accent"
             className={cn(
-              "mt-4 transition-colors duration-1000",
+              "mt-4 transition-colors",
               isWakeUpCall ? "bg-red-500/10 text-red-400 border-red-500/20" : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
             )}
           >
             {isWakeUpCall ? (
-              <AlertTriangle className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
+              <AlertTriangle className="h-3 w-3 mr-1" />
             ) : (
-              <TrendingUp className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
+              <TrendingUp className="h-3 w-3 mr-1" />
             )}
             {isWakeUpCall ? "-4.2% Risk" : `+12.4% ${t.yield}`}
           </AeroPill>
         </div>
       </div>
 
-      {/* PROJECTED VALUE CARD */}
       <AeroCard className={cn(
-        "w-full max-w-sm mb-4 overflow-hidden relative transition-all duration-1000",
+        "w-full max-w-sm mb-4 overflow-hidden relative",
         isWakeUpCall ? "border-red-500/30 bg-red-500/5 shadow-[0_0_40px_rgba(239,68,68,0.1)]" : "border-primary/20 bg-primary/5"
       )}>
-        <div className="absolute top-0 right-0 rtl:right-auto rtl:left-0 p-3 opacity-20">
-          {isWakeUpCall ? (
-            <AlertTriangle className="h-16 w-16 text-red-500" />
-          ) : (
-            <TrendingUp className="h-16 w-16 text-primary" />
-          )}
+        <div className="absolute top-0 right-0 p-3 opacity-20">
+          {isWakeUpCall ? <AlertTriangle className="h-16 w-16 text-red-500" /> : <TrendingUp className="h-16 w-16 text-primary" />}
         </div>
         <div className="relative z-10 flex flex-col gap-1">
-          <div className={cn(
-            "flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase transition-colors",
-            isWakeUpCall ? "text-red-400" : "text-primary"
-          )}>
+          <div className={cn("flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase", isWakeUpCall ? "text-red-400" : "text-primary")}>
             {isWakeUpCall ? <AlertTriangle className="h-3 w-3" /> : <ShieldCheck className="h-3 w-3" />}
             {t.projectionTitle}
           </div>
-          <p className={cn(
-            "text-2xl font-light tracking-wide transition-colors",
-            isWakeUpCall ? "text-red-200" : "text-foreground"
-          )}>
+          <p className={cn("text-2xl font-light tracking-wide", isWakeUpCall ? "text-red-200" : "text-foreground")}>
             {isWakeUpCall ? "---" : `$${projectedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
           </p>
-          <p className="text-xs text-muted-foreground italic">
-            {t.projectionSub}
-          </p>
+          <p className="text-xs text-muted-foreground italic">{t.projectionSub}</p>
         </div>
       </AeroCard>
 
-      {/* ASSET ALLOCATION (Liquid vs Frozen) */}
       <div className="mt-2 flex w-full max-w-sm gap-3">
-        {/* FROZEN (Endowment) */}
-        <AeroCard className="flex-1 border-white/10 bg-white/5 backdrop-blur-md relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="flex flex-col items-center p-4 relative z-10">
-            <Lock className="mb-2 h-4 w-4 text-muted-foreground" />
-            <p className="text-[10px] tracking-wider text-muted-foreground uppercase font-bold">{t.locked}</p>
-            <p className="font-numbers text-lg font-semibold text-foreground">
-              {'$'}{lockedBalance.toFixed(2)}
-            </p>
-            <span className="text-[9px] text-muted-foreground mt-1 text-center opacity-60">
-              {t.releaseInfo}
-            </span>
-          </div>
+        <AeroCard className="flex-1 bg-white/5 border-white/10 p-4 flex flex-col items-center">
+          <Lock className="mb-2 h-4 w-4 text-muted-foreground" />
+          <p className="text-[10px] text-muted-foreground uppercase font-bold">{t.locked}</p>
+          <p className="font-numbers text-lg font-semibold">${lockedBalance.toFixed(2)}</p>
+          <span className="text-[9px] text-muted-foreground mt-1">{t.releaseInfo}</span>
         </AeroCard>
-
-        {/* LIQUID (Spendable) */}
-        <AeroCard className="flex-1 border-gold/20 bg-gold/5 relative overflow-hidden group">
-          <div className="absolute inset-0 bg-gradient-to-tl from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          <div className="flex flex-col items-center p-4 relative z-10">
-            <Unlock className="mb-2 h-4 w-4 text-gold" />
-            <p className="text-[10px] tracking-wider text-gold/80 uppercase font-bold">{t.liquid}</p>
-            <p className="font-numbers text-lg font-semibold text-gold">
-              {'$'}{spendableBalance.toFixed(2)}
-            </p>
-            <span className="text-[9px] text-gold/60 mt-1 text-center">
-              {t.availableNow}
-            </span>
-          </div>
+        <AeroCard className="flex-1 bg-gold/5 border-gold/20 p-4 flex flex-col items-center">
+          <Unlock className="mb-2 h-4 w-4 text-gold" />
+          <p className="text-[10px] text-gold uppercase font-bold">{t.liquid}</p>
+          <p className="font-numbers text-lg font-semibold text-gold">${spendableBalance.toFixed(2)}</p>
+          <span className="text-[9px] text-gold/60 mt-1">{t.availableNow}</span>
         </AeroCard>
       </div>
 
-      {/* REWARD LOGIC */}
-      <div className="mt-6 flex w-full max-w-sm flex-col items-center gap-2">
-        <div className="flex items-center gap-3 w-full">
-          <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest">{t.miningRate}</span>
-          <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-        </div>
-        <AeroPill
-          variant="muted"
-          className={cn(
-            "border-white/5 bg-white/[0.02] transition-colors",
-            isWakeUpCall && "text-red-400 bg-red-500/5 border-red-500/20"
-          )}
-        >
-          {t.rateValue}
-        </AeroPill>
-      </div>
-
-      {/* TRANSACTION LEDGER */}
       <div className="mt-8 w-full max-w-sm">
         <div className="flex items-center justify-between mb-4 px-1">
-          <h2 className="font-serif text-sm font-medium text-foreground flex items-center gap-2">
+          <h2 className="font-serif text-sm font-medium flex items-center gap-2">
             <History className="h-4 w-4 text-muted-foreground" />
             {t.ledger}
           </h2>
-          <button className="text-[10px] text-primary hover:text-white transition-colors">
-            {t.export}
-          </button>
+          <button className="text-[10px] text-primary">{t.export}</button>
         </div>
 
         <div className="flex flex-col gap-2">
-          {DEMO_VAULT_TRANSACTIONS.map((tx) => (
-            <div
-              key={tx.id}
-              className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-colors"
-            >
-              <div
-                className="flex h-8 w-8 items-center justify-center rounded-full"
-                style={{
-                  background: tx.type === 'unlock'
-                    ? 'color-mix(in srgb, var(--primary) 10%, transparent)'
-                    : 'color-mix(in srgb, var(--gold) 10%, transparent)',
-                }}
-              >
+          {transactions.map((tx) => (
+            <div key={tx.id} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5">
                 {tx.type === 'unlock' ? (
-                  <ArrowUpRight className="h-4 w-4 rtl:-rotate-90" style={{ color: isWakeUpCall ? 'var(--destructive)' : 'var(--primary)' }} />
+                  <ArrowUpRight className="h-4 w-4" style={{ color: isWakeUpCall ? 'var(--destructive)' : 'var(--primary)' }} />
                 ) : (
-                  <ArrowDownLeft className="h-4 w-4 rtl:-rotate-90" style={{ color: 'var(--gold)' }} />
+                  <ArrowDownLeft className="h-4 w-4 text-gold" />
                 )}
               </div>
-              <div className="flex-1 text-left rtl:text-right">
-                <p className="text-sm font-medium text-foreground leading-none mb-1">{tx.description}</p>
-                <p className="text-[10px] text-muted-foreground font-mono opacity-60">{tx.date} • ID: {tx.id.slice(0, 6)}</p>
+              <div className="flex-1 text-left">
+                <p className="text-sm font-medium">{tx.description}</p>
+                <p className="text-[10px] text-muted-foreground">{tx.date}</p>
               </div>
-              <p
-                className="font-numbers text-sm font-semibold text-right"
-                style={{ color: tx.type === 'unlock' ? (isWakeUpCall ? 'var(--destructive)' : 'var(--primary)') : 'var(--gold)' }}
-              >
-                {tx.type === 'unlock' ? '+' : ''}{'$'}{tx.amount.toFixed(2)}
+              <p className="font-numbers text-sm font-semibold" style={{ color: tx.type === 'unlock' ? (isWakeUpCall ? 'var(--destructive)' : 'var(--primary)') : 'var(--gold)' }}>
+                {tx.type === 'unlock' ? '+' : ''}${tx.amount.toFixed(2)}
               </p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* CTA */}
       <AeroButton
         variant="primary"
         size="lg"
-        className={cn(
-          "mt-8 w-full max-w-sm h-14 transition-all duration-1000",
-          isWakeUpCall ? "bg-red-600 border-red-500/50 shadow-[0_0_40px_rgba(239,68,68,0.3)]" : ""
-        )}
+        className={cn("mt-8 w-full max-w-sm h-14", isWakeUpCall ? "bg-red-600 border-red-500/50" : "")}
         onClick={() => nav.goToScan()}
       >
         {t.cta}
