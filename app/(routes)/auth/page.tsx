@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Image from 'next/image';
 import { AeroButton, AeroCard, AeroPill } from '@/modules/ui';
 import { useAuth } from '@/modules/auth';
@@ -22,9 +23,14 @@ export default function AuthPage() {
     nav.goToDashboard();
   };
 
+  useEffect(() => {
+    if (isAuthenticated || demoMode) {
+      nav.goToDashboard();
+    }
+  }, [isAuthenticated, demoMode, nav]);
+
   if (isAuthenticated || demoMode) {
-    nav.goToDashboard();
-    return null;
+    return null; // Render nothing while redirecting
   }
 
   return (
