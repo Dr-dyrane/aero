@@ -118,7 +118,7 @@ export default function WelcomeDroplet() {
                     src={logoSrc}
                     alt="AERO Logo"
                     fill
-                    className="object-contain drop-shadow-[0_0_40px_rgba(0,245,255,0.2)]"
+                    className="object-contain drop-shadow-[0_0_40px_var(--primary)]"
                     priority
                   />
                 </motion.div>

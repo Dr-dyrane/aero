@@ -268,14 +268,14 @@ export default function VaultPage() {
                 className="flex h-8 w-8 items-center justify-center rounded-full"
                 style={{
                   background: tx.type === 'unlock'
-                    ? 'rgba(0, 245, 255, 0.1)'
-                    : 'rgba(212, 175, 55, 0.1)',
+                    ? 'color-mix(in srgb, var(--primary) 10%, transparent)'
+                    : 'color-mix(in srgb, var(--gold) 10%, transparent)',
                 }}
               >
                 {tx.type === 'unlock' ? (
-                  <ArrowUpRight className="h-4 w-4 rtl:-rotate-90" style={{ color: isWakeUpCall ? '#FF3B30' : '#00F5FF' }} />
+                  <ArrowUpRight className="h-4 w-4 rtl:-rotate-90" style={{ color: isWakeUpCall ? 'var(--destructive)' : 'var(--primary)' }} />
                 ) : (
-                  <ArrowDownLeft className="h-4 w-4 rtl:-rotate-90" style={{ color: '#D4AF37' }} />
+                  <ArrowDownLeft className="h-4 w-4 rtl:-rotate-90" style={{ color: 'var(--gold)' }} />
                 )}
               </div>
               <div className="flex-1 text-left rtl:text-right">
@@ -284,7 +284,7 @@ export default function VaultPage() {
               </div>
               <p
                 className="font-numbers text-sm font-semibold text-right"
-                style={{ color: tx.type === 'unlock' ? (isWakeUpCall ? '#FF3B30' : '#00F5FF') : '#D4AF37' }}
+                style={{ color: tx.type === 'unlock' ? (isWakeUpCall ? 'var(--destructive)' : 'var(--primary)') : 'var(--gold)' }}
               >
                 {tx.type === 'unlock' ? '+' : ''}{'$'}{tx.amount.toFixed(2)}
               </p>

@@ -259,8 +259,8 @@ export default function DashboardPage() {
                 scale: [1, 1.05, 1],
                 rotate: [0, 2, 0],
                 filter: isWakeUpCall
-                  ? ["drop-shadow(0 0 40px rgba(239,68,68,0.2))", "drop-shadow(0 0 60px rgba(239,68,68,0.4))", "drop-shadow(0 0 40px rgba(239,68,68,0.2))"]
-                  : ["drop-shadow(0 0 40px rgba(0,245,255,0.1))", "drop-shadow(0 0 60px rgba(0,245,255,0.2))", "drop-shadow(0 0 40px rgba(0,245,255,0.1))"]
+                  ? ["drop-shadow(0 0 40px var(--destructive))", "drop-shadow(0 0 60px var(--destructive))", "drop-shadow(0 0 40px var(--destructive))"]
+                  : ["drop-shadow(0 0 40px var(--primary))", "drop-shadow(0 0 60px var(--primary))", "drop-shadow(0 0 40px var(--primary))"]
               }}
               transition={{
                 duration: 10,
@@ -440,8 +440,8 @@ export default function DashboardPage() {
             className={cn(
               "w-full h-16 text-lg group border relative overflow-hidden transition-all duration-1000",
               isWakeUpCall
-                ? "shadow-[0_0_50px_rgba(239,68,68,0.3)] border-red-500/50 bg-red-600"
-                : "shadow-[0_0_50px_rgba(0,245,255,0.2)] border-primary/50"
+                ? "shadow-[0_0_50px_var(--destructive)] border-red-500/50 bg-red-600"
+                : "shadow-[0_0_50px_color-mix(in srgb, var(--primary) 20%, transparent)] border-primary/50"
             )}
             onClick={() => {
               if (isWakeUpCall) {

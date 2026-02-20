@@ -31,8 +31,8 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
   const glowAlpha = 0.12 + glowIntensity * 0.35;
 
   // The Wake-Up Call Shift: Cyan transforms into a pulsing Warning Red
-  const baseGlowColor = isWakeUpCall ? '255, 59, 48' : '0, 245, 255'; // Modified glowColor logic
-  const glowColor = `rgba(${baseGlowColor}, ${glowAlpha})`;
+  const glowAlphaHex = Math.round(glowAlpha * 255).toString(16).padStart(2, '0');
+  const glowColor = isWakeUpCall ? `var(--destructive)` : `var(--primary)`;
 
   // Determine animation parameters based on pulsing prop and wake-up call state
   const ambientOpacity = isWakeUpCall ? [0.4, 0.9, 0.4] : (pulsing ? [0.3, 0.8, 0.3] : [0.3, 0.6, 0.3]);
@@ -51,7 +51,7 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
       <motion.div
         className="absolute inset-0 rounded-full pointer-events-none"
         style={{
-          background: `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`,
+          background: `radial-gradient(circle, color-mix(in srgb, ${glowColor} ${glowAlpha * 100}%, transparent) 0%, transparent 70%)`,
           filter: `blur(40px)`,
         }}
         animate={{
@@ -86,7 +86,7 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
                 width: '100%',
                 height: '100%',
                 objectFit: 'contain',
-                filter: `drop-shadow(0 0 20px rgba(0, 245, 255, ${glowAlpha}))`,
+                filter: `drop-shadow(0 0 20px color-mix(in srgb, ${glowColor} ${glowAlpha * 100}%, transparent))`,
               }}
               className="z-10"
               draggable={false}

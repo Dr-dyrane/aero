@@ -109,7 +109,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <main className="flex min-h-screen flex-col items-center px-4 pb-282">
+    <main className="flex min-h-screen flex-col items-center px-4 pb-32">
       {/* Header handled by TopNav */}
       <div className="h-4" />
 
@@ -271,7 +271,7 @@ export default function SettingsPage() {
               </div>
               <div className={cn(
                 "h-2 w-2 rounded-full",
-                streak === 30 ? "bg-primary animate-pulse shadow-[0_0_10px_rgba(0,245,255,0.5)]" : "bg-white/10"
+                streak === 30 ? "bg-primary animate-pulse shadow-[0_0_10px_var(--primary)]" : "bg-white/10"
               )} />
             </button>
           </AeroCard>
@@ -296,13 +296,13 @@ export default function SettingsPage() {
                     className="flex h-10 w-10 items-center justify-center rounded-full"
                     style={{
                       background: isActive
-                        ? 'rgba(0, 245, 255, 0.15)'
+                        ? 'color-mix(in srgb, var(--primary) 15%, transparent)'
                         : 'var(--surface-translucent)',
                     }}
                   >
                     <Icon
                       className="h-5 w-5"
-                      style={{ color: isActive ? '#00F5FF' : 'var(--muted-foreground)' }}
+                      style={{ color: isActive ? 'var(--primary)' : 'var(--muted-foreground)' }}
                     />
                   </div>
                   <div className="flex-1 text-left rtl:text-right">
@@ -312,8 +312,8 @@ export default function SettingsPage() {
                   <div
                     className="h-4 w-4 rounded-full border-2"
                     style={{
-                      borderColor: isActive ? '#00F5FF' : 'var(--border)',
-                      background: isActive ? '#00F5FF' : 'transparent',
+                      borderColor: isActive ? 'var(--primary)' : 'var(--border)',
+                      background: isActive ? 'var(--primary)' : 'transparent',
                     }}
                   />
                 </button>
