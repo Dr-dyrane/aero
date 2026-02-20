@@ -62,7 +62,7 @@ export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm mx-auto max-w-[430px]"
+                        className="fixed inset-0 z-[800] bg-black/40 backdrop-blur-sm mx-auto max-w-[430px]"
                     />
 
                     {/* Panel: Right-aligned liquid sheet (mirrors sidebar) */}
@@ -72,7 +72,7 @@ export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
                         exit={{ x: language === 'ar' ? '-100%' : '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                         className={cn(
-                            "fixed inset-y-0 z-[110] w-[90%] max-w-[380px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col border-none",
+                            "fixed inset-y-0 z-[810] w-[90%] max-w-[380px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col border-none",
                             language === 'ar' ? "left-0 rounded-r-[40px]" : "right-0 rounded-l-[40px]"
                         )}
                     >

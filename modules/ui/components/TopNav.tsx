@@ -166,7 +166,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsOpen(false)}
-                            className="fixed inset-0 z-[110] bg-black/40 backdrop-blur-sm mx-auto max-w-[430px]"
+                            className="fixed inset-0 z-[800] bg-black/40 backdrop-blur-sm mx-auto max-w-[430px]"
                         />
 
                         {/* Panel: Borderless, Rounded-R, Transparent Blur */}
@@ -176,7 +176,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                             exit={{ x: language === 'ar' ? '100%' : '-100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                             className={cn(
-                                "fixed inset-y-0 z-[120] w-[85%] max-w-[360px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col border-none",
+                                "fixed inset-y-0 z-[810] w-[85%] max-w-[360px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col border-none",
                                 language === 'ar' ? "right-0 rounded-l-[40px]" : "left-0 rounded-r-[40px]"
                             )}
                         >
