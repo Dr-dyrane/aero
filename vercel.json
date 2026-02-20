@@ -2,5 +2,7 @@
   "framework": "nextjs",
   "regions": [
     "sfo1"
-  ]
+  ],
+  "buildCommand": "npm run build",
+  "installCommand": "npm install"
 }

@@ -26,6 +26,21 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@/modules/*": [
+        "./modules/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/store/*": [
+        "./store/*"
+      ],
+      "@/app/*": [
+        "./app/*"
+      ],
+      "@/components/*": [
+        "./components/*"
       ]
     }
   },
