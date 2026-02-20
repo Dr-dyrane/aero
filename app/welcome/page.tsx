@@ -1,16 +1,45 @@
 'use client';
 
 import { useTheme, ThemeToggle } from '@/modules/ui';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Globe } from 'lucide-react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigator } from '@/lib/navigation';
+import { useAeroStore } from '@/store/useAeroStore';
+import { useState } from 'react';
 
 export default function WelcomeDroplet() {
   const { resolvedTheme } = useTheme();
   const nav = useNavigator();
+  const { language, setLanguage } = useAeroStore();
   const isDark = resolvedTheme === 'eclipse';
-  const logoSrc = isDark ? "/logo.svg" : "/aero_light.png";
+  const logoSrc = isDark ? "/as.png" : "/aero_light.png";
+
+  // Local state for transition
+  const [isSelecting, setIsSelecting] = useState(!language);
+
+  const handleLanguageSelect = (lang: 'en' | 'ar') => {
+    setLanguage(lang);
+    setTimeout(() => setIsSelecting(false), 500); // Allow exit animation
+  };
+
+  // Content Dictionary
+  const content = {
+    en: {
+      title: "Aero Score",
+      subtitle: "The first Medical Credit Score.",
+      caption: "Your endowment is locked in the vault.",
+      cta: "Claim My Endowment"
+    },
+    ar: {
+      title: "نظام أيرو",
+      subtitle: "أول نظام ائتماني طبي.",
+      caption: "مخصصاتك المالية محفوظة في الخزنة.",
+      cta: "استلام المخصصات"
+    }
+  };
+
+  const text = language ? content[language] : content.en;
 
   return (
     <div className="relative flex min-h-[100dvh] w-full flex-col items-center justify-between overflow-hidden bg-background text-foreground transition-colors duration-700 py-12 px-6">
@@ -23,84 +52,129 @@ export default function WelcomeDroplet() {
         <ThemeToggle />
       </div>
 
-      {/* HERO: The Artifact + Typography (Center) */}
-      <div className="flex-1 flex flex-col items-center justify-evenly w-full max-w-md z-10 py-10">
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0, filter: "blur(20px)" }}
-          animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
-          transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
-          className="relative"
-        >
-          {/* LOCALIZED AURA: Bio-digital atmosphere */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[120%] w-[120%] bg-aero-blue/[0.08] blur-[80px] rounded-full pointer-events-none animate-pulse" />
-
+      <AnimatePresence mode="wait">
+        {isSelecting ? (
           <motion.div
-            animate={{ y: [0, -10, 0] }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="relative h-72 w-72"
+            key="language-select"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.05, filter: 'blur(10px)' }}
+            transition={{ duration: 0.5 }}
+            className="flex-1 flex flex-col items-center justify-center w-full max-w-sm gap-8 z-20"
           >
-            <Image
-              src={logoSrc}
-              alt="AERO Logo"
-              fill
-              className="object-contain drop-shadow-[0_0_40px_rgba(0,245,255,0.2)]"
-              priority
-            />
+            <div className="relative h-24 w-24 mb-4">
+              <Image src={logoSrc} alt="AERO" fill className="object-contain opacity-80" />
+            </div>
+
+            <div className="flex flex-col gap-4 w-full">
+              <button
+                onClick={() => handleLanguageSelect('en')}
+                className="flex items-center justify-between p-6 rounded-2xl bg-surface-translucent border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-xl"
+              >
+                <div className="flex flex-col items-start">
+                  <span className="text-xl font-light tracking-wide">English</span>
+                  <span className="text-xs text-muted-foreground uppercase tracking-widest">Default</span>
+                </div>
+                <ArrowRight className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0" />
+              </button>
+
+              <button
+                onClick={() => handleLanguageSelect('ar')}
+                className="flex items-center justify-between p-6 rounded-2xl bg-surface-translucent border border-white/5 hover:bg-white/10 transition-all group backdrop-blur-xl"
+                dir="rtl"
+              >
+                <div className="flex flex-col items-start">
+                  <span className="text-xl font-light tracking-wide font-sans">العربية</span>
+                  <span className="text-xs text-muted-foreground uppercase tracking-widest">الشرق الأوسط</span>
+                </div>
+                {/* Arrow direction handled by RTL context ideally, but manually flipping here for visual consistency if needed, or let RTL handle it */}
+                <ArrowRight className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 rotate-180" />
+              </button>
+            </div>
           </motion.div>
-        </motion.div>
+        ) : (
+          <>
+            {/* HERO: The Artifact + Typography (Center) */}
+            <div className="flex-1 flex flex-col items-center justify-evenly w-full max-w-md z-10 py-10">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, filter: "blur(20px)" }}
+                animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
+                className="relative"
+              >
+                {/* LOCALIZED AURA: Bio-digital atmosphere */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[120%] w-[120%] bg-aero-blue/[0.08] blur-[80px] rounded-full pointer-events-none animate-pulse" />
 
-        {/* Typography: Tightly coupled to the Artifact */}
-        <div className="flex flex-col items-center text-center gap-4">
-          <motion.h1
-            initial={{ y: 20, opacity: 0, filter: "blur(10px)" }}
-            animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-            transition={{ delay: 0.4, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            className="text-5xl font-light tracking-[-0.07em] text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/40 font-[family-name:var(--font-space-grotesk)]"
-          >
-            Aero Score
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1.2 }}
-            className="text-sm font-light leading-relaxed text-muted-foreground/60 max-w-xs tracking-wide"
-          >
-            The first Medical Credit Score. <br />
-            <span className="font-medium text-foreground/50 italic">Your endowment is locked in the vault.</span>
-          </motion.p>
-        </div>
-      </div>
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="relative h-72 w-72"
+                >
+                  <Image
+                    src={logoSrc}
+                    alt="AERO Logo"
+                    fill
+                    className="object-contain drop-shadow-[0_0_40px_rgba(0,245,255,0.2)]"
+                    priority
+                  />
+                </motion.div>
+              </motion.div>
 
-      {/* ACTION: Bottom-Anchored */}
-      <motion.div
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.8, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="w-full max-w-sm z-20 pb-12"
-      >
-        <motion.button
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => nav.goToDashboard()}
-          className="group relative flex w-full items-center justify-between pl-10 pr-2 overflow-hidden rounded-full bg-surface-translucent py-2 font-medium tracking-wider text-foreground backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
-        >
-          {/* Liquid Sheen: Hidden gradient that appears on hover */}
-          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.2)_0%,transparent_60%)]" />
+              {/* Typography: Tightly coupled to the Artifact */}
+              <div className="flex flex-col items-center text-center gap-4">
+                <motion.h1
+                  initial={{ y: 20, opacity: 0, filter: "blur(10px)" }}
+                  animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                  transition={{ delay: 0.4, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                  className="text-5xl font-light tracking-[-0.07em] text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/40 font-[family-name:var(--font-space-grotesk)]"
+                >
+                  {text.title}
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 1.2 }}
+                  className="text-sm font-light leading-relaxed text-muted-foreground/60 max-w-xs tracking-wide"
+                >
+                  {text.subtitle} <br />
+                  <span className="font-medium text-foreground/50 italic">{text.caption}</span>
+                </motion.p>
+              </div>
+            </div>
 
-          {/* Shimmer Effect: Subtle auto-sweep */}
-          <div className="absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+            {/* ACTION: Bottom-Anchored */}
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.8, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full max-w-sm z-20 pb-12"
+            >
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => nav.goToDashboard()}
+                className="group relative flex w-full items-center justify-between pl-10 pr-2 overflow-hidden rounded-full bg-surface-translucent py-2 font-medium tracking-wider text-foreground backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
+              >
+                {/* Liquid Sheen: Hidden gradient that appears on hover */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 bg-[radial-gradient(circle_at_50%_-20%,rgba(255,255,255,0.2)_0%,transparent_60%)]" />
 
-          <span className="relative z-10 text-base">Claim My Endowment</span>
+                {/* Shimmer Effect: Subtle auto-sweep */}
+                <div className="absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
 
-          <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-foreground/[0.03] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] transition-all group-hover:bg-foreground/[0.07]">
-            <ArrowRight className="h-5 w-5 text-primary/70 transition-transform group-hover:translate-x-1" />
-          </div>
-        </motion.button>
-      </motion.div>
+                <span className="relative z-10 text-base">{text.cta}</span>
+
+                <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-foreground/[0.03] shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)] transition-all group-hover:bg-foreground/[0.07]">
+                  <ArrowRight className="h-5 w-5 text-primary/70 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
+                </div>
+              </motion.button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
     </div>
   );

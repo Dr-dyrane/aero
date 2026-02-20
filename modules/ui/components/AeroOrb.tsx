@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { useTheme } from '@/modules/ui';
 
 export interface AeroOrbProps {
   score: number; // 0-100
@@ -18,6 +19,12 @@ export interface AeroOrbProps {
  * Uses exact AERO palette: #00F5FF glow.
  */
 export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false }: AeroOrbProps) {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'eclipse';
+
+  // Default theme-sensitive logo if no imgSrc provided
+  const logoSrc = imgSrc || (isDark ? "/as.png" : "/aero_light.png");
+
   const glowIntensity = score / 100;
   const glowAlpha = 0.12 + glowIntensity * 0.35;
   const glowColor = `rgba(0, 245, 255, ${glowAlpha})`;
@@ -35,13 +42,13 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
           filter: `blur(40px)`,
         }}
         animate={{
-          opacity: pulsing ? [0.4, 0.9, 0.4] : [0.4, 0.7, 0.4],
-          scale: pulsing ? [1, 1.1, 1] : 1,
+          opacity: pulsing ? [0.3, 0.8, 0.3] : [0.3, 0.6, 0.3],
+          scale: pulsing ? [1, 1.15, 1] : 1,
         }}
         transition={{
-          duration: pulsing ? 0.8 : 4,
+          duration: pulsing ? 3.6 : 10,
           repeat: Infinity,
-          ease: [0.4, 0, 0.2, 1], // Standard fast-out-linear-in
+          ease: "easeInOut",
         }}
       />
 
@@ -49,18 +56,18 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
       <motion.div
         className="relative flex items-center justify-center w-full h-full"
         animate={{
-          y: pulsing ? [0, -2, 0] : [0, -6, 0],
+          y: pulsing ? [0, -4, 0] : [0, -8, 0],
         }}
         transition={{
-          duration: pulsing ? 0.4 : 6,
+          duration: pulsing ? 4.8 : 12,
           repeat: Infinity,
           ease: "easeInOut",
         }}
       >
-        {imgSrc ? (
+        {logoSrc ? (
           <div className="relative flex items-center justify-center w-full h-full">
             <img
-              src={imgSrc}
+              src={logoSrc}
               alt="Aero Score Artifact"
               style={{
                 width: '100%',
@@ -79,9 +86,9 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
                 fontSize: size * 0.23,
                 fontWeight: 500,
                 letterSpacing: '-0.06em',
-                color: '#FFFFFF',
-                opacity: 0.85,
-                mixBlendMode: 'plus-lighter',
+                color: isDark ? '#FFFFFF' : '#000000',
+                opacity: isDark ? 0.85 : 0.9,
+                mixBlendMode: isDark ? 'plus-lighter' : 'normal',
               }}
             >
               {score}
@@ -98,7 +105,7 @@ export function AeroOrb({ score, size = 288, className, imgSrc, pulsing = false 
               boxShadow: `inset 0 1px 1px rgba(255,255,255,0.1), 0 0 30px ${glowColor}`,
             }}
           >
-            <span className="font-numbers text-3xl font-medium text-white">{score}</span>
+            <span className={cn("font-numbers text-3xl font-medium", isDark ? "text-white" : "text-black")}>{score}</span>
           </div>
         )}
       </motion.div>

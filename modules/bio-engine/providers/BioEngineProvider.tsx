@@ -103,12 +103,12 @@ export function BioEngineProvider({ children }: { children: ReactNode }) {
     setTripleCheckResult(INITIAL_RESULT);
 
     if (demoMode) {
-      // Demo mode: simulate scan with delays
-      await new Promise((r) => setTimeout(r, 800));
+      // Demo mode: simulate scan with delays (Slow & Graceful)
+      await new Promise((r) => setTimeout(r, 2800));
       setTripleCheckResult((prev) => ({ ...prev, voice: DEMO_TRIPLE_CHECK.voice }));
-      await new Promise((r) => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 2800));
       setTripleCheckResult((prev) => ({ ...prev, ppg: DEMO_TRIPLE_CHECK.ppg }));
-      await new Promise((r) => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 2800));
       setTripleCheckResult(DEMO_TRIPLE_CHECK);
       setScanStatus('success');
       setIsScanning(false);

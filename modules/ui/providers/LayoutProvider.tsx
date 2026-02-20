@@ -8,6 +8,8 @@ import {
   type ReactNode,
 } from 'react';
 
+import { useAeroStore } from '@/store/useAeroStore';
+
 interface LayoutContextValue {
   isMobile: boolean;
   isDesktop: boolean;
@@ -31,8 +33,20 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
   const [isMobile, setIsMobile] = useState(true);
   const [isSkeletonLoading, setSkeletonLoading] = useState(true);
   const [isNavVisible, setIsNavVisible] = useState(true);
-  const [isScrollSensitive, setScrollSensitivity] = useState(true); // Default to true
+  const [isScrollSensitive, setScrollSensitivity] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const language = useAeroStore((s) => s.language);
+
+  // Sync Language/Direction
+  useEffect(() => {
+    if (language === 'ar') {
+      document.documentElement.dir = 'rtl';
+      document.documentElement.lang = 'ar';
+    } else {
+      document.documentElement.dir = 'ltr';
+      document.documentElement.lang = 'en';
+    }
+  }, [language]);
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 768px)');

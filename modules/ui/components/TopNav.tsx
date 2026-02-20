@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useNavigator } from '@/lib/navigation';
-import { Menu, Bell, X, User, Heart, Activity, ShieldCheck, LayoutDashboard, ChevronLeft, Sparkles } from 'lucide-react';
+import { Menu, Bell, X, User, Heart, Activity, ShieldCheck, LayoutDashboard, ChevronLeft, Sparkles, LogOut } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { AeroCard } from './AeroCard';
@@ -12,6 +12,7 @@ import { ThemeToggle } from './ThemeToggle';
 
 import { useAeroStore } from '@/store/useAeroStore';
 import { useLayout } from '../providers/LayoutProvider';
+import { useAuth } from '@/modules/auth';
 
 import { NotificationSheet, useNotificationStore } from '@/modules/notifications';
 
@@ -29,8 +30,46 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
     const { isNavVisible, setScrollSensitivity } = useLayout();
     const nav = useNavigator();
     const pathname = usePathname();
-    const demoMode = useAeroStore((s) => s.demoMode);
+    const { demoMode, language, setDemoMode, setLanguage } = useAeroStore();
     const unreadCount = useNotificationStore((s) => s.unreadCount);
+    const { signOut } = useAuth();
+
+    const content = {
+        en: {
+            demo: "Demo",
+            patientFile: "Patient File",
+            vitalBaseline: "Vital Baseline",
+            optimal: "Optimal",
+            bioConnectivity: "Bio-Connectivity",
+            vaultInsurance: "Vault Insurance",
+            active: "ACTIVE",
+            navigation: "Navigation",
+            dashboard: "Dashboard",
+            bioVault: "Bio-Vault Portfolio",
+            identity: "Identity & Security",
+            diagnostics: "Baseline Diagnostics",
+            sovereign: "Sovereign Bio-Identity Protocol",
+            signOut: "De-authenticate"
+        },
+        ar: {
+            demo: "تجريبي",
+            patientFile: "ملف المريض",
+            vitalBaseline: "خط الأساس الحيوي",
+            optimal: "مثالي",
+            bioConnectivity: "الاتصال الحيوي",
+            vaultInsurance: "تأمين الخزنة",
+            active: "نشط",
+            navigation: "التنقل",
+            dashboard: "لوحة التحكم",
+            bioVault: "محفظة الخزنة الحيوية",
+            identity: "الهوية والأمن",
+            diagnostics: "تشخيصات الأساس",
+            sovereign: "بروتوكول الهوية الحيوية السيادية",
+            signOut: "تسجيل الخروج"
+        }
+    };
+
+    const t = language === 'ar' ? content.ar : content.en;
 
     // Sync scroll sensitivity
     useEffect(() => {
@@ -63,7 +102,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                             onClick={onBack || (() => window.history.back())}
                             className="flex h-10 w-8 items-center justify-center rounded-full bg-transparent backdrop-blur-sm transition-transform active:scale-95"
                         >
-                            <ChevronLeft className="h-5 w-5 text-foreground" />
+                            <ChevronLeft className="h-5 w-5 text-foreground rtl:rotate-180" />
                         </button>
                     )}
 
@@ -77,9 +116,9 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
 
                     {/* DEMO Marker in Nav: Restored premium style with AI icon */}
                     {demoMode && (
-                        <div className="ml-1.5 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm">
+                        <div className="mx-1.5 flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/20 backdrop-blur-sm">
                             <Sparkles className="h-2.5 w-2.5 text-primary animate-pulse" />
-                            <span className="text-[8px] font-bold text-primary tracking-widest uppercase">Demo</span>
+                            <span className="text-[8px] font-bold text-primary tracking-widest uppercase">{t.demo}</span>
                         </div>
                     )}
                 </div>
@@ -89,9 +128,9 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                     {title && (
                         <motion.h2
                             key={title}
-                            initial={{ opacity: 0, x: 10 }}
+                            initial={{ opacity: 0, x: language === 'ar' ? -10 : 10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="font-serif text-[10px] font-bold tracking-[0.2em] text-white/50 uppercase text-right"
+                            className="font-serif text-[10px] font-bold tracking-[0.2em] text-muted-foreground uppercase text-right rtl:text-left"
                         >
                             {title}
                         </motion.h2>
@@ -103,7 +142,7 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                     >
                         <Bell className="h-5 w-5 text-foreground" />
                         {unreadCount > 0 && (
-                            <div className="absolute top-2.5 right-2.5 h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,245,255,0.6)]" />
+                            <div className="absolute top-2.5 right-2.5 rtl:right-auto rtl:left-2.5 h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,245,255,0.6)]" />
                         )}
                     </button>
                 </div>
@@ -130,16 +169,19 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
 
                         {/* Panel: Borderless, Rounded-R, Transparent Blur */}
                         <motion.div
-                            initial={{ x: '-100%' }}
+                            initial={{ x: language === 'ar' ? '100%' : '-100%' }}
                             animate={{ x: 0 }}
-                            exit={{ x: '-100%' }}
+                            exit={{ x: language === 'ar' ? '100%' : '-100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 left-0 z-[110] w-[85%] max-w-[360px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col rounded-r-[40px] border-none"
+                            className={cn(
+                                "fixed inset-y-0 z-[110] w-[85%] max-w-[360px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col border-none",
+                                language === 'ar' ? "right-0 rounded-l-[40px]" : "left-0 rounded-r-[40px]"
+                            )}
                         >
                             {/* Liquid BG for Sheet */}
                             <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-                                <div className="absolute -top-20 -left-20 h-64 w-64 rounded-full bg-primary/20 blur-[100px]" />
-                                <div className="absolute bottom-20 right-0 h-80 w-80 rounded-full bg-aero-blue/10 blur-[120px]" />
+                                <div className={cn("absolute -top-20 h-64 w-64 rounded-full bg-primary/20 blur-[100px]", language === 'ar' ? "-right-20" : "-left-20")} />
+                                <div className={cn("absolute bottom-20 h-80 w-80 rounded-full bg-aero-blue/10 blur-[120px]", language === 'ar' ? "left-0" : "right-0")} />
                             </div>
 
                             {/* Content */}
@@ -151,9 +193,9 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                                 <img src={AVATAR_URL} alt="User" className="w-full h-full object-cover" />
                                             </div>
                                         </div>
-                                        <div>
-                                            <h3 className="font-serif text-lg font-semibold">Patient File</h3>
-                                            <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold">AERO-1092-B</p>
+                                        <div className="text-left rtl:text-right">
+                                            <h3 className="font-serif text-lg font-semibold">{t.patientFile}</h3>
+                                            <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold">{language === 'ar' ? 'أيرو-١٠٩٢-ب' : 'AERO-1092-B'}</p>
                                         </div>
                                     </div>
 
@@ -168,35 +210,35 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                                 <Heart className="h-3.5 w-3.5 text-destructive" />
-                                                Vital Baseline
+                                                {t.vitalBaseline}
                                             </div>
-                                            <span className="text-sm font-numbers font-medium text-foreground">Optimal</span>
+                                            <span className="text-sm font-numbers font-medium text-foreground">{t.optimal}</span>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                                 <Activity className="h-3.5 w-3.5 text-primary" />
-                                                Bio-Connectivity
+                                                {t.bioConnectivity}
                                             </div>
                                             <span className="text-sm font-numbers font-medium text-foreground">98%</span>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                                 <ShieldCheck className="h-3.5 w-3.5 text-gold" />
-                                                Vault Insurance
+                                                {t.vaultInsurance}
                                             </div>
-                                            <AeroPill variant="accent" className="text-[8px] py-0">ACTIVE</AeroPill>
+                                            <AeroPill variant="accent" className="text-[8px] py-0">{t.active}</AeroPill>
                                         </div>
                                     </div>
                                 </AeroCard>
 
                                 {/* Navigation Links */}
                                 <div className="flex flex-col gap-2 flex-1">
-                                    <p className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-bold mb-2 ml-2">Navigation</p>
+                                    <p className="text-[10px] tracking-[0.2em] text-muted-foreground uppercase font-bold mb-2 ml-2 rtl:ml-0 rtl:mr-2">{t.navigation}</p>
                                     {[
-                                        { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-                                        { name: 'Bio-Vault Portfolio', path: '/vault', icon: ShieldCheck },
-                                        { name: 'Identity & Security', path: '/settings', icon: User },
-                                        { name: 'Baseline Diagnostics', path: '/scan', icon: Activity },
+                                        { name: t.dashboard, path: '/dashboard', icon: LayoutDashboard },
+                                        { name: t.bioVault, path: '/vault', icon: ShieldCheck },
+                                        { name: t.identity, path: '/settings', icon: User },
+                                        { name: t.diagnostics, path: '/scan', icon: Activity },
                                     ].map((link) => (
                                         <button
                                             key={link.path}
@@ -216,14 +258,31 @@ export function TopNav({ title, onBack, scrollSensitivity = true }: TopNavProps)
                                             <span className="text-sm font-medium tracking-wide">{link.name}</span>
                                         </button>
                                     ))}
+
+                                    <button
+                                        onClick={async () => {
+                                            await signOut();
+                                            setDemoMode(false);
+                                            // Reset language to null to force welcome screen to show language select again
+                                            setLanguage(null as any);
+                                            nav.goToRoot();
+                                            setIsOpen(false);
+                                        }}
+                                        className="group flex items-center gap-4 px-4 py-4 rounded-2xl transition-all active:scale-[0.98] border-none text-muted-foreground hover:bg-destructive/10 hover:text-destructive mt-auto"
+                                    >
+                                        <LogOut className="h-5 w-5 transition-transform group-hover:scale-110 rtl:rotate-180" />
+                                        <span className="text-sm font-medium tracking-wide">{t.signOut}</span>
+                                    </button>
                                 </div>
 
                                 {/* Footer */}
                                 <div className="pt-6 border-t border-white/5 flex items-center justify-between">
-                                    <p className="text-[10px] text-muted-foreground">
-                                        AERO v1.0.4 <br />
-                                        Sovereign Bio-Identity Protocol
-                                    </p>
+                                    <div className="text-left rtl:text-right">
+                                        <p className="text-[10px] text-muted-foreground">
+                                            {language === 'ar' ? 'أيرو v١.٠.٤' : 'AERO v1.0.4'} <br />
+                                            {t.sovereign}
+                                        </p>
+                                    </div>
                                     <ThemeToggle />
                                 </div>
                             </div>

@@ -21,180 +21,218 @@ export default function ScanPage() {
   } = useBioEngine();
   const scanStatus = useAeroStore((s) => s.scanStatus);
   const aeroScore = useAeroStore((s) => s.aeroScore);
+  const language = useAeroStore((s) => s.language);
   const nav = useNavigator();
   const { setIsNavVisible, setScrollSensitivity } = useLayout();
 
-  // Immersive Mode: Hide Nav on Mount, Restore on Unmount
+  const content = {
+    en: {
+      protocolActive: "PROTOCOL ACTIVE",
+      bioVerification: "BIO-VERIFICATION",
+      yieldUnlocked: "YIELD UNLOCKED",
+      analyzing: "ANALYZING...",
+      ready: "READY",
+      confidence: "CONFIDENCE",
+      yieldMined: "Yield Mined",
+      equityAdded: "+ $5.00 Equity Added",
+      viewInVault: "View In Vault",
+      initiate: "INITIATE BIO-VERIFICATION",
+      abort: "Abort Protocol",
+      return: "Return to Terminal",
+      sensors: {
+        voice: { label: "Vocal Biomarkers", desc: "Analyzing tonal stability..." },
+        ppg: { label: "Hemodynamic Pulse", desc: "Measuring HRV coherence..." },
+        face: { label: "Micro-Expression", desc: "Detecting fatigue signals..." }
+      }
+    },
+    ar: {
+      protocolActive: "البروتوكول نشط",
+      bioVerification: "التحقق الحيوي",
+      yieldUnlocked: "تم فتح العائد",
+      analyzing: "جاري التحليل...",
+      ready: "جاهز",
+      confidence: "مستوى الثقة",
+      yieldMined: "تم حصاد العائد",
+      equityAdded: "+ ٥.٠٠ دولار أصول مضافة",
+      viewInVault: "عرض الخزنة",
+      initiate: "بدء التحقق الحيوي",
+      abort: "إلغاء البروتوكول",
+      return: "العودة إلى الواجهة",
+      sensors: {
+        voice: { label: "المقاييس الصوتية", desc: "تحليل استقرار النبرة..." },
+        ppg: { label: "النبض الدوري", desc: "قياس تباين معدل ضربات القلب..." },
+        face: { label: "تعبيرات دقيقة", desc: "كشف إشارات الإرهاق..." }
+      }
+    }
+  };
+
+  const t = language === 'ar' ? content.ar : content.en;
+
+  // Immersive Mode
   useEffect(() => {
-    setIsNavVisible(false); // Force hide nav
-    setScrollSensitivity(false); // Disable scroll showing
+    setIsNavVisible(false);
+    setScrollSensitivity(false);
     return () => {
       setIsNavVisible(true);
       setScrollSensitivity(true);
     };
   }, [setIsNavVisible, setScrollSensitivity]);
 
-  const sensors = [
-    {
-      key: 'voice' as const,
-      label: 'Vocal Biomarkers',
-      desc: 'Analyzing tonal stability...',
-      icon: Mic,
-      result: tripleCheckResult.voice,
-    },
-    {
-      key: 'ppg' as const,
-      label: 'Hemodynamic Pulse',
-      desc: 'Measuring HRV coherence...',
-      icon: Camera,
-      result: tripleCheckResult.ppg,
-    },
-    {
-      key: 'face' as const,
-      label: 'Micro-Expression',
-      desc: 'Detecting fatigue signals...',
-      icon: ScanFace,
-      result: tripleCheckResult.face,
-    },
-  ];
-
   const isComplete = scanStatus === 'success' && tripleCheckResult.completedAt;
 
+  // Determine current active sensor step
+  const activeSensor = !tripleCheckResult.voice ? 'voice' : !tripleCheckResult.ppg ? 'ppg' : !tripleCheckResult.face ? 'face' : null;
+
+  const sensorData = {
+    voice: { label: t.sensors.voice.label, desc: t.sensors.voice.desc, icon: Mic },
+    ppg: { label: t.sensors.ppg.label, desc: t.sensors.ppg.desc, icon: Camera },
+    face: { label: t.sensors.face.label, desc: t.sensors.face.desc, icon: ScanFace },
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6 relative overflow-hidden">
+    <main className="flex min-h-[100dvh] flex-col items-center justify-center px-6 relative overflow-hidden bg-background">
       {/* AMBIENT RITUAL BACKGROUND */}
       <div className={`absolute inset-0 transition-colors duration-1000 ${isScanning ? 'bg-black' : 'bg-background'}`}>
         {isScanning && <div className="absolute inset-0 bg-primary/5 animate-pulse" />}
       </div>
 
-      {/* RITUAL HEADER */}
-      <div className="relative z-10 w-full max-w-sm flex flex-col items-center mb-8">
-        <span className="text-[10px] font-bold tracking-[0.3em] text-primary/60 uppercase mb-2">
-          {isScanning ? 'PROTOCOL ACTIVE' : 'BIO-VERIFICATION'}
-        </span>
-        <AeroPill
-          variant={isComplete ? 'accent' : isScanning ? 'muted' : 'muted'}
-          className="backdrop-blur-xl border-white/10"
+      {/* FIXED STATUS ANCHOR (72px AeroOrb as requested) */}
+      <div className="absolute top-12 flex flex-col items-center gap-2 z-50">
+        <AeroOrb score={aeroScore} size={72} pulsing={isScanning} />
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-[9px] font-bold tracking-[0.3em] text-primary/60 uppercase"
         >
-          {isComplete ? 'YIELD UNLOCKED' : isScanning ? 'ANALYZING...' : 'READY'}
-        </AeroPill>
+          {isScanning ? t.protocolActive : t.bioVerification}
+        </motion.span>
       </div>
 
-      {/* THE ORB (Ritual Focus) */}
-      <div className="relative z-10 py-8 scale-110">
-        <AeroOrb score={aeroScore} size={isScanning ? 280 : 200} pulsing={isScanning} />
-      </div>
-
-      {/* SENSOR ARRAY (Only show during scan or result) */}
-      <AnimatePresence>
-        {(isScanning || isComplete) && (
+      <AnimatePresence mode="wait">
+        {!isScanning && !isComplete ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="w-full max-w-sm flex flex-col gap-3 relative z-10"
+            key="idle"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
+            className="flex flex-col items-center gap-12 z-10 w-full max-w-sm"
           >
-            {sensors.map(({ key, label, desc, icon: Icon, result }, idx) => {
-              const completed = !!result;
-              return (
+            <div className="relative py-8">
+              <AeroOrb score={aeroScore} size={240} />
+            </div>
+
+            <AeroButton
+              variant="primary"
+              size="lg"
+              className="w-full h-20 text-lg tracking-widest font-bold shadow-[0_0_60px_rgba(0,245,255,0.3)] border border-primary/20"
+              onClick={startTripleCheck}
+            >
+              {t.initiate}
+            </AeroButton>
+          </motion.div>
+        ) : isScanning ? (
+          <motion.div
+            key="scanning"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col items-center justify-center w-full max-w-sm z-10 gap-8"
+          >
+            {/* Focused Sensor View: Progressive Disclosure */}
+            <AnimatePresence mode="wait">
+              {activeSensor && (
                 <motion.div
-                  key={key}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
+                  key={activeSensor}
+                  initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -40, filter: 'blur(10px)' }}
+                  className="w-full"
                 >
-                  <AeroCard className={`border-white/5 bg-black/40 backdrop-blur-md ${completed ? 'border-primary/30' : ''}`}>
-                    <div className="flex items-center gap-3 p-3">
-                      <div
-                        className="flex h-8 w-8 items-center justify-center rounded-full"
-                        style={{
-                          background: completed
-                            ? 'rgba(0, 245, 255, 0.15)'
-                            : 'rgba(255, 255, 255, 0.03)',
-                        }}
-                      >
-                        <Icon
-                          className="h-4 w-4"
-                          style={{ color: completed ? '#00F5FF' : 'var(--muted-foreground)' }}
-                        />
+                  <AeroCard className="p-8 border-primary/20 bg-black/40 backdrop-blur-2xl shadow-[0_0_80px_rgba(0,245,255,0.1)] active:scale-[0.98] transition-transform">
+                    <div className="flex flex-col items-center text-center gap-6">
+                      <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 animate-pulse">
+                        {(() => {
+                          const Icon = sensorData[activeSensor as keyof typeof sensorData].icon;
+                          return <Icon className="h-10 w-10 text-primary" />;
+                        })()}
                       </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-bold tracking-wider text-foreground uppercase">{label}</p>
-                        <p className="text-[10px] text-muted-foreground font-mono">
-                          {completed
-                            ? `CONFIDENCE: ${(result.confidence * 100).toFixed(1)}%`
-                            : desc}
+                      <div className="space-y-2">
+                        <h3 className="text-xl font-serif text-foreground tracking-wide">
+                          {sensorData[activeSensor as keyof typeof sensorData].label}
+                        </h3>
+                        <p className="text-sm text-muted-foreground/60 font-mono tracking-tight">
+                          {sensorData[activeSensor as keyof typeof sensorData].desc}
                         </p>
                       </div>
-                      {completed && (
-                        <CheckCircle2 className="h-4 w-4 text-primary animate-in zoom-in spin-in-90 duration-300" />
-                      )}
+
+                      {/* Progress Line */}
+                      <div className="w-full h-[1px] bg-white/5 relative overflow-hidden">
+                        <motion.div
+                          className="absolute inset-0 bg-primary"
+                          initial={{ x: '-100%' }}
+                          animate={{ x: '100%' }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+                        />
+                      </div>
                     </div>
                   </AeroCard>
                 </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
-      </AnimatePresence>
+              )}
+            </AnimatePresence>
 
-      {/* SUCCESS PAYOFF (Yield Unlocked) */}
-      <AnimatePresence>
-        {isComplete && (
+            <button
+              onClick={cancelTripleCheck}
+              className="mt-4 text-[10px] text-muted-foreground/40 hover:text-destructive transition-colors tracking-[0.3em] uppercase py-4"
+            >
+              {t.abort}
+            </button>
+          </motion.div>
+        ) : isComplete ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            key="complete"
+            initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-sm mt-6 relative z-10"
+            className="flex flex-col items-center justify-center w-full max-w-sm z-10 gap-6"
           >
-            <AeroCard glow className="border-gold/20 bg-gold/5">
-              <div className="flex flex-col items-center p-6 text-center">
-                <div className="h-12 w-12 rounded-full bg-gold/10 flex items-center justify-center mb-3 animate-bounce">
-                  <Gem className="h-6 w-6 text-gold" />
+            <AeroCard glow className="w-full border-gold/30 bg-gold/5 backdrop-blur-3xl p-8">
+              <div className="flex flex-col items-center text-center gap-6">
+                <motion.div
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', damping: 12 }}
+                  className="h-24 w-24 rounded-full bg-gold/20 flex items-center justify-center shadow-[0_0_50px_rgba(212,175,55,0.3)]"
+                >
+                  <Gem className="h-12 w-12 text-gold" />
+                </motion.div>
+
+                <div className="space-y-2">
+                  <h2 className="font-serif text-4xl text-white">{t.yieldMined}</h2>
+                  <p className="text-sm text-gold/80 uppercase tracking-[0.2em] font-bold">
+                    {t.equityAdded}
+                  </p>
                 </div>
-                <h2 className="font-serif text-2xl text-white mb-1">Yield Mined</h2>
-                <p className="text-xs text-gold/80 uppercase tracking-widest font-bold mb-4">
-                  + $5.00 Equity Added
-                </p>
-                <AeroButton onClick={() => nav.goToVault()} size="sm" variant="secondary" className="w-full">
-                  View In Vault
-                </AeroButton>
+
+                <div className="w-full space-y-3 pt-4">
+                  <AeroButton
+                    onClick={() => nav.goToVault()}
+                    size="lg"
+                    variant="primary"
+                    className="w-full bg-gold border-none text-black hover:bg-gold/90"
+                  >
+                    {t.viewInVault}
+                  </AeroButton>
+                  <button
+                    onClick={() => nav.goToDashboard()}
+                    className="w-full text-center text-[10px] text-muted-foreground hover:text-white transition-colors tracking-[0.2em] uppercase py-4"
+                  >
+                    {t.return}
+                  </button>
+                </div>
               </div>
             </AeroCard>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
-
-      {/* ACTION AREA */}
-      <div className="mt-8 w-full max-w-sm relative z-10 pb-8">
-        {!isScanning && !isComplete && (
-          <AeroButton
-            variant="primary"
-            size="lg"
-            className="w-full h-16 text-lg tracking-widest font-bold shadow-[0_0_60px_rgba(0,245,255,0.3)]"
-            onClick={startTripleCheck}
-          >
-            INITIATE BIO-VERIFICATION
-          </AeroButton>
-        )}
-
-        {isScanning && (
-          <button
-            onClick={cancelTripleCheck}
-            className="w-full text-center text-xs text-muted-foreground hover:text-white transition-colors tracking-widest uppercase py-4"
-          >
-            Abort Protocol
-          </button>
-        )}
-
-        {isComplete && (
-          <button
-            onClick={() => nav.goToDashboard()}
-            className="w-full text-center text-xs text-muted-foreground hover:text-white transition-colors tracking-widest uppercase py-4"
-          >
-            Return to Terminal
-          </button>
-        )}
-      </div>
     </main>
   );
 }

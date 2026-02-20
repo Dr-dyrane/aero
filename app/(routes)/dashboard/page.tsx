@@ -17,6 +17,51 @@ export default function DashboardPage() {
   const { lockedBalance, spendableBalance } = useVault();
   const { user } = useAuth();
   const nav = useNavigator();
+  const language = useAeroStore((s) => s.language);
+
+  // Dictionary
+  const content = {
+    en: {
+      bioMarketValue: "Bio-Market Value",
+      topGlobal: "TOP 4.2% GLOBAL",
+      marketInsight: "Market Insight",
+      insightText: `"Your baseline stability signals a breakout. Projected yield increases by 12% if streak holds through weekend."`,
+      liveFeed: "Live Feed",
+      fullReport: "FULL REPORT",
+      totalEquity: "Total Equity",
+      locked: "LOCKED",
+      verifyStatus: "Verify Status",
+      secure: "SECURE",
+      pending: "PENDING",
+      uptime: "99.8% Uptime",
+      yieldTier: "Yield Tier",
+      levelUp: "to Level Up",
+      ctaMain: "VERIFY & MINE YIELD",
+      ctaSub: "DAILY CHECK-IN UNLOCKED",
+      footer: "Encrypted Bio-Ledger Active"
+    },
+    ar: {
+      bioMarketValue: "القيمة السوقية الحيوية",
+      topGlobal: "أعلى ٤.٢٪ عالمياً",
+      marketInsight: "رؤى السوق",
+      insightText: `"استقرارك الحيوي يشير إلى انطلاقة قوية. العائد المتوقع سيزيد بنسبة ١٢٪ إذا استمر الأداء خلال عطلة نهاية الأسبوع."`,
+      liveFeed: "بث مباشر",
+      fullReport: "التقرير الكامل",
+      totalEquity: "إجمالي الأصول",
+      locked: "مُجمد",
+      verifyStatus: "حالة التحقق",
+      secure: "آمن",
+      pending: "قيد الانتظار",
+      uptime: "٩٩.٨٪ استقرار",
+      yieldTier: "مستوى العائد",
+      levelUp: "للترقية",
+      ctaMain: "تحقق واجمع العائد",
+      ctaSub: "تسجيل الدخول اليومي متاح",
+      footer: "السجل الحيوي المشفر نشط"
+    }
+  };
+
+  const t = language === 'ar' ? content.ar : content.en;
 
   const nextMerit = MERIT_LEVELS.find((m) => m.threshold > streak) ?? MERIT_LEVELS[MERIT_LEVELS.length - 1];
   const highestMerit = DEMO_MERITS[DEMO_MERITS.length - 1];
@@ -57,30 +102,35 @@ export default function DashboardPage() {
         <div className="h-6" />
 
         {/* BIO-MARKET VALUE TICKER */}
-        <motion.section variants={item} className="flex flex-col items-center py-6 relative w-full">
+        <motion.section variants={item} className="flex flex-col items-center py-6 relative w-full pt-10">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+
+          {/* Global Identity Anchor (72px AeroOrb) */}
+          <div className="mb-6">
+            <AeroOrb score={aeroScore} size={72} pulsing />
+          </div>
 
           <div className="flex flex-col items-center gap-1 z-10">
             <span className="text-[10px] tracking-[0.2em] font-bold text-muted-foreground uppercase opacity-70">
-              Bio-Market Value
+              {t.bioMarketValue}
             </span>
             <h1 className="font-serif text-7xl font-light tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-foreground via-foreground to-foreground/50 tabular-nums">
               {aeroScore}
             </h1>
 
             {/* Global Percentile Indicator */}
-            <div className="mt-2 flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+            <div className="mt-4 flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-lg">
               <Globe className="h-3 w-3 text-primary animate-pulse" />
-              <span className="text-[10px] font-medium text-primary tracking-wide">
-                TOP 4.2% GLOBAL
+              <span className="text-[10px] font-bold text-primary tracking-widest uppercase">
+                {t.topGlobal}
               </span>
             </div>
           </div>
         </motion.section>
 
-        {/* Live Orb Visualization (Smaller, secondary) */}
-        <motion.div variants={item} className="mb-8 scale-75 opacity-80">
-          <AeroOrb score={aeroScore} size={160} imgSrc="/as.png" />
+        {/* Scoring Narrative (Simplified, no large redundant orb) */}
+        <motion.div variants={item} className="mb-8 opacity-40">
+          <div className="h-[1px] w-24 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
         </motion.div>
 
         {/* Intelligence Card */}
@@ -92,18 +142,18 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2 text-[10px] tracking-widest text-primary uppercase font-bold">
                 <Sparkles className="h-3 w-3" />
-                Market Insight
+                {t.marketInsight}
               </div>
               <p className="text-sm font-medium leading-relaxed text-foreground/90 italic">
-                "Your baseline stability signals a breakout. Projected yield increases by 12% if streak holds through weekend."
+                {t.insightText}
               </p>
               <div className="flex items-center justify-between pt-2 border-t border-primary/10">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Clock className="h-3.5 w-3.5" />
-                  Live Feed
+                  {t.liveFeed}
                 </div>
                 <button className="text-[10px] font-bold text-primary hover:text-white transition-colors flex items-center gap-1">
-                  FULL REPORT <ChevronRight className="h-3 w-3" />
+                  {t.fullReport} <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                 </button>
               </div>
             </div>
@@ -124,12 +174,12 @@ export default function DashboardPage() {
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 transition-transform group-hover:scale-105 border border-gold/20">
                   <Shield className="h-6 w-6 text-gold" />
                 </div>
-                <div className="text-left">
-                  <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold">Total Equity</p>
+                <div className="text-left rtl:text-right">
+                  <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold">{t.totalEquity}</p>
                   <p className="font-numbers text-2xl font-medium text-foreground flex items-center gap-2">
                     {'$'}{(spendableBalance + lockedBalance).toFixed(2)}
                     <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                      <ArrowUpRight className="h-2.5 w-2.5" /> +5.2%
+                      <ArrowUpRight className="h-2.5 w-2.5 rtl:-rotate-90" /> +5.2%
                     </span>
                   </p>
                 </div>
@@ -138,7 +188,7 @@ export default function DashboardPage() {
               <div className="flex flex-col items-end gap-1 relative z-10">
                 <div className="flex items-center gap-1.5">
                   <div className="h-2 w-2 rounded-full bg-gold animate-pulse" />
-                  <span className="text-[10px] font-bold text-gold tracking-wider">LOCKED</span>
+                  <span className="text-[10px] font-bold text-gold tracking-wider">{t.locked}</span>
                 </div>
                 <span className="text-xs font-mono text-muted-foreground">
                   {'$'}{lockedBalance.toFixed(2)}
@@ -152,27 +202,27 @@ export default function DashboardPage() {
         <motion.div variants={item} className="grid grid-cols-2 gap-3 w-full mt-4">
           <AeroCard className="p-4 flex flex-col justify-between h-32 bg-white/[0.02]">
             <div>
-              <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold mb-1">Verify Status</p>
+              <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold mb-1">{t.verifyStatus}</p>
               <div className="flex items-center gap-1.5 mt-2">
                 {scanStatus === 'success' ? (
                   <div className="flex items-center gap-2 text-emerald-400">
                     <Shield className="h-4 w-4" />
-                    <span className="font-bold text-sm">SECURE</span>
+                    <span className="font-bold text-sm">{t.secure}</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 text-amber-400">
                     <Clock className="h-4 w-4" />
-                    <span className="font-bold text-sm">PENDING</span>
+                    <span className="font-bold text-sm">{t.pending}</span>
                   </div>
                 )}
               </div>
             </div>
-            <p className="text-[10px] text-muted-foreground">99.8% Uptime</p>
+            <p className="text-[10px] text-muted-foreground">{t.uptime}</p>
           </AeroCard>
 
           <AeroCard className="p-4 flex flex-col justify-between h-32 bg-white/[0.02]">
             <div>
-              <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold mb-1">Yield Tier</p>
+              <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-bold mb-1">{t.yieldTier}</p>
               <div className="flex items-center gap-2 mt-2">
                 <span className="font-serif text-sm font-semibold uppercase" style={{ color: nextMerit.color }}>
                   {nextMerit.name}
@@ -189,7 +239,7 @@ export default function DashboardPage() {
                   style={{ background: nextMerit.color }}
                 />
               </div>
-              <p className="text-[10px] text-muted-foreground text-right">{streak}/{nextMerit.threshold}d to Level Up</p>
+              <p className="text-[10px] text-muted-foreground text-right">{streak}/{nextMerit.threshold}d {t.levelUp}</p>
             </div>
           </AeroCard>
         </motion.div>
@@ -207,16 +257,16 @@ export default function DashboardPage() {
 
             <div className="flex items-center gap-3 relative z-10">
               <ScanFace className="h-6 w-6 transition-transform group-hover:scale-110" />
-              <div className="flex flex-col items-start leading-none">
-                <span className="text-base font-bold tracking-wide">VERIFY & MINE YIELD</span>
-                <span className="text-[10px] font-normal opacity-80 tracking-wider">DAILY CHECK-IN UNLOCKED</span>
+              <div className="flex flex-col items-start leading-none gap-1">
+                <span className="text-base font-bold tracking-wide">{t.ctaMain}</span>
+                <span className="text-[10px] font-normal opacity-80 tracking-wider font-sans">{t.ctaSub}</span>
               </div>
             </div>
           </AeroButton>
 
           <div className="mt-6 flex items-center justify-center gap-2 opacity-40">
             <div className="h-1 w-1 rounded-full bg-foreground" />
-            <p className="text-[9px] tracking-[0.2em] uppercase">Encrypted Bio-Ledger Active</p>
+            <p className="text-[9px] tracking-[0.2em] uppercase">{t.footer}</p>
             <div className="h-1 w-1 rounded-full bg-foreground" />
           </div>
         </motion.div>

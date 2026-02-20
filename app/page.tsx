@@ -37,7 +37,7 @@ export default function HomePage() {
             opacity: [0.7, 1, 0.7]
           }}
           transition={{
-            duration: 5,
+            duration: 10,
             repeat: Infinity,
             ease: "easeInOut"
           }}

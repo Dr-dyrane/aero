@@ -37,48 +37,65 @@ type AeroState = {
   // Streak
   streak: number;
   setStreak: (n: number) => void;
+
+  // Language
+  language: 'en' | 'ar' | null;
+  setLanguage: (lang: 'en' | 'ar') => void;
 };
 
-export const useAeroStore = create<AeroState>((set) => ({
-  // Demo Mode — ON by default
-  demoMode: true,
-  setDemoMode: (demoMode) =>
-    set(
-      demoMode
-        ? {
-            demoMode,
-            vault: { locked: DEMO_VAULT.locked_balance, spendable: DEMO_VAULT.spendable_balance },
-            aeroScore: DEMO_AERO_SCORE,
-            streak: DEMO_STREAK,
-            scanStatus: 'success',
-          }
-        : {
-            demoMode,
-            vault: { locked: 100.0, spendable: 0.0 },
-            aeroScore: 0,
-            streak: 0,
-            scanStatus: 'idle',
-          }
-    ),
+import { persist } from 'zustand/middleware';
 
-  // Vault
-  vault: { locked: DEMO_VAULT.locked_balance, spendable: DEMO_VAULT.spendable_balance },
-  setVault: (vault) =>
-    set((state) => ({ vault: { ...state.vault, ...vault } })),
+export const useAeroStore = create<AeroState>()(
+  persist(
+    (set) => ({
+      // Demo Mode — ON by default
+      demoMode: true,
+      setDemoMode: (demoMode) =>
+        set(
+          demoMode
+            ? {
+              demoMode,
+              vault: { locked: DEMO_VAULT.locked_balance, spendable: DEMO_VAULT.spendable_balance },
+              aeroScore: DEMO_AERO_SCORE,
+              streak: DEMO_STREAK,
+              scanStatus: 'success',
+            }
+            : {
+              demoMode,
+              vault: { locked: 100.0, spendable: 0.0 },
+              aeroScore: 0,
+              streak: 0,
+              scanStatus: 'idle',
+            }
+        ),
 
-  // Aero Score
-  aeroScore: DEMO_AERO_SCORE,
-  setAeroScore: (aeroScore) => set({ aeroScore }),
+      // Vault
+      vault: { locked: DEMO_VAULT.locked_balance, spendable: DEMO_VAULT.spendable_balance },
+      setVault: (vault) =>
+        set((state) => ({ vault: { ...state.vault, ...vault } })),
 
-  // Theme
-  theme: 'eclipse',
-  setTheme: (theme) => set({ theme }),
+      // Aero Score
+      aeroScore: DEMO_AERO_SCORE,
+      setAeroScore: (aeroScore) => set({ aeroScore }),
 
-  // Scan Status
-  scanStatus: 'success',
-  setScanStatus: (scanStatus) => set({ scanStatus }),
+      // Theme
+      theme: 'eclipse',
+      setTheme: (theme) => set({ theme }),
 
-  // Streak
-  streak: DEMO_STREAK,
-  setStreak: (streak) => set({ streak }),
-}));
+      // Scan Status
+      scanStatus: 'success',
+      setScanStatus: (scanStatus) => set({ scanStatus }),
+
+      // Streak
+      streak: DEMO_STREAK,
+      setStreak: (streak) => set({ streak }),
+
+      // Language
+      language: null,
+      setLanguage: (language) => set({ language }),
+    }),
+    {
+      name: 'aero-storage',
+    }
+  )
+);

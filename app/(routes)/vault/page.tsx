@@ -13,7 +13,43 @@ export default function VaultPage() {
   const { lockedBalance, spendableBalance, totalBalance } = useVault();
   const demoMode = useAeroStore((s) => s.demoMode);
   const streak = useAeroStore((s) => s.streak);
+  const language = useAeroStore((s) => s.language);
   const nav = useNavigator();
+
+  const content = {
+    en: {
+      totalBioEquity: "Total Bio-Equity",
+      yield: "yield",
+      projectionTitle: "10-Year Projection",
+      projectionSub: "Based on current streak & compound bio-yield.",
+      locked: "Locked",
+      liquid: "Liquid",
+      releaseInfo: "Releases at Level 5",
+      availableNow: "Available Now",
+      miningRate: "Mining Rate",
+      rateValue: "$5.00 / verified day",
+      ledger: "Ledger",
+      export: "EXPORT CSV",
+      cta: "Verify & Mine Yield"
+    },
+    ar: {
+      totalBioEquity: "إجمالي الأصول الحيوية",
+      yield: "عائد",
+      projectionTitle: "توقعات ١٠ سنوات",
+      projectionSub: "بناءً على الأداء الحالي وعائد النمو الحيوي المركب.",
+      locked: "مُجمد",
+      liquid: "سيولة",
+      releaseInfo: "يفتح عند المستوى ٥",
+      availableNow: "متاح الآن",
+      miningRate: "معدل الحصاد",
+      rateValue: "٥.٠٠ دولار / يوم محقق",
+      ledger: "السجل",
+      export: "تصدير CSV",
+      cta: "تحقق واجمع العائد"
+    }
+  };
+
+  const t = language === 'ar' ? content.ar : content.en;
 
   // Projected Value Calculation (Compound effect of sobriety)
   // Simple heuristic: Current Balance * Streak Multiplier * 10 years
@@ -26,32 +62,32 @@ export default function VaultPage() {
 
       {/* TOTAL EQUITY HEADER */}
       <div className="flex flex-col items-center mb-6">
-        <span className="text-xs font-medium text-muted-foreground tracking-widest uppercase">Total Bio-Equity</span>
+        <span className="text-xs font-medium text-muted-foreground tracking-widest uppercase">{t.totalBioEquity}</span>
         <h1 className="font-serif text-5xl font-light text-foreground mt-2 flex items-baseline gap-1">
           <span className="text-2xl text-muted-foreground opacity-50">$</span>
           {totalBalance.toFixed(2)}
         </h1>
         <AeroPill variant="accent" className="mt-2 bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-          <TrendingUp className="h-3 w-3 mr-1" />
-          +12.4% yield
+          <TrendingUp className="h-3 w-3 mr-1 rtl:ml-1 rtl:mr-0" />
+          +12.4% {t.yield}
         </AeroPill>
       </div>
 
       {/* PROJECTED VALUE CARD */}
       <AeroCard className="w-full max-w-sm mb-4 border-primary/20 bg-primary/5 overflow-hidden relative">
-        <div className="absolute top-0 right-0 p-3 opacity-20">
+        <div className="absolute top-0 right-0 rtl:right-auto rtl:left-0 p-3 opacity-20">
           <TrendingUp className="h-16 w-16 text-primary" />
         </div>
         <div className="relative z-10 flex flex-col gap-1">
           <div className="flex items-center gap-2 text-[10px] font-bold text-primary tracking-widest uppercase">
             <ShieldCheck className="h-3 w-3" />
-            10-Year Projection
+            {t.projectionTitle}
           </div>
           <p className="text-2xl font-light tracking-wide text-foreground">
             ${projectedValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
           <p className="text-xs text-muted-foreground italic">
-            Based on current streak & compound bio-yield.
+            {t.projectionSub}
           </p>
         </div>
       </AeroCard>
@@ -63,12 +99,12 @@ export default function VaultPage() {
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="flex flex-col items-center p-4 relative z-10">
             <Lock className="mb-2 h-4 w-4 text-muted-foreground" />
-            <p className="text-[10px] tracking-wider text-muted-foreground uppercase font-bold">Locked</p>
+            <p className="text-[10px] tracking-wider text-muted-foreground uppercase font-bold">{t.locked}</p>
             <p className="font-numbers text-lg font-semibold text-foreground">
               {'$'}{lockedBalance.toFixed(2)}
             </p>
             <span className="text-[9px] text-muted-foreground mt-1 text-center opacity-60">
-              Releases at Level 5
+              {t.releaseInfo}
             </span>
           </div>
         </AeroCard>
@@ -78,12 +114,12 @@ export default function VaultPage() {
           <div className="absolute inset-0 bg-gradient-to-tl from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           <div className="flex flex-col items-center p-4 relative z-10">
             <Unlock className="mb-2 h-4 w-4 text-gold" />
-            <p className="text-[10px] tracking-wider text-gold/80 uppercase font-bold">Liquid</p>
+            <p className="text-[10px] tracking-wider text-gold/80 uppercase font-bold">{t.liquid}</p>
             <p className="font-numbers text-lg font-semibold text-gold">
               {'$'}{spendableBalance.toFixed(2)}
             </p>
             <span className="text-[9px] text-gold/60 mt-1 text-center">
-              Available Now
+              {t.availableNow}
             </span>
           </div>
         </AeroCard>
@@ -93,11 +129,11 @@ export default function VaultPage() {
       <div className="mt-6 flex w-full max-w-sm flex-col items-center gap-2">
         <div className="flex items-center gap-3 w-full">
           <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Mining Rate</span>
+          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest">{t.miningRate}</span>
           <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         </div>
         <AeroPill variant="muted" className="border-white/5 bg-white/[0.02]">
-          $5.00 / verified day
+          {t.rateValue}
         </AeroPill>
       </div>
 
@@ -106,10 +142,10 @@ export default function VaultPage() {
         <div className="flex items-center justify-between mb-4 px-1">
           <h2 className="font-serif text-sm font-medium text-foreground flex items-center gap-2">
             <History className="h-4 w-4 text-muted-foreground" />
-            Ledger
+            {t.ledger}
           </h2>
           <button className="text-[10px] text-primary hover:text-white transition-colors">
-            EXPORT CSV
+            {t.export}
           </button>
         </div>
 
@@ -128,12 +164,12 @@ export default function VaultPage() {
                 }}
               >
                 {tx.type === 'unlock' ? (
-                  <ArrowUpRight className="h-4 w-4" style={{ color: '#00F5FF' }} />
+                  <ArrowUpRight className="h-4 w-4 rtl:-rotate-90" style={{ color: '#00F5FF' }} />
                 ) : (
-                  <ArrowDownLeft className="h-4 w-4" style={{ color: '#D4AF37' }} />
+                  <ArrowDownLeft className="h-4 w-4 rtl:-rotate-90" style={{ color: '#D4AF37' }} />
                 )}
               </div>
-              <div className="flex-1">
+              <div className="flex-1 text-left rtl:text-right">
                 <p className="text-sm font-medium text-foreground leading-none mb-1">{tx.description}</p>
                 <p className="text-[10px] text-muted-foreground font-mono opacity-60">{tx.date} • ID: {tx.id.slice(0, 6)}</p>
               </div>
@@ -155,7 +191,7 @@ export default function VaultPage() {
         className="mt-8 w-full max-w-sm h-14"
         onClick={() => nav.goToScan()}
       >
-        Verify & Mine Yield
+        {t.cta}
       </AeroButton>
     </main>
   );

@@ -12,20 +12,64 @@ import { ArrowLeft, Sun, Moon, Monitor, Shield, LogOut } from 'lucide-react';
 export default function SettingsPage() {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const { user, signOut } = useAuth();
-  const demoMode = useAeroStore((s) => s.demoMode);
-  const setDemoMode = useAeroStore((s) => s.setDemoMode);
+  const { demoMode, setDemoMode, language, setLanguage } = useAeroStore();
   const nav = useNavigator();
 
   const handleSignOut = async () => {
     await signOut();
     setDemoMode(false);
-    nav.goToAuth();
+    setLanguage(null as any);
+    nav.goToRoot();
   };
 
+  const content = {
+    en: {
+      profile: "Patient Identity",
+      demoMode: "Simulation Protocol",
+      demoDesc: "Bypass auth, use localized placeholder data",
+      appearance: "Visual Interface",
+      language: "Linguistic Interface",
+      signOut: "De-authenticate",
+      themes: {
+        eclipse: { label: "Eclipse", desc: "Digital Dark Protocol" },
+        cloud: { label: "Cloud", desc: "Atmospheric Light Protocol" },
+        system: { label: "System", desc: "Inherited OS Context" }
+      },
+      languages: {
+        en: "English (Global)",
+        ar: "العربية (Regional)"
+      }
+    },
+    ar: {
+      profile: "هوية المريض",
+      demoMode: "بروتوكول المحاكاة",
+      demoDesc: "تجاوز المصادقة، استخدام بيانات تجريبية",
+      appearance: "الواجهة المرئية",
+      language: "واجهة اللغة",
+      signOut: "تسجيل الخروج",
+      themes: {
+        eclipse: { label: "الكسوف", desc: "النمط الداكن الرقمي" },
+        cloud: { label: "السحاب", desc: "النمط الفاتح الجوي" },
+        system: { label: "النظام", desc: "سياق نظام التشغيل" }
+      },
+      languages: {
+        en: "الإنجليزية (عالمي)",
+        ar: "العربية (إقليمي)"
+      }
+    }
+  };
+
+  const t = language === 'ar' ? content.ar : content.en;
+
   const themes = [
-    { key: 'eclipse' as const, label: 'Eclipse', icon: Moon, desc: 'Dark theme' },
-    { key: 'cloud' as const, label: 'Cloud', icon: Sun, desc: 'Light theme' },
-    { key: 'system' as const, label: 'System', icon: Monitor, desc: 'Follow system' },
+    { key: 'eclipse' as const, label: t.themes.eclipse.label, icon: Moon, desc: t.themes.eclipse.desc },
+    { key: 'cloud' as const, label: t.themes.cloud.label, icon: Sun, desc: t.themes.cloud.desc },
+    { key: 'system' as const, label: t.themes.system.label, icon: Monitor, desc: t.themes.system.desc },
+  ];
+
+  const languages = [
+    { key: 'en' as const, label: t.languages.en },
+    { key: 'ar' as const, label: t.languages.ar },
   ];
 
   return (
@@ -60,16 +104,16 @@ export default function SettingsPage() {
             >
               <Shield className="h-5 w-5" style={{ color: '#D4AF37' }} />
             </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">Demo Mode</p>
-              <p className="text-xs text-muted-foreground">
-                Bypass auth, use placeholder data
+            <div className="text-left rtl:text-right">
+              <p className="text-sm font-medium text-foreground">{t.demoMode}</p>
+              <p className="text-xs text-muted-foreground leading-tight">
+                {t.demoDesc}
               </p>
             </div>
           </div>
           <button
             onClick={() => setDemoMode(!demoMode)}
-            className="relative h-6 w-11 rounded-full transition-colors"
+            className="relative h-6 w-11 rounded-full transition-colors flex-shrink-0"
             style={{
               background: demoMode ? '#00F5FF' : 'var(--surface-translucent)',
             }}
@@ -88,10 +132,51 @@ export default function SettingsPage() {
         </div>
       </AeroCard>
 
+      {/* Language Selection */}
+      <div className="mt-6 w-full max-w-sm">
+        <h2 className="mb-3 font-serif text-sm font-medium text-foreground px-1">
+          {t.language}
+        </h2>
+        <div className="flex flex-col gap-2">
+          {languages.map(({ key, label }) => {
+            const isActive = language === key;
+            return (
+              <AeroCard key={key}>
+                <button
+                  onClick={() => setLanguage(key)}
+                  className="flex w-full items-center gap-3 p-3"
+                >
+                  <div
+                    className="flex h-10 w-10 items-center justify-center rounded-full"
+                    style={{
+                      background: isActive
+                        ? 'rgba(0, 245, 255, 0.15)'
+                        : 'var(--surface-translucent)',
+                    }}
+                  >
+                    <Monitor className="h-5 w-5" style={{ color: isActive ? '#00F5FF' : 'var(--muted-foreground)' }} />
+                  </div>
+                  <div className="flex-1 text-left rtl:text-right">
+                    <p className="text-sm font-medium text-foreground">{label}</p>
+                  </div>
+                  <div
+                    className="h-4 w-4 rounded-full border-2"
+                    style={{
+                      borderColor: isActive ? '#00F5FF' : 'var(--border)',
+                      background: isActive ? '#00F5FF' : 'transparent',
+                    }}
+                  />
+                </button>
+              </AeroCard>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Theme Selection */}
       <div className="mt-6 w-full max-w-sm">
-        <h2 className="mb-3 font-serif text-sm font-medium text-foreground">
-          Appearance
+        <h2 className="mb-3 font-serif text-sm font-medium text-foreground px-1">
+          {t.appearance}
         </h2>
         <div className="flex flex-col gap-2">
           {themes.map(({ key, label, icon: Icon, desc }) => {
@@ -115,7 +200,7 @@ export default function SettingsPage() {
                       style={{ color: isActive ? '#00F5FF' : 'var(--muted-foreground)' }}
                     />
                   </div>
-                  <div className="flex-1 text-left">
+                  <div className="flex-1 text-left rtl:text-right">
                     <p className="text-sm font-medium text-foreground">{label}</p>
                     <p className="text-xs text-muted-foreground">{desc}</p>
                   </div>
@@ -138,11 +223,11 @@ export default function SettingsPage() {
         <AeroButton
           variant="secondary"
           size="lg"
-          className="w-full"
+          className="w-full flex items-center justify-center gap-2"
           onClick={handleSignOut}
         >
-          <LogOut className="mr-2 h-4 w-4" />
-          Sign Out
+          <LogOut className="h-4 w-4 rtl:rotate-180" />
+          {t.signOut}
         </AeroButton>
       </div>
     </main>

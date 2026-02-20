@@ -12,15 +12,45 @@ interface NotificationSheetProps {
     onClose: () => void;
 }
 
-const TYPE_CONFIG: Record<NotificationType, { icon: any, color: string, label: string }> = {
-    alert: { icon: Activity, color: 'text-destructive', label: 'Critical' },
-    merit: { icon: Sparkles, color: 'text-primary', label: 'Merit' },
-    security: { icon: Shield, color: 'text-gold', label: 'Security' },
-    update: { icon: Clock, color: 'text-muted-foreground', label: 'Protocol' },
-};
+import { useAeroStore } from '@/store/useAeroStore';
 
 export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
     const { notifications, markAsRead, clearAll, unreadCount } = useNotificationStore();
+    const language = useAeroStore((s) => s.language);
+
+    const content = {
+        en: {
+            title: "Notifications",
+            empty: "All bio-signals are clear.",
+            archive: "Archive All Signals",
+            types: {
+                alert: "Critical",
+                merit: "Merit",
+                security: "Security",
+                update: "Protocol"
+            }
+        },
+        ar: {
+            title: "التنبيهات",
+            empty: "جميع الإشارات الحيوية واضحة.",
+            archive: "أرشفة جميع الإشارات",
+            types: {
+                alert: "حرج",
+                merit: "استحقاق",
+                security: "أمني",
+                update: "بروتوكول"
+            }
+        }
+    };
+
+    const t = language === 'ar' ? content.ar : content.en;
+
+    const TYPE_CONFIG: Record<NotificationType, { icon: any, color: string, label: string }> = {
+        alert: { icon: Activity, color: 'text-destructive', label: t.types.alert },
+        merit: { icon: Sparkles, color: 'text-primary', label: t.types.merit },
+        security: { icon: Shield, color: 'text-gold', label: t.types.security },
+        update: { icon: Clock, color: 'text-muted-foreground', label: t.types.update },
+    };
 
     return (
         <AnimatePresence>
@@ -35,19 +65,22 @@ export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
                         className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm mx-auto max-w-[430px]"
                     />
 
-                    {/* Panel: Right-aligned liquid sheet */}
+                    {/* Panel: Right-aligned liquid sheet (mirrors sidebar) */}
                     <motion.div
-                        initial={{ x: '100%' }}
+                        initial={{ x: language === 'ar' ? '-100%' : '100%' }}
                         animate={{ x: 0 }}
-                        exit={{ x: '100%' }}
+                        exit={{ x: language === 'ar' ? '-100%' : '100%' }}
                         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                        className="fixed inset-y-0 right-0 z-[110] w-[90%] max-w-[380px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col rounded-l-[40px] border-none"
+                        className={cn(
+                            "fixed inset-y-0 z-[110] w-[90%] max-w-[380px] bg-background/60 backdrop-blur-sm shadow-2xl overflow-hidden flex flex-col border-none",
+                            language === 'ar' ? "left-0 rounded-r-[40px]" : "right-0 rounded-l-[40px]"
+                        )}
                     >
                         {/* Header */}
                         <div className="p-6 pb-4 flex items-center justify-between border-b border-white/5">
                             <div className="flex items-center gap-2">
                                 <Bell className="h-5 w-5 text-primary" />
-                                <h2 className="font-serif text-lg font-semibold">Notifications</h2>
+                                <h2 className="font-serif text-lg font-semibold">{t.title}</h2>
                                 {unreadCount > 0 && (
                                     <AeroPill variant="accent" className="px-1.5 py-0 text-[10px]">{unreadCount}</AeroPill>
                                 )}
@@ -64,7 +97,7 @@ export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
                                     <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                                         <CheckCircle2 className="h-8 w-8 text-muted-foreground/20" />
                                     </div>
-                                    <p className="text-sm text-muted-foreground">All bio-signals are clear.</p>
+                                    <p className="text-sm text-muted-foreground">{t.empty}</p>
                                 </div>
                             ) : (
                                 notifications.map((n) => {
@@ -81,10 +114,10 @@ export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
                                             )}
                                         >
                                             {!n.isRead && (
-                                                <div className="absolute top-4 right-4 h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,245,255,0.6)]" />
+                                                <div className="absolute top-4 right-4 rtl:right-auto rtl:left-4 h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,245,255,0.6)]" />
                                             )}
 
-                                            <div className="flex gap-3">
+                                            <div className="flex gap-3 text-left rtl:text-right">
                                                 <div className={cn("h-10 w-10 shrink-0 rounded-2xl flex items-center justify-center bg-white/5", config.color)}>
                                                     <config.icon className="h-5 w-5" />
                                                 </div>
@@ -113,7 +146,7 @@ export function NotificationSheet({ isOpen, onClose }: NotificationSheetProps) {
                                     className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs text-muted-foreground hover:text-foreground hover:bg-white/5 transition-all"
                                 >
                                     <Trash2 className="h-4 w-4" />
-                                    Archive All Signals
+                                    {t.archive}
                                 </button>
                             </div>
                         )}
