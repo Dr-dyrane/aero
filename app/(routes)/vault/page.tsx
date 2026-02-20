@@ -16,22 +16,8 @@ export default function VaultPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center px-4 pb-28 pt-2">
-      {/* Header */}
-      <header className="flex w-full max-w-sm items-center gap-3 py-4">
-        <button
-          onClick={() => nav.goToDashboard()}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-[var(--surface-hover)]"
-          aria-label="Back to dashboard"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-        <h1 className="font-serif text-xl font-semibold text-foreground">
-          Bio-Vault
-        </h1>
-        {demoMode && (
-          <AeroPill variant="accent" className="ml-auto">DEMO</AeroPill>
-        )}
-      </header>
+      {/* Header handled by TopNav */}
+      <div className="h-4" />
 
       {/* Total Balance */}
       <AeroCard glow className="w-full max-w-sm">

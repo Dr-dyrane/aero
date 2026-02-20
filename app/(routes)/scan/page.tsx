@@ -50,27 +50,14 @@ export default function ScanPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center px-4 pb-28 pt-2">
-      {/* Header */}
-      <header className="flex w-full max-w-sm items-center gap-3 py-4">
-        <button
-          onClick={() => nav.goToDashboard()}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-foreground transition-colors hover:bg-[var(--surface-hover)]"
-          aria-label="Back to dashboard"
+      {/* Header handled by TopNav */}
+      <div className="w-full max-w-sm flex justify-end gap-2 mb-4">
+        <AeroPill
+          variant={isComplete ? 'accent' : isScanning ? 'muted' : 'muted'}
         >
-          <ArrowLeft className="h-5 w-5" />
-        </button>
-        <h1 className="font-serif text-xl font-semibold text-foreground">
-          Triple-Check
-        </h1>
-        <div className="ml-auto flex items-center gap-2">
-          {demoMode && <AeroPill variant="accent">DEMO</AeroPill>}
-          <AeroPill
-            variant={isComplete ? 'accent' : isScanning ? 'muted' : 'muted'}
-          >
-            {isComplete ? 'Complete' : isScanning ? 'Scanning...' : scanStatus}
-          </AeroPill>
-        </div>
-      </header>
+          {isComplete ? 'Complete' : isScanning ? 'Scanning...' : scanStatus}
+        </AeroPill>
+      </div>
 
       {/* Orb visualization */}
       <AnimatePresence>

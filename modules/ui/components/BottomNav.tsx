@@ -2,76 +2,91 @@
 
 import { usePathname } from 'next/navigation';
 import { useNavigator } from '@/lib/navigation';
-import { LayoutDashboard, Shield, ScanFace, Settings } from 'lucide-react';
+import { LayoutDashboard, Shield, Settings, ScanFace, ChevronRight, Zap, Coins } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
+import { useState } from 'react';
+
+import { useLayout } from '../providers/LayoutProvider';
 
 const NAV_ITEMS = [
-  { key: 'dashboard', label: 'Home', icon: LayoutDashboard, path: '/dashboard' },
-  { key: 'vault', label: 'Vault', icon: Shield, path: '/vault' },
-  { key: 'scan', label: 'Scan', icon: ScanFace, path: '/scan' },
-  { key: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
+  { id: 'dashboard', icon: LayoutDashboard, path: '/dashboard' },
+  { id: 'vault', icon: Shield, path: '/vault' },
+  { id: 'settings', icon: Settings, path: '/settings' },
 ] as const;
 
 export function BottomNav() {
   const pathname = usePathname();
   const nav = useNavigator();
+  const { isNavVisible } = useLayout();
+  const currentItem = NAV_ITEMS.find(item => pathname.startsWith(item.path)) || NAV_ITEMS[0];
 
-  const handleNav = (path: string) => {
-    switch (path) {
-      case '/dashboard': nav.goToDashboard(); break;
-      case '/vault': nav.goToVault(); break;
-      case '/scan': nav.goToScan(); break;
-      case '/settings': nav.goToSettings(); break;
-    }
+  // Context-aware FAB logic
+  const getFabConfig = () => {
+    if (pathname.startsWith('/dashboard')) return { icon: ScanFace, action: nav.goToScan };
+    if (pathname.startsWith('/vault')) return { icon: Coins, action: () => { } };
+    if (pathname.startsWith('/scan')) return { icon: ChevronRight, action: () => { } };
+    return { icon: Zap, action: () => { } };
   };
 
+  const fab = getFabConfig();
+
   return (
-    <nav
-      className="fixed inset-x-0 bottom-0 z-40 mx-auto flex w-full max-w-[430px] items-center justify-around border-t px-2 pb-[env(safe-area-inset-bottom)] pt-2"
-      style={{
-        background: 'var(--background)',
-        borderColor: 'var(--border)',
-        backdropFilter: 'blur(40px)',
-      }}
-      role="navigation"
-      aria-label="Main navigation"
+    <motion.div
+      animate={{ y: isNavVisible ? 0 : 120 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed bottom-8 left-1/2 z-50 w-full max-w-[400px] -translate-x-1/2 px-4 pointer-events-none"
     >
-      {NAV_ITEMS.map(({ key, label, icon: Icon, path }) => {
-        const isActive = pathname === path;
-        return (
-          <button
-            key={key}
-            onClick={() => handleNav(path)}
-            className={cn(
-              'flex flex-col items-center gap-0.5 rounded-2xl px-4 py-2 text-xs transition-colors',
-              isActive
-                ? 'text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            )}
-            aria-current={isActive ? 'page' : undefined}
-          >
-            <Icon
-              className="h-5 w-5"
-              style={isActive ? { color: '#00F5FF' } : undefined}
-            />
-            <span
-              className={cn(
-                'text-[10px]',
-                isActive ? 'font-medium' : 'font-normal'
-              )}
-              style={isActive ? { color: '#00F5FF' } : undefined}
+      <div className="flex items-center justify-between pointer-events-auto">
+
+        {/* PILL: The Core Navigation - Simplified Borderless Design */}
+        <div className="relative flex items-center bg-transparent h-14 rounded-full px-2 backdrop-blur-sm overflow-hidden min-w-[180px]">
+          {NAV_ITEMS.map((item) => {
+            const isActive = currentItem.id === item.id;
+            const Icon = item.icon;
+
+            return (
+              <button
+                key={item.id}
+                onClick={item.id === 'vault' ? nav.goToVault : item.id === 'settings' ? nav.goToSettings : nav.goToDashboard}
+                className={cn(
+                  "relative z-10 flex h-10 w-10 items-center justify-center rounded-full transition-all duration-300 mx-1",
+                  isActive ? "text-primary scale-110" : "text-muted-foreground/40 hover:text-foreground"
+                )}
+              >
+                <Icon className={cn("h-5 w-5", isActive && "drop-shadow-[0_0_8px_rgba(0,245,255,0.4)]")} />
+              </button>
+            );
+          })}
+        </div>
+
+        {/* DROPLET FAB: Context-Aware Droplet */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={fab.action}
+          className="relative flex h-16 w-16 items-center justify-center rounded-[2.5rem] bg-primary text-primary-foreground shadow-[0_12px_40px_rgba(0,245,255,0.35)] transition-all overflow-hidden"
+          style={{
+            borderRadius: '40% 60% 70% 30% / 40% 50% 60% 70%', // Droplet/Organic feel
+          }}
+        >
+          {/* Shimmer Effect */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none" />
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
+              transition={{ duration: 0.3 }}
             >
-              {label}
-            </span>
-            {isActive && (
-              <div
-                className="mt-0.5 h-0.5 w-4 rounded-full"
-                style={{ background: '#00F5FF' }}
-              />
-            )}
-          </button>
-        );
-      })}
-    </nav>
+              <fab.icon className="h-7 w-7" strokeWidth={2.5} />
+            </motion.div>
+          </AnimatePresence>
+        </motion.button>
+
+      </div>
+    </motion.div>
   );
 }

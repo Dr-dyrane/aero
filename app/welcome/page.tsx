@@ -18,6 +18,11 @@ export default function WelcomeDroplet() {
       {/* AMBIENT VOID: Deterministic Background Glow */}
       <div className="absolute top-1/2 left-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-aero-blue/[0.03] blur-[160px] dark:bg-[#00F5FF]/[0.03] transition-colors duration-700 pointer-events-none" />
 
+      {/* THEME TOGGLE: Top Right Absolute (Specific to Welcome) */}
+      <div className="absolute top-6 right-6 z-50">
+        <ThemeToggle />
+      </div>
+
       {/* HERO: The Artifact + Typography (Center) */}
       <div className="flex-1 flex flex-col items-center justify-start pt-20 gap-8 w-full max-w-md z-10">
         <motion.div

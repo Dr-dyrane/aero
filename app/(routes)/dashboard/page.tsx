@@ -53,21 +53,8 @@ export default function DashboardPage() {
         animate="show"
         className="w-full max-w-sm flex flex-col items-center"
       >
-        {/* Header Section */}
-        <motion.div variants={item} className="flex w-full items-center justify-between mb-8">
-          <div>
-            <p className="text-[10px] tracking-widest text-muted-foreground uppercase font-medium">Aero Terminal</p>
-            <h1 className="font-serif text-2xl font-semibold text-foreground mt-0.5">
-              {user?.name?.split(' ')[0] ?? 'Explorer'}
-            </h1>
-          </div>
-          {demoMode && (
-            <AeroPill variant="accent" className="bg-primary/10 border border-primary/20 backdrop-blur-sm">
-              <Sparkles className="h-3 w-3 mr-1" />
-              DEMO
-            </AeroPill>
-          )}
-        </motion.div>
+        {/* Header Section: Reduced padding, now handled by TopNav */}
+        <div className="h-6" />
 
         {/* Hero Score Section */}
         <motion.section variants={item} className="flex flex-col items-center py-4 relative">

@@ -14,6 +14,8 @@ interface LayoutContextValue {
   isSkeletonLoading: boolean;
   setSkeletonLoading: (v: boolean) => void;
   safeAreaInsets: { top: number; bottom: number };
+  isNavVisible: boolean;
+  setIsNavVisible: (v: boolean) => void;
 }
 
 const LayoutContext = createContext<LayoutContextValue | null>(null);
@@ -27,6 +29,8 @@ export function useLayout() {
 export function LayoutProvider({ children }: { children: ReactNode }) {
   const [isMobile, setIsMobile] = useState(true);
   const [isSkeletonLoading, setSkeletonLoading] = useState(true);
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 768px)');
@@ -42,20 +46,31 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
+  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    const currentScrollY = e.currentTarget.scrollTop;
+    // Hide on scroll down, show on scroll up
+    if (currentScrollY > lastScrollY && currentScrollY > 60) {
+      if (isNavVisible) setIsNavVisible(false);
+    } else {
+      if (!isNavVisible) setIsNavVisible(true);
+    }
+    setLastScrollY(currentScrollY);
+  };
+
   const safeAreaInsets = {
     top: typeof window !== 'undefined'
       ? parseInt(
-          getComputedStyle(document.documentElement).getPropertyValue(
-            'env(safe-area-inset-top)'
-          ) || '0'
-        )
+        getComputedStyle(document.documentElement).getPropertyValue(
+          'env(safe-area-inset-top)'
+        ) || '0'
+      )
       : 0,
     bottom: typeof window !== 'undefined'
       ? parseInt(
-          getComputedStyle(document.documentElement).getPropertyValue(
-            'env(safe-area-inset-bottom)'
-          ) || '0'
-        )
+        getComputedStyle(document.documentElement).getPropertyValue(
+          'env(safe-area-inset-bottom)'
+        ) || '0'
+      )
       : 0,
   };
 
@@ -67,9 +82,16 @@ export function LayoutProvider({ children }: { children: ReactNode }) {
         isSkeletonLoading,
         setSkeletonLoading,
         safeAreaInsets,
+        isNavVisible,
+        setIsNavVisible,
       }}
     >
-      {children}
+      <main
+        onScroll={handleScroll}
+        className="relative mx-auto h-[100dvh] w-full max-w-[430px] overflow-auto bg-background shadow-2xl"
+      >
+        {children}
+      </main>
     </LayoutContext.Provider>
   );
 }

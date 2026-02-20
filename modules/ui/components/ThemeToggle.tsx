@@ -2,7 +2,7 @@
 
 import { useTheme } from '@/modules/ui/providers/ThemeProvider';
 import { Moon, Sun } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 export function ThemeToggle() {
@@ -24,7 +24,7 @@ export function ThemeToggle() {
     };
 
     return (
-        <div className="relative h-20 w-10 rounded-full bg-surface-translucent backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_4px_20px_rgba(0,0,0,0.1)] p-1">
+        <div className="relative h-20 w-10 rounded-full bg-surface-translucent backdrop-blur-md shadow-[inset_0_1px_1px_rgba(255,255,255,0.15),0_4px_20px_rgba(0,0,0,0.1)] p-1 scale-[0.8] origin-right">
             {/* Icons Background */}
             <div className="absolute inset-0 flex flex-col items-center justify-between py-3 pointer-events-none">
                 <Sun className={`h-4 w-4 transition-colors duration-300 ${!isDark ? 'text-amber-400' : 'text-muted-foreground/30'}`} />

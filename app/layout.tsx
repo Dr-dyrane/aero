@@ -35,7 +35,7 @@ const satoshi = DM_Mono({
 
 
 export const metadata: Metadata = {
-  title: 'AERO — Bio-Investment Platform',
+  title: 'AERO',
   description: 'Rebranding Addiction as an Elite Bio-Investment. Track your Aero Score, protect your Bio-Vault, and earn real-world merits.',
   generator: 'AERO',
   manifest: '/site.webmanifest',
@@ -91,14 +91,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         <AppProviders>
-          {/* Mobile Chassis: Centered, constricted width on desktop, full on mobile */}
-          <main className="relative mx-auto h-[100dvh] w-full max-w-[430px] overflow-auto bg-background shadow-2xl">
-            {/* GLOBAL THEME TOGGLE: Persistent across all screens */}
-            <div className="fixed top-6 right-6 z-[60] pointer-events-auto">
-              <ThemeToggle />
-            </div>
-            {children}
-          </main>
+          {children}
         </AppProviders>
         <Analytics />
 
